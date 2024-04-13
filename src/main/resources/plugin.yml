@@ -1,0 +1,8 @@
+name: KireiWalls
+version: '${project.version}'
+main: dev.tqqn.kireiwalls.KireiWalls
+api-version: '1.20'
+commands:
+  debug:
+    description: Debug command
+    usage: /<command>
