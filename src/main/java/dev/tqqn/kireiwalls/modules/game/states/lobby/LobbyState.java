@@ -13,12 +13,12 @@ public class LobbyState extends AbstractGameState {
     private boolean canStart = false;
 
     public LobbyState(GameModule gameModule) {
-        super(gameModule, GameStates.WAITING, 300,"Lobby");
-
+        super(gameModule, GameStates.WAITING,"Lobby");
     }
 
     @Override
     public void run() {
+        timer--;
         if (getGameModule().canStart() && timer <= 0) {
             cancel();
             getGameModule().setGameState(GameStates.ACTIVE);
@@ -54,11 +54,11 @@ public class LobbyState extends AbstractGameState {
                 player.sendMessage(ChatUtil.format("<red>Not enough players. Setting timer to <green>3 <red>minutes."));
             }
         }
-        timer--;
     }
 
     @Override
     public void onEnable() {
+        setTimer(getGameModule().getGameSettings().getLobbyCount());
         addListener(LobbyListeners.class);
         this.runTaskTimer(getGameModule().getPlugin(), 0L, 20L);
     }

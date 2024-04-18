@@ -15,15 +15,13 @@ import java.util.Map;
 
 public final class ModuleManager {
 
-    private final KireiWalls plugin;
     private final Map<Class<? extends AbstractModule>, AbstractModule> modules;
 
     public ModuleManager(KireiWalls plugin) {
-        this.plugin = plugin;
         modules = new LinkedHashMap<>();
         modules.put(DatabaseModule.class, new DatabaseModule(plugin));
         modules.put(PlayerModule.class, new PlayerModule(plugin));
-        modules.put(GameModule.class, new GameModule(plugin));
+        modules.put(GameModule.class, new GameModule(plugin, (DatabaseModule) modules.get(DatabaseModule.class)));
         modules.put(RegionModule.class, new RegionModule(plugin));
         modules.put(TeamModule.class, new TeamModule(plugin));
         modules.put(MenuModule.class, new MenuModule(plugin));

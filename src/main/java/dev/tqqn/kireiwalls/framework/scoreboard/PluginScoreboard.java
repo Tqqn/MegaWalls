@@ -54,7 +54,7 @@ public abstract class PluginScoreboard {
         if (playerModel.getCurrentScoreboard() != null) {
             removeScoreboard();
         }
-
+        System.out.println("Called1");
         playerModel.setCurrentScoreboard(this);
         KireiWalls.getReflectionLayer().sendSideBarScoreboard(name, playerModel.getPlayer(), displayName, boardLines);
     }

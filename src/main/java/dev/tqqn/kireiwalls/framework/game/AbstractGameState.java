@@ -2,6 +2,7 @@ package dev.tqqn.kireiwalls.framework.game;
 
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -16,14 +17,13 @@ public abstract class AbstractGameState extends BukkitRunnable {
     @Getter private final GameModule gameModule;
     @Getter private final GameStates gameStates;
     @Getter private final String name;
-    @Getter protected static int timer;
+    @Setter @Getter protected static int timer;
 
     private final Set<Listener> listeners;
 
-    public AbstractGameState(GameModule gameModule, GameStates gameStates, int count, String name) {
+    public AbstractGameState(GameModule gameModule, GameStates gameStates, String name) {
         this.gameModule = gameModule;
         this.gameStates = gameStates;
-        timer = count;
         this.name = name;
         this.listeners = new HashSet<>();
     }

@@ -2,8 +2,10 @@ package dev.tqqn.kireiwalls.modules.game;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.modules.game.commands.DebugCommand;
 import dev.tqqn.kireiwalls.modules.game.commands.WitherDebugCommand;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
@@ -15,19 +17,30 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class GameModule extends AbstractModule {
 
     @Getter private static AbstractGameState currentState;
+    @Getter private GameSettings gameSettings;
 
-    public GameModule(KireiWalls plugin) {
+    private final DatabaseModule databaseModule;
+
+    @Getter private final Set<PlayerModel> ingamePlayers;
+
+    public GameModule(KireiWalls plugin, DatabaseModule databaseModule) {
         super(plugin, "Game");
         currentState = new LobbyState(this);
+        this.ingamePlayers = new HashSet<>();
+        this.databaseModule = databaseModule;
     }
 
     @Override
     public void onEnable() {
         addComponent(DebugCommand.class, "debug");
         addComponent(WitherDebugCommand.class, "witherdebug");
+        this.gameSettings = new GameSettings("DragonKeep", databaseModule.getDefaultConfig().getLobbyLocation(), databaseModule.getDefaultConfig().getLobbyTimer());
         currentState.enable();
     }
 

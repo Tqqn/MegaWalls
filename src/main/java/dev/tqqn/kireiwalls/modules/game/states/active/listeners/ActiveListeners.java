@@ -28,6 +28,4 @@ public class ActiveListeners implements Listener {
             scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
         }
     }
-
-
 }

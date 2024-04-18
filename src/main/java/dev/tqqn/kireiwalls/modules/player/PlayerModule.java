@@ -34,6 +34,11 @@ public class PlayerModule extends AbstractModule {
         CACHED_PLAYERS.put(playerModel.getUuid(), playerModel);
     }
 
+    public void removePlayerFromCache(UUID uuid) {
+        CACHED_PLAYERS.remove(uuid);
+        System.out.println("Removed");
+    }
+
     public void processSpigotLogin(Player player) {
         // TODO: checks if lobby or shit
     }

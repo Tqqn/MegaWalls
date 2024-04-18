@@ -1,3 +1,12 @@
+game:
+  lobby-timer:
+  lobby-location:
+    world:
+    x:
+    y:
+    z:
+    yaw:
+    pitch:
 teams:
   red:
     spawn-location:
