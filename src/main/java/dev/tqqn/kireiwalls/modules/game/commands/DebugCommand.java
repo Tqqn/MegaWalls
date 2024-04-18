@@ -25,7 +25,6 @@ public class DebugCommand implements CommandExecutor {
             return true;
         }
 
-
         PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
         playerModel.setCoins(playerModel.getCoins() + Integer.parseInt(strings[0]));
 

@@ -62,8 +62,5 @@ public class PlayerLoadListeners implements Listener {
         Bukkit.getPluginManager().callEvent(new GamePlayerJoinEvent(PlayerModule.getPlayerModel(player.getUniqueId())));
 
         playerModule.processSpigotLogin(player);
-
-        ScoreboardModule scoreboardModule = (ScoreboardModule) databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
-        scoreboardModule.setScoreboard(playerModel, new ActiveBoard(playerModel));
     }
 }

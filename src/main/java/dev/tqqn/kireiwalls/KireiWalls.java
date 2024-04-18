@@ -56,6 +56,6 @@ public final class KireiWalls extends JavaPlugin {
                 if (PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard() == null) return;
                 PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard().update();
             }
-        }, 0, 20L);
+        }, 0, 10L);
     }
 }

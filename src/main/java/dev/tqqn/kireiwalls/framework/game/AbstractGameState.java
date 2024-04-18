@@ -5,20 +5,25 @@ import lombok.Getter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractGameState {
+public abstract class AbstractGameState extends BukkitRunnable {
 
     @Getter private final GameModule gameModule;
+    @Getter private final GameStates gameStates;
     @Getter private final String name;
+    @Getter protected static int timer;
 
     private final Set<Listener> listeners;
 
-    public AbstractGameState(GameModule gameModule, String name) {
+    public AbstractGameState(GameModule gameModule, GameStates gameStates, int count, String name) {
         this.gameModule = gameModule;
+        this.gameStates = gameStates;
+        timer = count;
         this.name = name;
         this.listeners = new HashSet<>();
     }
@@ -27,14 +32,17 @@ public abstract class AbstractGameState {
     public abstract void onDisable();
 
     public void enable() {
+        getGameModule().getPlugin().getLogger().info("State: " + name + " is loading...");
         onEnable();
         registerListeners();
+        getGameModule().getPlugin().getLogger().info("State: " + name + " finished loading!");
     }
 
     public void disable() {
+        getGameModule().getPlugin().getLogger().info("State: " + name + " is disabling...");
         onDisable();
         unRegisterListeners();
-
+        getGameModule().getPlugin().getLogger().info("State: " + name + " finished disabling!");
     }
 
     private void registerListeners() {

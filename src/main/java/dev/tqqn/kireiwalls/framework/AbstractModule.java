@@ -22,7 +22,7 @@ public abstract class AbstractModule {
     private final Map<String, CommandExecutor> commands = new HashMap<>();
 
     @Getter private final String name;
-    @Getter  private final String prefix;
+    @Getter private final String prefix;
 
     public AbstractModule(KireiWalls plugin, String name) {
         this.plugin = plugin;

@@ -6,3 +6,6 @@ commands:
   debug:
     description: Debug command
     usage: /<command>
+  witherdebug:
+    description: Wither Debug command
+    usage: /<command>

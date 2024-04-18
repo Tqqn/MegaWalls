@@ -51,8 +51,17 @@ public abstract class PluginScoreboard {
      * @param playerModel The PlayerModel for which to set the scoreboard.
      */
     public void setScoreboard(PlayerModel playerModel) {
+        if (playerModel.getCurrentScoreboard() != null) {
+            removeScoreboard();
+        }
+
         playerModel.setCurrentScoreboard(this);
         KireiWalls.getReflectionLayer().sendSideBarScoreboard(name, playerModel.getPlayer(), displayName, boardLines);
+    }
+
+    public void removeScoreboard() {
+        playerModel.setCurrentScoreboard(null);
+        KireiWalls.getReflectionLayer().removePlayerFromScoreboard(name, playerModel.getPlayer());
     }
 
     public void removeScoreboardFromAllPlayers() {
