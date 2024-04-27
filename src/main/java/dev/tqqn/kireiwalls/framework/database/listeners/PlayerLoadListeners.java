@@ -48,6 +48,7 @@ public class PlayerLoadListeners implements Listener {
             joiningPlayers.remove(event.getPlayer().getUniqueId());
             return;
         }
+
         PlayerModel playerModel;
 
         if (!isPlayerLoaded(event.getPlayer().getUniqueId())) {

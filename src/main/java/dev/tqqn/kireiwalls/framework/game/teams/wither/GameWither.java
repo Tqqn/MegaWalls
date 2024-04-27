@@ -1,11 +1,13 @@
 package dev.tqqn.kireiwalls.framework.game.teams.wither;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
+import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Entity;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class GameWither {
 
@@ -14,14 +16,14 @@ public class GameWither {
     @Getter private int health;
     @Getter @Setter private WitherStatus witherStatus;
     @Getter private Entity bukkitEntity;
-    private CustomWither nmsEntity;
+    private ICustomWither nmsEntity;
 
     public GameWither(GameTeam gameTeam) {
         this.gameTeam = gameTeam;
         this.health = 1000;
         this.witherStatus = WitherStatus.PROTECTED;
-        this.nmsEntity = new CustomWither(gameTeam);
-        this.bukkitEntity = nmsEntity.getBukkitEntity();
+        this.nmsEntity = KireiWalls.getReflectionLayer().createCustomWither(gameTeam);
+        this.bukkitEntity = nmsEntity.getEntity();
         bukkitEntity.setCustomNameVisible(true);
         bukkitEntity.setGlowing(true);
         bukkitEntity.setPersistent(false);
@@ -31,12 +33,18 @@ public class GameWither {
         //team.color(gameTeam.getNamedTextColor());
         //team.addEntry(witherEntity.getUniqueId().toString());
 
+        bukkitEntity.setMetadata("Team", new FixedMetadataValue(KireiWalls.getInstance(), gameTeam.getName()));
+
         bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
     }
 
     public void kill() {
-        this.bukkitEntity.remove();
+        if (bukkitEntity != null) {
+            this.bukkitEntity.remove();
+        }
+        this.bukkitEntity = null;
         this.witherStatus = WitherStatus.DEATH;
+        this.nmsEntity = null;
     }
 
     public String getScoreboardStatus() {

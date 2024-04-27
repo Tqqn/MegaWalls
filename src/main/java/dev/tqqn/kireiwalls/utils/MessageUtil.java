@@ -7,6 +7,8 @@ public enum MessageUtil {
     NO_PERMISSION("<redYou do not have <blue>%s <red>permission to do this."),
     PLAYER_JOIN("%s%s <yellow>has joined the game (<aqua%s<yellow>/<aqua>%s<yellow>)!"),
     PLAYER_QUIT("%s%s <yellow> has left the game!"),
+    ALL_WITHERS_DEAD("<red>All Withers are dead."),
+    DM_COUNTDOWN("<red>Death-Match starting in <green>%s<red>."),
     SCOREBOARD_TITLE("§9§lKIREI WALLS");
 
     private final String message;

@@ -1,0 +1,35 @@
+package dev.tqqn.kireiwalls.framework.game.events;
+
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
+import lombok.Getter;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+
+public class WitherDamageByPlayerEvent extends Event implements Cancellable {
+
+    private static final HandlerList handlers = new HandlerList();
+    @Getter private final GameTeam witherTeam;
+    @Getter private final PlayerModel attacker;
+
+    private boolean cancelled = false;
+
+    public WitherDamageByPlayerEvent(GameTeam witherTeam, PlayerModel attacker) {
+        this.witherTeam = witherTeam;
+        this.attacker = attacker;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() { return handlers; }
+
+    public static HandlerList getHandlerList() { return handlers; }
+
+    @Override
+    public boolean isCancelled() { return cancelled; }
+
+    @Override
+    public void setCancelled(boolean cancelled) { this.cancelled = cancelled; }
+}

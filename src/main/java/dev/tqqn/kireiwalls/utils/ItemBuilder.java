@@ -6,7 +6,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ItemBuilder {
 
@@ -49,7 +51,16 @@ public class ItemBuilder {
      * @return The ItemBuilder instance for method chaining.
      */
     public ItemBuilder setLore(String... lines) {
-        itemMeta.setLore(Arrays.asList(ChatUtil.translateLegacy(lines)));
+        setLore(Arrays.asList(lines));
+        return this;
+    }
+
+    public ItemBuilder setLore(List<String> lines) {
+        List<String> tempList = new ArrayList<>();
+        for (String line : lines) {
+            tempList.add(ChatUtil.translateLegacy(line));
+        }
+        itemMeta.setLore(tempList);
         return this;
     }
 
@@ -59,6 +70,11 @@ public class ItemBuilder {
     public void setGlow() {
         itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    }
+
+    public ItemBuilder hideAttributes() {
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        return this;
     }
 
     /**

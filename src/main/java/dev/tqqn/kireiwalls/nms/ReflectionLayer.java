@@ -1,5 +1,8 @@
 package dev.tqqn.kireiwalls.nms;
 
+import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -32,18 +35,15 @@ public interface ReflectionLayer {
      * @param suffix   The suffix to be displayed after the player's name.
      */
     void sendNameTag(Player player, String teamName, String color, String prefix, String suffix);
+    void updateHealth(Player player);
 
-    /**
-     * Initializes the scoreboard teams for the teams.
-     * If the teams do not exist, this method creates them and sets collision rules to NEVER
-     * to prevent player collision within the teams.
-     */
-    void initScoreboardTeams();
 
     void sendSideBarScoreboard(String name, Player player, String displayName, Collection<String> board);
 
     void updateSidebarScoreboardLine(String name, Player player, String line, int index);
 
     void removePlayerFromScoreboard(String name, Player player);
+
+    ICustomWither createCustomWither(GameTeam gameTeam);
 }
 

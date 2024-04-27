@@ -1,6 +1,8 @@
 package dev.tqqn.kireiwalls;
 
+import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.modules.ModuleManager;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import lombok.Getter;
@@ -43,7 +45,7 @@ public final class KireiWalls extends JavaPlugin {
         try {
             Class<?> nmsClass = Class.forName("dev.tqqn.kireiwalls.nms." + version + "." + version);
             Bukkit.getLogger().info("Using reflection layer for version " + version);
-            reflectionLayer = (ReflectionLayer) nmsClass.getConstructors()[0].newInstance(this);
+            reflectionLayer = (ReflectionLayer) nmsClass.getConstructors()[0].newInstance();
         } catch (Exception ignored) {
             Bukkit.getLogger().info("This version is not supported - " + version);
             Bukkit.getServer().shutdown();
@@ -55,6 +57,9 @@ public final class KireiWalls extends JavaPlugin {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard() == null) return;
                 PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard().update();
+                if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+                    KireiWalls.getReflectionLayer().updateHealth(player);
+                }
             }
         }, 0, 10L);
     }

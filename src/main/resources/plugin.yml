@@ -9,3 +9,9 @@ commands:
   witherdebug:
     description: Wither Debug command
     usage: /<command>
+  build:
+    description: Build command
+    usage: /<command>
+  spectate:
+    description: Spectate command
+    usage: /<command>

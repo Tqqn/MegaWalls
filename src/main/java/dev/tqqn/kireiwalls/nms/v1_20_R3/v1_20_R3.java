@@ -1,34 +1,30 @@
 package dev.tqqn.kireiwalls.nms.v1_20_R3;
 
-import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
+import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
+import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
+import dev.tqqn.kireiwalls.utils.ChatUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.numbers.BlankFormat;
+import net.minecraft.network.chat.numbers.FixedFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket;
 import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
-import net.minecraft.world.scores.DisplaySlot;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Collection;
 
 public class v1_20_R3 implements ReflectionLayer {
-
-    private Scoreboard mainScoreboard;
-
-    public v1_20_R3(KireiWalls plugin) {
-        Bukkit.getScheduler().runTask(plugin, () -> mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard());
-    }
 
     @Override
     public void sendPacket(Player player, Object packetObject) {
@@ -38,25 +34,67 @@ public class v1_20_R3 implements ReflectionLayer {
 
     @Override
     public void sendNameTag(Player player, String teamName, String color, String prefix, String suffix) {
-        CraftScoreboard craftScoreboard = (CraftScoreboard) mainScoreboard;
-        PlayerTeam playerTeam = new PlayerTeam(craftScoreboard.getHandle(), teamName);
+        net.minecraft.world.scores.Scoreboard scoreboard = ((CraftScoreboard) player.getScoreboard()).getHandle();
 
-        playerTeam.setColor(ChatFormatting.getByName(color));
-        playerTeam.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix + " "));
-        playerTeam.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
+        PlayerTeam playerTeam = scoreboard.getPlayerTeam(teamName);
+        boolean created;
+        if (playerTeam == null) {
+            playerTeam = new PlayerTeam(scoreboard, teamName);
+            playerTeam.setColor(ChatFormatting.getByName(color)); //Name Color
+            playerTeam.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix + " "));
+            playerTeam.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
+            playerTeam.setCollisionRule(Team.CollisionRule.NEVER);
+            scoreboard.addPlayerTeam(teamName);
+            created = true;
+        } else {
+            playerTeam.setColor(ChatFormatting.getByName(color)); //Name Color
+            playerTeam.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix + " "));
+            playerTeam.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
+            created = false;
+        }
+
+
         ClientboundSetPlayerTeamPacket add = ClientboundSetPlayerTeamPacket.createPlayerPacket(playerTeam, player.getName(), ClientboundSetPlayerTeamPacket.Action.ADD);
-        Bukkit.getOnlinePlayers().forEach(players -> sendPacket(players, add));
+        ClientboundSetPlayerTeamPacket createTeam = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(playerTeam, true);
+        ClientboundSetPlayerTeamPacket modifyTeam = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(playerTeam, false);
+        Bukkit.getOnlinePlayers().forEach(players -> {
+            if (created) {
+                sendPacket(players, createTeam);
+            } else {
+                sendPacket(players, modifyTeam);
+            }
+            sendPacket(players, add);
+        });
     }
 
     @Override
-    public void initScoreboardTeams() {
+    public void updateHealth(Player player) {
+        net.minecraft.world.scores.Scoreboard nmsScoreboard = ((CraftScoreboard) player.getScoreboard()).getHandle();
 
+        Objective underName = new Objective(nmsScoreboard, "undername_health", ObjectiveCriteria.HEALTH, CraftChatMessage.fromStringOrNull(" "), ObjectiveCriteria.RenderType.INTEGER, false, new BlankFormat());
+        nmsScoreboard.setDisplayObjective(DisplaySlot.BELOW_NAME, underName);
+        underName.setRenderType(ObjectiveCriteria.RenderType.INTEGER);
+
+        int playerMaxHealth = (int) Math.round(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+        int playerHealth = (int) Math.round(player.getHealth());
+        String healthColor = ChatUtil.getHealthColor(playerMaxHealth, playerHealth);
+
+        Objective onTab = new Objective(nmsScoreboard, "ontab_health", ObjectiveCriteria.HEALTH, CraftChatMessage.fromStringOrNull(" "), ObjectiveCriteria.RenderType.INTEGER, true, new FixedFormat(CraftChatMessage.fromStringOrNull(healthColor + playerHealth)));
+        nmsScoreboard.setDisplayObjective(DisplaySlot.LIST, onTab);
+        onTab.setRenderType(ObjectiveCriteria.RenderType.INTEGER);
+
+        sendPacket(player, new ClientboundSetObjectivePacket(underName, 1));
+        sendPacket(player, new ClientboundSetObjectivePacket(underName, 0));
+        sendPacket(player, new ClientboundSetDisplayObjectivePacket(DisplaySlot.BELOW_NAME, underName));
+
+        sendPacket(player, new ClientboundSetObjectivePacket(onTab, 1));
+        sendPacket(player, new ClientboundSetObjectivePacket(onTab, 0));
+        sendPacket(player, new ClientboundSetDisplayObjectivePacket(DisplaySlot.LIST, onTab));
     }
 
     @Override
     public void sendSideBarScoreboard(String name, Player player, String displayName, Collection<String> board) {
-        CraftScoreboard craftScoreboard = (CraftScoreboard) Bukkit.getScoreboardManager().getNewScoreboard();
-        net.minecraft.world.scores.Scoreboard nmsScoreboard = craftScoreboard.getHandle();
+        net.minecraft.world.scores.Scoreboard nmsScoreboard = new net.minecraft.world.scores.Scoreboard();
         Objective objective = new Objective(nmsScoreboard, name, ObjectiveCriteria.DUMMY, CraftChatMessage.fromStringOrNull(displayName), ObjectiveCriteria.RenderType.INTEGER, false, null);
         nmsScoreboard.setDisplayObjective(DisplaySlot.SIDEBAR, objective);
 
@@ -83,5 +121,10 @@ public class v1_20_R3 implements ReflectionLayer {
     @Override
     public void removePlayerFromScoreboard(String name, Player player) {
         sendPacket(player, new ClientboundSetDisplayObjectivePacket(DisplaySlot.SIDEBAR, null));
+    }
+
+    @Override
+    public ICustomWither createCustomWither(GameTeam gameTeam) {
+        return new CustomWither(gameTeam);
     }
 }

@@ -4,6 +4,5 @@ public enum GameStates {
 
     WAITING,
     ACTIVE,
-    DEATH_MATCH,
     END
 }

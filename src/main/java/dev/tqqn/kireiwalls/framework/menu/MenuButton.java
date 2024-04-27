@@ -10,27 +10,18 @@ import java.util.function.Consumer;
 public class MenuButton {
 
     private final ItemStack itemStack;
-    /**
-     *  Returns the Consumer (Player/whoClicked).
-     */
-    private Consumer<Player> whoClicked;
 
-    /**
-     * Creates a new MenuButton Object.
-     *
-     * @param itemStack ItemStack
-     */
+    private Consumer<Player> clicker;
+
     public MenuButton(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
-    /**
-     * Sets the Consumer (Player) and returns this MenuButton.
-     *
-     * @param whoClicked Consumer(Player)
-     */
-    public MenuButton setWhoClicked(Consumer<Player> whoClicked) {
-        this.whoClicked = whoClicked;
+    public MenuButton setClicker(Consumer<Player> clicker) {
+        this.clicker = clicker;
         return this;
     }
+
+
+
 }
