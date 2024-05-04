@@ -35,8 +35,6 @@ public interface ReflectionLayer {
      * @param suffix   The suffix to be displayed after the player's name.
      */
     void sendNameTag(Player player, String teamName, String color, String prefix, String suffix);
-    void updateHealth(Player player);
-
 
     void sendSideBarScoreboard(String name, Player player, String displayName, Collection<String> board);
 

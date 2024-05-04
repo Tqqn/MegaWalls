@@ -1,5 +1,6 @@
 package dev.tqqn.kireiwalls.utils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -11,47 +12,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ItemBuilder {
-
     private final ItemStack itemStack;
     private final ItemMeta itemMeta;
 
-    /**
-     * Constructs an ItemBuilder with the specified material and amount.
-     *
-     * @param material The material of the item.
-     * @param amount   The amount of the item.
-     */
-    public ItemBuilder(Material material, int amount) {
-        itemStack = new ItemStack(material, amount);
-        itemMeta = itemStack.getItemMeta();
+    private ItemBuilder(ItemStack itemStack) {
+        this.itemStack = itemStack;
+        this.itemMeta = itemStack.getItemMeta();
     }
 
-    /**
-     * Updates the ItemMeta of the ItemStack.
-     */
-    private void updateItemMeta() {
-        itemStack.setItemMeta(itemMeta);
-    }
-
-    /**
-     * Sets the display name of the ItemStack.
-     *
-     * @param name The display name to set.
-     * @return The ItemBuilder instance for method chaining.
-     */
     public ItemBuilder setDisplayName(String name) {
-        itemMeta.displayName(ChatUtil.format(name));
-        return this;
-    }
-
-    /**
-     * Sets the lore of the ItemStack.
-     *
-     * @param lines The lines of lore to set.
-     * @return The ItemBuilder instance for method chaining.
-     */
-    public ItemBuilder setLore(String... lines) {
-        setLore(Arrays.asList(lines));
+        this.itemMeta.setDisplayName(ChatUtil.translateLegacy(name));
         return this;
     }
 
@@ -64,12 +34,15 @@ public class ItemBuilder {
         return this;
     }
 
-    /**
-     * Adds a glow effect to the ItemStack.
-     */
-    public void setGlow() {
+    public ItemBuilder setLore(String... lines) {
+        setLore(Arrays.asList(lines));
+        return this;
+    }
+
+    public ItemBuilder setGlow() {
         itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        return this;
     }
 
     public ItemBuilder hideAttributes() {
@@ -77,20 +50,12 @@ public class ItemBuilder {
         return this;
     }
 
-    /**
-     * Makes the ItemStack unbreakable.
-     */
-    public void setUnbreakable() {
-        itemMeta.setUnbreakable(true);
+    public ItemStack build() {
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
-    /**
-     * Builds the ItemStack with the configured attributes.
-     *
-     * @return The built ItemStack.
-     */
-    public ItemStack build() {
-        updateItemMeta();
-        return itemStack;
+    public static ItemBuilder getBuilder(Material material) {
+        return new ItemBuilder(new ItemStack(material, 1));
     }
 }

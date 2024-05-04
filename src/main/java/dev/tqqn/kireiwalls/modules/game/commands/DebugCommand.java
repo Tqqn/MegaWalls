@@ -3,6 +3,7 @@ package dev.tqqn.kireiwalls.modules.game.commands;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.framework.game.classes.menu.ClassChooseMenu;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
@@ -31,14 +32,14 @@ public class DebugCommand implements CommandExecutor {
                     gameModule.setGameState(GameStates.ACTIVE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("kit")) {
-                    //MenuModule.getMenu(ClassChooseMenu.class).open(player);
+                    new ClassChooseMenu(PlayerModule.getPlayerModel(player.getUniqueId())).open();
                     return true;
                 } else if (!this.isNumber(strings[0])) {
                     player.sendMessage(ChatUtil.format("<red>This is not a number."));
                     return true;
                 } else {
                     PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
-                    playerModel.setCoins(playerModel.getCoins() + Integer.parseInt(strings[0]));
+                    playerModel.increaseCoins(Integer.parseInt(strings[0]));
                     player.sendMessage(ChatUtil.format("<green>Increased coins by <gold>" + strings[0] + "<green>."));
                     return true;
                 }

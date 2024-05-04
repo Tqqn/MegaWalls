@@ -65,7 +65,15 @@ public abstract class AbstractClass implements Listener {
         }
 
 
-        return new ItemBuilder(classOptions.getClassType().getIcon(), 1).setDisplayName("§a" + name).setLore(lore).hideAttributes().build();
+        return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("&a" + name).setLore(lore).hideAttributes().build();
+    }
+
+    public String getTag(PlayerModel playerModel) {
+        String tagColor = "§7";
+        if (playerModel.getCurrentClass().isPrestigeFour) {
+            tagColor = "§6";
+        }
+        return tagColor + tag;
     }
 
 }

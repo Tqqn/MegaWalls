@@ -24,7 +24,6 @@ public class WitherDebugCommand implements CommandExecutor {
                     return false;
                 } else {
                     gameTeam.getGameWither().damage(Integer.parseInt(strings[1]));
-                    gameTeam.getGameWither().updateHealth();
                     String teamName = gameTeam.getName();
                     player.sendMessage(ChatUtil.format("<green>Damaged " + teamName + " Wither by " + strings[1]));
                     return true;

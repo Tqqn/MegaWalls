@@ -4,5 +4,7 @@ public enum RegionType {
 
     PROTECTION,
     WITHER,
-    BORDER
+    BORDER,
+    MIDDLE,
+    WALLS
 }

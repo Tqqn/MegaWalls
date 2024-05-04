@@ -3,13 +3,18 @@ package dev.tqqn.kireiwalls.framework.game.teams;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.region.Cuboid;
 import dev.tqqn.kireiwalls.framework.region.types.TeamProtectionRegion;
+import dev.tqqn.kireiwalls.framework.region.types.WitherProtectionRegion;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import lombok.Getter;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.antlr.v4.runtime.tree.xpath.XPathLexerErrorListener;
 import org.bukkit.Location;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -25,8 +30,9 @@ public class GameTeam {
     private GameWither gameWither;
     private final GameTeamSettings gameTeamSettings;
     private final Set<PlayerModel> currentPlayers;
+    private final Set<PlayerModel> alivePlayers;
 
-    public GameTeam(String name, String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor adventureColor, TeamProtectionRegion teamProtectionRegion, Location spawnLocation, Location witherLocation) {
+    public GameTeam(String name, String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor adventureColor, Cuboid spawnRegion, Cuboid witherRegion, Location spawnLocation, Location witherLocation) {
         this.name = name;
         this.prettyName = prettyName;
         this.tagName = tagName;
@@ -35,8 +41,12 @@ public class GameTeam {
         this.legacyColor = legacyColor;
         this.namedTextColor = adventureColor;
 
-        this.gameTeamSettings = new GameTeamSettings(teamProtectionRegion, spawnLocation, witherLocation);
+        TeamProtectionRegion teamProtectionRegion = new TeamProtectionRegion(name, spawnRegion, this);
+        WitherProtectionRegion witherProtectionRegion = new WitherProtectionRegion(name, witherRegion, this);
+
+        this.gameTeamSettings = new GameTeamSettings(teamProtectionRegion, witherProtectionRegion, spawnLocation, witherLocation);
         this.currentPlayers = new HashSet<>();
+        this.alivePlayers = new HashSet<>();
     }
 
     public void spawnWither() {
@@ -45,17 +55,20 @@ public class GameTeam {
 
     public void addPlayer(PlayerModel playerModel) {
         currentPlayers.add(playerModel);
+        alivePlayers.add(playerModel);
         playerModel.setGameTeam(this);
         sendNameTag(playerModel);
     }
 
+    public void removeAlive(PlayerModel playerModel) {
+        alivePlayers.remove(playerModel);
+    }
+
     public void sendNameTag(PlayerModel playerModel) {
-        System.out.println("Called name tag sending");
-        KireiWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, legacyColor + prefix, "");
+        KireiWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, legacyColor + prefix, " " + playerModel.getCurrentClass().getTag(playerModel));
     }
 
     public void sendSpectatorTag(PlayerModel playerModel) {
-        System.out.println("Called Spectator tag");
         KireiWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, "§7✖ " + legacyColor + prefix, "");
     }
 

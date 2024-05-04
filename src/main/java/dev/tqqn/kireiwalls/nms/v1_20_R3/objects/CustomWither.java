@@ -1,9 +1,7 @@
 package dev.tqqn.kireiwalls.nms.v1_20_R3.objects;
 
-import dev.tqqn.kireiwalls.framework.database.events.GamePlayerJoinEvent;
 import dev.tqqn.kireiwalls.framework.game.events.WitherDamageByPlayerEvent;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;

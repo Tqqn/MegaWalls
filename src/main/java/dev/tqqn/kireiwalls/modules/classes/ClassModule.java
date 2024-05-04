@@ -5,21 +5,21 @@ import dev.tqqn.kireiwalls.framework.AbstractModule;
 import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 public class ClassModule extends AbstractModule {
-    private final Set<AbstractClass> classes = new HashSet<>();
+    @Getter
+    private static final List<AbstractClass> classes = new ArrayList<>();
 
     public ClassModule(KireiWalls plugin) {
         super(plugin, "Class");
     }
 
     public void onEnable() {
-        this.classes.add(new Herobrine());
-        this.classes.add(new Skeleton());
-        this.classes.add(new Zombie());
+        classes.add(new Herobrine());
+        classes.add(new Skeleton());
+        classes.add(new Zombie());
     }
 
     public void onDisable() {

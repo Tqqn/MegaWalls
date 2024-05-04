@@ -1,13 +1,20 @@
 package dev.tqqn.kireiwalls.framework.game.teams.wither;
 
 import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 public class GameWither {
 
@@ -17,6 +24,8 @@ public class GameWither {
     @Getter @Setter private WitherStatus witherStatus;
     @Getter private Entity bukkitEntity;
     private ICustomWither nmsEntity;
+    @Getter private BossBar witherBar;
+    private final String bossBarName;
 
     public GameWither(GameTeam gameTeam) {
         this.gameTeam = gameTeam;
@@ -28,14 +37,19 @@ public class GameWither {
         bukkitEntity.setGlowing(true);
         bukkitEntity.setPersistent(false);
 
-        //Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        //Team team = board.registerNewTeam(gameTeam.getName());
-        //team.color(gameTeam.getNamedTextColor());
-        //team.addEntry(witherEntity.getUniqueId().toString());
+        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+        Team team = board.registerNewTeam(gameTeam.getName());
+        team.color(gameTeam.getNamedTextColor());
+        team.addEntry(bukkitEntity.getUniqueId().toString());
 
         bukkitEntity.setMetadata("Team", new FixedMetadataValue(KireiWalls.getInstance(), gameTeam.getName()));
 
         bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
+
+        bossBarName = ChatUtil.translateLegacy(gameTeam.getLegacyColor() + gameTeam.getPrefix() + " WITHER &7- " + gameTeam.getLegacyColor() + health + "/1000");
+
+        this.witherBar = Bukkit.createBossBar(bossBarName, BarColor.valueOf(gameTeam.getName()), BarStyle.SEGMENTED_20);
+        this.witherBar.setProgress(1);
     }
 
     public void kill() {
@@ -45,11 +59,18 @@ public class GameWither {
         this.bukkitEntity = null;
         this.witherStatus = WitherStatus.DEATH;
         this.nmsEntity = null;
+        this.witherBar.removeAll();
+        for (PlayerModel playerModel : this.gameTeam.getAlivePlayers()) {
+            playerModel.setProtected(false);
+        }
     }
 
     public String getScoreboardStatus() {
         if (witherStatus == WitherStatus.DEATH) {
-            return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Players: 1";
+            if (gameTeam.getAlivePlayers().isEmpty()) {
+                return "§7" + gameTeam.getPrettyName() + " eliminated!";
+            }
+            return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Players: " + gameTeam.getAlivePlayers().size();
         }
         return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Wither ❤: " + health;
     }
@@ -58,18 +79,23 @@ public class GameWither {
         bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
     }
 
+    public void updateWitherBar() {
+        witherBar.setTitle(bukkitEntity.getName());
+        witherBar.setProgress((double) health / 1000);
+    }
+
     public void damage(int damage) {
         if (this.health <= 500) {
             nmsEntity.setPowered(false);
         }
 
         if ((this.health - damage) <= 0) {
-            bukkitEntity.remove();
-            this.witherStatus = WitherStatus.DEATH;
+            kill();
             return;
         }
         this.health = health - damage;
         updateHealth();
+        updateWitherBar();
     }
 
     public enum WitherStatus {

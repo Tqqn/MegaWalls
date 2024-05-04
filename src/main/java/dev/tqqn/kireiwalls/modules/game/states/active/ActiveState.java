@@ -17,6 +17,7 @@ public class ActiveState extends AbstractGameState {
     @Getter
     private static int cycleTimer;
     private boolean areWithersDead;
+    private boolean initHealth;
 
     public ActiveState(GameModule gameModule) {
         super(gameModule, GameStates.ACTIVE, "Active");
@@ -28,8 +29,9 @@ public class ActiveState extends AbstractGameState {
         this.addListener(ActiveListeners.class);
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
         currentCycle = ActiveState.Cycle.PREPARE;
-        cycleTimer = 40;
+        cycleTimer = 10;
         this.areWithersDead = false;
+        this.initHealth = false;
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
     }
 
@@ -44,6 +46,7 @@ public class ActiveState extends AbstractGameState {
             if (cycleTimer <= 0) {
                 cycleTimer = 0;
                 currentCycle = ActiveState.Cycle.PRE_DM;
+                getGameModule().wallsFall();
                 System.out.println("Walls fall");
             }
         }
@@ -58,6 +61,11 @@ public class ActiveState extends AbstractGameState {
             if (cycleTimer <= 0) {
                 currentCycle = ActiveState.Cycle.DM;
             }
+        }
+
+        if (currentCycle == Cycle.DM && !initHealth) {
+            getGameModule().initHealthOnTab();
+            initHealth = true;
         }
 
         if (this.getGameModule().areAllWithersDead() && currentCycle != ActiveState.Cycle.DM && currentCycle != ActiveState.Cycle.END && !this.areWithersDead) {

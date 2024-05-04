@@ -1,5 +1,8 @@
 package dev.tqqn.kireiwalls.framework.region;
 
+import dev.tqqn.kireiwalls.KireiWalls;
+import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,7 +27,7 @@ public class Cuboid {
     private final double yMaxCentered;
     private final double zMinCentered;
     private final double zMaxCentered;
-    private final World world;
+    @Getter private final World world;
 
     public Cuboid(final Location point1, final Location point2) {
         this.xMin = Math.min(point1.getBlockX(), point2.getBlockX());
@@ -43,7 +46,7 @@ public class Cuboid {
     }
 
     public Iterator<Block> blockList() {
-        List<Block> bL = new ArrayList<>(this.getTotalBlockSize());
+        List<Block> bL = new ArrayList<>();
         for (int x = this.xMin; x <= this.xMax; ++x) {
             for (int y = this.yMin; y <= this.yMax; ++y) {
                 for (int z = this.zMin; z <= this.zMax; ++z) {

@@ -2,7 +2,7 @@ package dev.tqqn.kireiwalls.modules.region;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.region.listeners.PlayerMoveListener;
+import dev.tqqn.kireiwalls.framework.region.listeners.RegionListener;
 
 public class RegionModule extends AbstractModule {
 
@@ -11,7 +11,7 @@ public class RegionModule extends AbstractModule {
     }
 
     public void onEnable() {
-        this.addComponent(PlayerMoveListener.class, "");
+        this.addComponent(RegionListener.class, "");
     }
 
     public void onDisable() {

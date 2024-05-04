@@ -1,6 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game.states.active.board;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
@@ -19,7 +20,7 @@ public class ActiveBoard extends PluginScoreboard {
     public ActiveBoard(PlayerModel playerModel) {
         super("Active", playerModel);
         LocalDateTime date = LocalDateTime.now();
-        this.setDisplayName(MessageUtil.SCOREBOARD_TITLE.getStringMessage());
+        this.setDisplayName(playerModel.getGameTeam().getLegacyColor() + MessageUtil.SCOREBOARD_TITLE.getStringMessage());
         this.addLines("§7" + date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         this.addLines(" ");
         if (ActiveState.getCurrentCycle() == null) {
@@ -54,8 +55,8 @@ public class ActiveBoard extends PluginScoreboard {
         this.updateLine((teams.get("Green")).getGameWither().getScoreboardStatus(), 8);
         this.updateLine((teams.get("Red")).getGameWither().getScoreboardStatus(), 7);
         this.updateLine((teams.get("Yellow")).getGameWither().getScoreboardStatus(), 6);
-        this.updateLine("§a0 §fKills §a0 §fAssists", 4);
-        this.updateLine("§a0 §fFinals §a0 §fF.Assists", 3);
+        this.updateLine("§a" + getPlayerModel().getPlayerStats().getStat(PlayerStats.StatType.KILLS) + " §fKills §a" + getPlayerModel().getPlayerStats().getStat(PlayerStats.StatType.ASSISTS) + " §fAssists", 4);
+        this.updateLine("§a" + getPlayerModel().getPlayerStats().getStat(PlayerStats.StatType.FINAL_KILLS) + " §fFinals §a" + getPlayerModel().getPlayerStats().getStat(PlayerStats.StatType.FINAL_ASSISTS) + " §fF.Assists", 3);
         this.updateLine(String.format("§6%s §fCoins", getPlayerModel().getCoins()), 2);
     }
 }

@@ -1,11 +1,13 @@
 package dev.tqqn.kireiwalls.framework.database;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.region.Cuboid;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultConfig {
 
@@ -54,29 +56,41 @@ public class DefaultConfig {
         );
     }
 
-    public Cuboid getTeamProtectionCuboid(String team) {
+    public Cuboid getCuboid(String path) {
         return new Cuboid(
-                new Location(Bukkit.getWorld(plugin.getConfig().getString("teams." + team + ".protection-region.point-1.world")),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-1.x"),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-1.y"),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-1.z")),
-                new Location(Bukkit.getWorld(plugin.getConfig().getString("teams." + team + ".protection-region.point-2.world")),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-2.x"),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-2.y"),
-                        plugin.getConfig().getDouble("teams." + team + ".protection-region.point-2.z"))
+                new Location(Bukkit.getWorld(plugin.getConfig().getString(path + ".point-1.world")),
+                        plugin.getConfig().getDouble( path + ".point-1.x"),
+                        plugin.getConfig().getDouble(path + ".point-1.y"),
+                        plugin.getConfig().getDouble(path + ".point-1.z")),
+                new Location(Bukkit.getWorld(plugin.getConfig().getString(path + ".point-2.world")),
+                        plugin.getConfig().getDouble(path + ".point-2.x"),
+                        plugin.getConfig().getDouble(path + ".point-2.y"),
+                        plugin.getConfig().getDouble(path + ".point-2.z"))
         );
     }
 
+    public Cuboid getTeamProtectionCuboid(String team) {
+        return getCuboid("teams." + team + ".protection-region");
+    }
+
+    public Cuboid getMiddleCuboid() {
+        return getCuboid("game.middle");
+    }
+
+    public Cuboid[] getWallCuboids() {
+        List<Cuboid> cuboids = new ArrayList<>();
+        int size = plugin.getConfig().getConfigurationSection("game.walls").getKeys(false).size();
+        System.out.println(size);
+
+        for (int i = 1; i < size+1; i++ ) {
+            cuboids.add(getCuboid("game.walls.wall-" + i));
+        }
+        return cuboids.toArray(Cuboid[]::new);
+    }
+
+
+
     public Cuboid getTeamWitherCuboid(String team) {
-        return new Cuboid(
-                new Location(Bukkit.getWorld(plugin.getConfig().getString("teams." + team + ".wither-region.point-1.world")),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-1.x"),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-1.y"),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-1.z")),
-                new Location(Bukkit.getWorld(plugin.getConfig().getString("teams." + team + ".wither-region.point-2.world")),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-2.x"),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-2.y"),
-                        plugin.getConfig().getDouble("teams." + team + ".wither-region.point-2.z"))
-        );
+        return getCuboid("teams." + team + ".wither-region");
     }
 }

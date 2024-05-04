@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class LobbyListeners implements Listener {
@@ -39,6 +40,7 @@ public class LobbyListeners implements Listener {
         event.getPlayerModel().getPlayer().teleport(gameModule.getGameSettings().getLobbyLocation());
         ScoreboardModule scoreboardModule = (ScoreboardModule) databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
         scoreboardModule.setScoreboard(event.getPlayerModel(), new LobbyBoard(event.getPlayerModel()));
+        event.getPlayerModel().getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
         event.getPlayerModel().getPlayer().setHealth(event.getPlayerModel().getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         event.getPlayerModel().getPlayer().setFoodLevel(20);
     }
@@ -60,6 +62,11 @@ public class LobbyListeners implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onHungerLose(FoodLevelChangeEvent event) {
         event.setCancelled(true);
     }
 }

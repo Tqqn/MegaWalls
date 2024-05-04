@@ -2,29 +2,167 @@ package dev.tqqn.kireiwalls.modules.game.states.active.listeners;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.events.GamePlayerJoinEvent;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.framework.game.events.GamePlayerKilledEvent;
+import dev.tqqn.kireiwalls.framework.game.events.GamePlayerRespawnEvent;
 import dev.tqqn.kireiwalls.framework.game.events.WitherDamageByPlayerEvent;
+import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.ModuleManager;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
+import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.game.states.active.board.ActiveBoard;
+import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.modules.scoreboard.ScoreboardModule;
+import dev.tqqn.kireiwalls.utils.ChatUtil;
+import dev.tqqn.kireiwalls.utils.MessageUtil;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class ActiveListeners implements Listener {
     private final DatabaseModule databaseModule;
+    private final GameModule gameModule;
 
     public ActiveListeners() {
         ModuleManager moduleManager = KireiWalls.getInstance().getModuleManager();
         this.databaseModule = (DatabaseModule)moduleManager.getModule(DatabaseModule.class);
+        this.gameModule = (GameModule) moduleManager.getModule(GameModule.class);
     }
 
     @EventHandler
     public void onJoin(GamePlayerJoinEvent event) {
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
-            ScoreboardModule scoreboardModule = (ScoreboardModule)this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
+            ScoreboardModule scoreboardModule = (ScoreboardModule) this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
             scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                final PlayerModel players = PlayerModule.getPlayerModel(player.getUniqueId());
+
+                if (players.isSpectatorMode()) {
+                    if (event.getPlayerModel().isSpectatorMode()) {
+                        event.getPlayerModel().getPlayer().showPlayer(KireiWalls.getInstance(), player);
+                    } else {
+                        event.getPlayerModel().getPlayer().hidePlayer(KireiWalls.getInstance(), player);
+                    }
+                }
+
+                if (players.isSpectatorMode()) {
+                    players.sendSpectatorTag(true);
+                    continue;
+                }
+
+                players.getGameTeam().sendNameTag(players);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDeath(GamePlayerKilledEvent event) {
+
+        String broadcastMessage;
+
+        switch (event.getDeathReason()) {
+            case KILLED_BY_NO_PLAYER -> broadcastMessage = MessageUtil.KILLED_NO_KILLER.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName());
+            case KILLED_BY_PLAYER_BOW -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_BOW.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getGameTeam().getColor(), event.getKiller().getName());
+            case KILLED_BY_PLAYER_HAND -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_HAND.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getGameTeam().getColor(), event.getKiller().getName());
+            default -> broadcastMessage = "";
+        }
+
+        boolean isFinal = event.getKilledPlayer().getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH;
+        String prefix;
+        int coin;
+
+        if (isFinal) {
+            prefix = MessageUtil.FINAL_KILL.getStringMessage();
+            coin = 30;
+        } else {
+            prefix = MessageUtil.KILL.getStringMessage();
+            coin = 15;
+        }
+
+        if (event.getKiller() != null) {
+            if (isFinal) {
+                event.getKiller().getPlayerStats().increaseStat(PlayerStats.StatType.FINAL_KILLS);
+            } else {
+                event.getKiller().getPlayerStats().increaseStat(PlayerStats.StatType.KILLS);
+            }
+            event.getKiller().getPlayer().sendMessage(ChatUtil.format(MessageUtil.COINS_EARNED.getStringMessage(String.valueOf(coin)) + prefix));
+            event.getKiller().increaseCoins(coin);
+        }
+
+        if (isFinal) {
+            for (PlayerModel playerModel : gameModule.getIngamePlayers()) {
+                if (event.getKiller() == playerModel) {
+                    playerModel.getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
+                } else {
+                    playerModel.getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
+                }
+            }
+        } else {
+            event.getKilledPlayer().getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
+            if (event.getKiller() != null) {
+                event.getKiller().getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        event.deathMessage(Component.empty());
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player hitPlayer)) return;
+
+        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE || ActiveState.getCurrentCycle() == ActiveState.Cycle.END) {
+            event.setCancelled(true);
+            return;
+        }
+
+        PlayerModel hitPlayerModel = PlayerModule.getPlayerModel(hitPlayer.getUniqueId());
+        if (event.getDamager() instanceof Projectile projectile) {
+            if (projectile.getShooter() instanceof Player shooter) {
+                PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
+                if (shooterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+
+        if (event.getDamager() instanceof Player hitter) {
+            PlayerModel hitterModel = PlayerModule.getPlayerModel(hitter.getUniqueId());
+            if (hitterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
+
+        if (playerModel.getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH) {
+
+            if (event.getPlayer().getKiller() == null) {
+                event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
+            } else {
+                event.setRespawnLocation(event.getPlayer().getKiller().getLocation());
+            }
+
+            Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> playerModel.setSpectatorMode(true), 2L);
+        } else {
+            event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
+            playerModel.setProtected(true);
+            //Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> playerModel.setProtected(true), 2L);
         }
     }
 
@@ -33,5 +171,48 @@ public class ActiveListeners implements Listener {
         if (event.getAttacker().getGameTeam() == event.getWitherTeam()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEntityDamageDeath(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player damagedPlayer) {
+
+            if ((damagedPlayer.getHealth()) - event.getDamage() <= 0) {
+
+                final PlayerModel damagedPlayerModel = PlayerModule.getPlayerModel(damagedPlayer.getUniqueId());
+
+                GamePlayerKilledEvent gamePlayerKilledEvent = null;
+
+                if (event.getDamager() instanceof Projectile projectile) {
+                    if (projectile.getShooter() instanceof Player damager) {
+                        gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_BOW);
+                    } else {
+                        gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+                    }
+                }
+
+                if (event.getDamager() instanceof Player damager) {
+                    gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_HAND);
+                }
+
+                if (!(event.getDamager() instanceof Player)) {
+                    if (!(event.getDamager() instanceof Projectile)) {
+                        gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+                    }
+                }
+
+                if (gamePlayerKilledEvent != null) {
+                    Bukkit.getPluginManager().callEvent(gamePlayerKilledEvent);
+                }
+
+                Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> damagedPlayer.spigot().respawn(), 2L);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        GamePlayerRespawnEvent gamePlayerRespawnEvent = new GamePlayerRespawnEvent(PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()));
+        Bukkit.getPluginManager().callEvent(gamePlayerRespawnEvent);
     }
 }

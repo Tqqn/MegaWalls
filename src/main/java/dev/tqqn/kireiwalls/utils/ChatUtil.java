@@ -58,17 +58,17 @@ public final class ChatUtil {
         return String.format("%02d:%02d", m, s);
     }
 
-    public static String getHealthColor(float maxHealth, float currentHealth) {
-        if (currentHealth > maxHealth) {
-            return "§2";
+    public static int getHealthColor(float maxHealth, float currentHealth) {
+        if (currentHealth >= maxHealth) {
+            return 43520; // Dark_Green
         } else if (currentHealth > maxHealth * 3f / 4f) {
-            return "§a";
+            return 5635925; // Green
         } else if (currentHealth > maxHealth / 2f) {
-            return "§e";
+            return 16755200; // Yellow
         } else if (currentHealth > maxHealth / 4f) {
-            return "§c";
+            return 16733525; // RED
         } else {
-            return "§4";
+            return 11141120; // Dark_red
         }
     }
 }
