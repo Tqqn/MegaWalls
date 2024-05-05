@@ -10,6 +10,7 @@ public class Herobrine extends AbstractClass {
 
     public Herobrine() {
         super("Herobrine", "HBR", new ClassOptions(ClassDescriptions.ClassType.HEROBRINE, ClassDescriptions.ClassDifficulty.HEROBRINE, Arrays.asList(ClassDescriptions.ClassStyle.DAMAGE, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.HEROBRINE, ClassDescriptions.ClassSkillDescription.HEROBRINE), 3);
+        setPrestigeFour(true);
     }
 
     public void onMainAbility() {
