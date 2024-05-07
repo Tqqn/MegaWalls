@@ -8,7 +8,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class WitherDeathEvent extends Event implements Cancellable {
+/**
+ * The WitherDeathEvent class represents an event that occurs when the wither dies.
+ * It provides information about the killer player and the game wither.
+ */
+public final class WitherDeathEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -17,6 +21,12 @@ public class WitherDeathEvent extends Event implements Cancellable {
     @Getter private final PlayerModel killer;
     @Getter private final GameWither gameWither;
 
+    /**
+     * Constructs a WitherDeathEvent object with the specified parameters.
+     *
+     * @param killer The player model of the killer.
+     * @param gameWither The game wither associated with the event.
+     */
     public WitherDeathEvent(PlayerModel killer, GameWither gameWither) {
         this.killer = killer;
         this.gameWither = gameWither;

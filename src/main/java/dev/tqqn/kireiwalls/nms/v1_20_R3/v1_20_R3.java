@@ -12,10 +12,7 @@ import net.minecraft.network.chat.numbers.FixedFormat;
 import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket;
-import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
@@ -27,7 +24,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-public class v1_20_R3 implements ReflectionLayer {
+/**
+ * The v1_20_R3 class implements the ReflectionLayer interface for version 1.20_R3.
+ */
+public final class v1_20_R3 implements ReflectionLayer {
 
     @Override
     public void sendPacket(Player player, Object packetObject) {
@@ -38,7 +38,6 @@ public class v1_20_R3 implements ReflectionLayer {
     @Override
     public void sendNameTag(Player player, String teamName, String color, String prefix, String suffix) {
         Scoreboard scoreboard = new Scoreboard();
-
         PlayerTeam playerTeam = scoreboard.getPlayerTeam(teamName + player.getUniqueId());
         boolean created;
         if (playerTeam == null) {

@@ -6,7 +6,6 @@ import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.framework.game.events.GamePlayerKilledEvent;
-import dev.tqqn.kireiwalls.framework.game.events.GamePlayerRespawnEvent;
 import dev.tqqn.kireiwalls.framework.game.events.WitherDamageByPlayerEvent;
 import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.ModuleManager;
@@ -27,7 +26,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-public class ActiveListeners implements Listener {
+/**
+ * The ActiveListeners class implements various event listeners for active gameplay.
+ */
+public final class ActiveListeners implements Listener {
+
     private final DatabaseModule databaseModule;
     private final GameModule gameModule;
 
@@ -37,6 +40,11 @@ public class ActiveListeners implements Listener {
         this.gameModule = (GameModule) moduleManager.getModule(GameModule.class);
     }
 
+    /**
+     * Handles the event when a player joins during active gameplay.
+     *
+     * @param event The GamePlayerJoinEvent instance
+     */
     @EventHandler
     public void onJoin(GamePlayerJoinEvent event) {
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
@@ -64,8 +72,13 @@ public class ActiveListeners implements Listener {
         }
     }
 
+    /**
+     * Handles the event when a player is killed during active gameplay.
+     *
+     * @param event The GamePlayerKilledEvent instance
+     */
     @EventHandler
-    public void onDeath(GamePlayerKilledEvent event) {
+    public void onPlayerDeath(GamePlayerKilledEvent event) {
 
         String broadcastMessage;
 
@@ -114,11 +127,21 @@ public class ActiveListeners implements Listener {
         }
     }
 
+    /**
+     * Handles the event when a player dies during active gameplay.
+     *
+     * @param event The PlayerDeathEvent instance
+     */
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         event.deathMessage(Component.empty());
     }
 
+    /**
+     * Handles the event when an entity damages another entity during active gameplay.
+     *
+     * @param event The EntityDamageByEntityEvent instance
+     */
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player hitPlayer)) return;
@@ -146,6 +169,11 @@ public class ActiveListeners implements Listener {
         }
     }
 
+    /**
+     * Handles the event when a player respawns during active gameplay.
+     *
+     * @param event The PlayerRespawnEvent instance
+     */
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
@@ -162,10 +190,14 @@ public class ActiveListeners implements Listener {
         } else {
             event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
             playerModel.setProtected(true);
-            //Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> playerModel.setProtected(true), 2L);
         }
     }
 
+    /**
+     * Handles the event when a wither damages a player during active gameplay.
+     *
+     * @param event The WitherDamageByPlayerEvent instance
+     */
     @EventHandler
     public void onWitherDamage(WitherDamageByPlayerEvent event) {
         if (event.getAttacker().getGameTeam() == event.getWitherTeam()) {
@@ -173,6 +205,11 @@ public class ActiveListeners implements Listener {
         }
     }
 
+    /**
+     * Handles the event when an entity damages another entity causing death during active gameplay.
+     *
+     * @param event The EntityDamageByEntityEvent instance
+     */
     @EventHandler
     public void onEntityDamageDeath(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player damagedPlayer) {
@@ -208,11 +245,5 @@ public class ActiveListeners implements Listener {
                 Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> damagedPlayer.spigot().respawn(), 2L);
             }
         }
-    }
-
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        GamePlayerRespawnEvent gamePlayerRespawnEvent = new GamePlayerRespawnEvent(PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()));
-        Bukkit.getPluginManager().callEvent(gamePlayerRespawnEvent);
     }
 }

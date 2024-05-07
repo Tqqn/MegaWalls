@@ -12,6 +12,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The AbstractGameState class represents the abstract base class for game states, providing
+ * common functionality for enabling, disabling, and managing listeners.
+ */
 public abstract class AbstractGameState extends BukkitRunnable {
 
     @Getter private final GameModule gameModule;
@@ -21,6 +25,13 @@ public abstract class AbstractGameState extends BukkitRunnable {
 
     private final Set<Listener> listeners;
 
+    /**
+     * Constructs an AbstractGameState object with the specified attributes.
+     *
+     * @param gameModule The GameModule associated with the state.
+     * @param gameStates The game state.
+     * @param name The name of the game state.
+     */
     public AbstractGameState(GameModule gameModule, GameStates gameStates, String name) {
         this.gameModule = gameModule;
         this.gameStates = gameStates;
@@ -31,6 +42,7 @@ public abstract class AbstractGameState extends BukkitRunnable {
     public abstract void onEnable();
     public abstract void onDisable();
 
+    /** Enables the game state. */
     public void enable() {
         getGameModule().getPlugin().getLogger().info("State: " + name + " is loading...");
         onEnable();
@@ -38,6 +50,7 @@ public abstract class AbstractGameState extends BukkitRunnable {
         getGameModule().getPlugin().getLogger().info("State: " + name + " finished loading!");
     }
 
+    /** Disables the game state. */
     public void disable() {
         getGameModule().getPlugin().getLogger().info("State: " + name + " is disabling...");
         onDisable();
@@ -45,6 +58,7 @@ public abstract class AbstractGameState extends BukkitRunnable {
         getGameModule().getPlugin().getLogger().info("State: " + name + " finished disabling!");
     }
 
+    /** Registers the listeners for the state. */
     private void registerListeners() {
         if (listeners.isEmpty()) return;
         PluginManager pluginManager = getGameModule().getPlugin().getServer().getPluginManager();
@@ -54,6 +68,7 @@ public abstract class AbstractGameState extends BukkitRunnable {
         });
     }
 
+    /** Unregisters the listeners for the state. */
     private void unRegisterListeners() {
         if (listeners.isEmpty()) return;
         listeners.forEach(listener -> {
@@ -62,6 +77,11 @@ public abstract class AbstractGameState extends BukkitRunnable {
         });
     }
 
+    /**
+     * Adds a listener to the state.
+     *
+     * @param clazz The class of the listener to add.
+     */
     public void addListener(Class<?> clazz) {
         if (Listener.class.isAssignableFrom(clazz)) {
             try {

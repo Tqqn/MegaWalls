@@ -17,8 +17,12 @@ import org.bson.conversions.Bson;
 
 import java.util.UUID;
 
+/**
+ * The MongoDriver class implements the IDatabaseDriver interface and provides functionality
+ * for connecting to and interacting with a MongoDB database.
+ */
 @Getter
-public class MongoDriver implements IDatabaseDriver {
+public final class MongoDriver implements IDatabaseDriver {
 
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
@@ -29,12 +33,10 @@ public class MongoDriver implements IDatabaseDriver {
         this.databaseModule = databaseModule;
     }
 
-    public void connect(String database, String host, String port) {
-        this.mongoClient = new MongoClient(new MongoClientURI("mongodb://" + host + ":" + port));
-        this.mongoDatabase = this.mongoClient.getDatabase(database);
-        this.initPlayerCollection();
-    }
-
+    /**
+     * Initializes the player collection in the MongoDB database.
+     * If the collection does not exist, it creates a new one.
+     */
     public void initPlayerCollection() {
         try {
             this.mongoDatabase.createCollection("players");
@@ -44,6 +46,14 @@ public class MongoDriver implements IDatabaseDriver {
         this.playerCollection = this.mongoDatabase.getCollection("players");
     }
 
+    @Override
+    public void connect(String database, String host, String port) {
+        this.mongoClient = new MongoClient(new MongoClientURI("mongodb://" + host + ":" + port));
+        this.mongoDatabase = this.mongoClient.getDatabase(database);
+        this.initPlayerCollection();
+    }
+
+    @Override
     public void createPlayerTemplate(UUID uuid, String name) {
         Document statsDocument = new Document();
         statsDocument.put("kills", 0);
@@ -63,6 +73,7 @@ public class MongoDriver implements IDatabaseDriver {
         this.playerCollection.insertOne(playerDocument);
     }
 
+    @Override
     public void savePlayer(PlayerModel playerModel) {
         PlayerStats playerStats = playerModel.getPlayerStats();
         Bson playerUpdates = Updates.set("name", playerModel.getName());
@@ -70,5 +81,4 @@ public class MongoDriver implements IDatabaseDriver {
         this.playerCollection.updateOne(Filters.eq("_id", playerModel.getUuid().toString()), playerUpdates);
         this.playerCollection.updateOne(Filters.eq("_id", playerModel.getUuid().toString()), statsUpdates);
     }
-
 }

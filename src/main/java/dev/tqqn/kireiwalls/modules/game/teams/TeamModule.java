@@ -10,7 +10,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeamModule extends AbstractModule {
+/**
+ * The TeamModule class manages the game teams.
+ */
+public final class TeamModule extends AbstractModule {
 
     private DatabaseModule databaseModule;
     @Getter private static Map<String, GameTeam> gameTeams;
@@ -23,6 +26,7 @@ public class TeamModule extends AbstractModule {
         super(plugin, "Team");
     }
 
+    @Override
     public void onEnable() {
         this.databaseModule = (DatabaseModule)this.getPlugin().getModuleManager().getModule(DatabaseModule.class);
         gameTeams = new HashMap<>();
@@ -33,6 +37,7 @@ public class TeamModule extends AbstractModule {
         gameTeams.putAll(Map.of("Red", this.RED, "Blue", this.BLUE, "Green", this.GREEN, "Yellow", this.YELLOW));
     }
 
+    @Override
     public void onDisable() {
         gameTeams.values().forEach((gameTeam) -> {
             if (gameTeam.getGameWither() != null) {
@@ -41,6 +46,11 @@ public class TeamModule extends AbstractModule {
         });
     }
 
+    /**
+     * Determines which team has fewer players.
+     *
+     * @return The team with fewer players.
+     */
     public GameTeam whichTeamIsSmaller() {
         GameTeam gameTeam = null;
 

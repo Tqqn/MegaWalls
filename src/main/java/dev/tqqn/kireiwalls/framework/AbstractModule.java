@@ -14,6 +14,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The AbstractModule class represents a module in the plugin.
+ * It provides methods to enable, disable, and manage listeners and commands for the module.
+ */
 public abstract class AbstractModule {
 
     @Getter private final KireiWalls plugin;
@@ -24,15 +28,33 @@ public abstract class AbstractModule {
     @Getter private final String name;
     @Getter private final String prefix;
 
+    /**
+     * Constructs a new AbstractModule object with the specified plugin and name.
+     *
+     * @param plugin The main plugin instance.
+     * @param name   The name of the module.
+     */
     public AbstractModule(KireiWalls plugin, String name) {
         this.plugin = plugin;
         this.name = name;
         this.prefix = "Module: " + name;
     }
 
-    public abstract void onEnable();
-    public abstract void onDisable();
+    /**
+     * Called when the module is being enabled.
+     * Subclasses must implement this method to perform initialization tasks.
+     */
+    protected abstract void onEnable();
 
+    /**
+     * Called when the module is being disabled.
+     * Subclasses must implement this method to perform cleanup tasks.
+     */
+    protected abstract void onDisable();
+
+    /**
+     * Enables the module by registering listeners and commands.
+     */
     public void enable() {
         plugin.getLogger().info(prefix + " is loading...");
         onEnable();
@@ -41,6 +63,9 @@ public abstract class AbstractModule {
         plugin.getLogger().info(prefix + " finished loading!");
     }
 
+    /**
+     * Disables the module by unregistering listeners and commands.
+     */
     public void disable() {
         plugin.getLogger().info(prefix + " is disabling...");
         onDisable();
@@ -48,6 +73,9 @@ public abstract class AbstractModule {
         plugin.getLogger().info(prefix + " finished disabling!");
     }
 
+    /**
+     * Registers listeners for the module.
+     */
     private void registerListeners() {
         if (listeners.isEmpty()) return;
         PluginManager pluginManager = plugin.getServer().getPluginManager();
@@ -57,6 +85,9 @@ public abstract class AbstractModule {
         });
     }
 
+    /**
+     * Registers commands for the module.
+     */
     private void registerCommands() {
         if (commands.isEmpty()) return;
         commands.forEach((commandString, command) ->{
@@ -65,6 +96,9 @@ public abstract class AbstractModule {
         });
     }
 
+    /**
+     * Unregisters listeners for the module.
+     */
     private void unRegisterListeners() {
         if (listeners.isEmpty()) return;
         listeners.forEach(listener -> {
@@ -72,7 +106,12 @@ public abstract class AbstractModule {
             plugin.getLogger().info(prefix + " has unregistered listener: " + listener);
         });
     }
-
+    /**
+     * Adds a component (listener or command) to the module.
+     *
+     * @param clazz The class representing the component.
+     * @param name  The name of the component.
+     */
     public void addComponent(Class<?> clazz, String name) {
         if (Listener.class.isAssignableFrom(clazz)) {
             try {
@@ -82,7 +121,6 @@ public abstract class AbstractModule {
                 getPlugin().getLogger().info(prefix + " unable to register listener: " + clazz.getName());
                 e.printStackTrace();
             }
-
         }
 
         if (CommandExecutor.class.isAssignableFrom(clazz)) {

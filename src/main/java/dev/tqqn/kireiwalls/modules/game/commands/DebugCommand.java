@@ -14,7 +14,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class DebugCommand implements CommandExecutor {
+/**
+ * The DebugCommand class implements the CommandExecutor interface and represents a command executor for debug commands.
+ * It allows players to perform various debug actions.
+ */
+public final class DebugCommand implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player player) {
@@ -49,6 +53,12 @@ public class DebugCommand implements CommandExecutor {
         }
     }
 
+    /**
+     * Checks if a string is a number.
+     *
+     * @param number The string to check.
+     * @return true if the string is a number, otherwise false.
+     */
     private boolean isNumber(String number) {
         return StringUtils.isNumeric(number);
     }

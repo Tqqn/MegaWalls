@@ -20,7 +20,11 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerLoadListeners implements Listener {
+/**
+ * The PlayerLoadListeners class implements event listeners for player loading events.
+ * It manages the loading of player data from the database and handles player login and join events.
+ */
+public final class PlayerLoadListeners implements Listener {
 
     private final DatabaseModule databaseModule;
     private final PlayerModule playerModule;
@@ -31,6 +35,11 @@ public class PlayerLoadListeners implements Listener {
         this.playerModule = (PlayerModule) databaseModule.getPlugin().getModuleManager().getModule(PlayerModule.class);
     }
 
+    /**
+     * Listens for the AsyncPlayerPreLoginEvent and loads player data if not already loaded.
+     *
+     * @param event The AsyncPlayerPreLoginEvent.
+     */
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         if (!isPlayerLoaded(event.getUniqueId())) {
@@ -40,6 +49,11 @@ public class PlayerLoadListeners implements Listener {
         }
     }
 
+    /**
+     * Listens for the PlayerLoginEvent and handles login procedures.
+     *
+     * @param event The PlayerLoginEvent.
+     */
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         if (GameModule.getCurrentState().getGameStates() != GameStates.WAITING && !event.getPlayer().hasPermission("staff.join") && !isPlayerLoaded(event.getPlayer().getUniqueId())) {
@@ -63,6 +77,11 @@ public class PlayerLoadListeners implements Listener {
         }
     }
 
+    /**
+     * Listens for the PlayerJoinEvent and handles player joining procedures.
+     *
+     * @param event The PlayerJoinEvent.
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.joinMessage(Component.empty());
@@ -83,6 +102,12 @@ public class PlayerLoadListeners implements Listener {
         if (!playerModel.getName().equals(player.getName())) playerModel.setName(player.getName());
     }
 
+    /**
+     * Checks if a player is already loaded.
+     *
+     * @param uuid The UUID of the player.
+     * @return {@code true} if the player is already loaded, {@code false} otherwise.
+     */
     private boolean isPlayerLoaded(UUID uuid) {
         return PlayerModule.getPlayerModel(uuid) != null;
     }

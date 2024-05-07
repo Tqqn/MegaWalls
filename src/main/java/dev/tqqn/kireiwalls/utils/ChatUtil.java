@@ -1,6 +1,5 @@
 package dev.tqqn.kireiwalls.utils;
 
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
@@ -9,8 +8,9 @@ import java.util.ArrayList;
 
 public final class ChatUtil {
 
-    @Getter
-    private static final String prefix = "<red>[VampireZ]";
+    private ChatUtil() {
+        // Private constructor to prevent instantiation.
+    }
 
     /**
      * Formats a message using MiniMessage.
@@ -58,6 +58,13 @@ public final class ChatUtil {
         return String.format("%02d:%02d", m, s);
     }
 
+    /**
+     * Gets the color code for health based on current and maximum health.
+     *
+     * @param maxHealth     The maximum health value.
+     * @param currentHealth The current health value.
+     * @return The color code for health.
+     */
     public static int getHealthColor(float maxHealth, float currentHealth) {
         if (currentHealth >= maxHealth) {
             return 43520; // Dark_Green

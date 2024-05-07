@@ -9,7 +9,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class WitherDebugCommand implements CommandExecutor {
+/**
+ * The SpectateCommand class implements the CommandExecutor interface and represents a command executor for the spectate command.
+ * It allows players to toggle their spectator mode.
+ */
+public final class WitherDebugCommand implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player player) {

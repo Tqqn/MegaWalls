@@ -9,10 +9,20 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultConfig {
+/**
+ * The DefaultConfig class provides methods to access configuration settings
+ * related to the game environment and setup.
+ */
+public final class DefaultConfig {
 
     private final KireiWalls plugin;
 
+    /**
+     * Constructs a DefaultConfig object using the specified DatabaseModule.
+     * Initializes the plugin instance and saves the default configuration if not already present.
+     *
+     * @param databaseModule The DatabaseModule instance.
+     */
     public DefaultConfig(DatabaseModule databaseModule) {
         plugin = databaseModule.getPlugin();
         plugin.saveDefaultConfig();

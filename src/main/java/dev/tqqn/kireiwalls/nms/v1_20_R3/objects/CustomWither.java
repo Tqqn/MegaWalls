@@ -16,7 +16,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 
-public class CustomWither extends WitherBoss implements ICustomWither {
+/**
+ * The CustomWither class extends WitherBoss and implements the ICustomWither interface.
+ */
+public final class CustomWither extends WitherBoss implements ICustomWither {
 
     private final GameTeam gameTeam;
 
@@ -41,11 +44,19 @@ public class CustomWither extends WitherBoss implements ICustomWither {
         return getBukkitEntity();
     }
 
-
+    /**
+     * No random AI attacks.
+     */
     @Override
     protected void customServerAiStep() {
     }
 
+    /**
+     * Overriding the hurt method from the NMS Wither Class.
+     * Cancel damaging the health of the NMS Wither because of self implemented health.
+     * Also triggers WitherDamageByPlayerEvent event.
+     *
+     */
     @Override
     public boolean hurt(DamageSource damagesource, float damage) {
         if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE || ActiveState.getCurrentCycle() == ActiveState.Cycle.END) return false;
@@ -86,6 +97,9 @@ public class CustomWither extends WitherBoss implements ICustomWither {
         return false;
     }
 
+    /**
+     * Registering custom goals for the NMS Wither.
+     */
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));

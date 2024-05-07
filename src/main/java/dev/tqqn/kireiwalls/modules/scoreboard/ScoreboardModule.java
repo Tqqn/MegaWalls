@@ -6,30 +6,32 @@ import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class ScoreboardModule extends AbstractModule {
-    private final HashMap<Class<? extends PluginScoreboard>, PluginScoreboard> loadedScoreboards = new HashMap<>();
+/**
+ * The ScoreboardModule class manages scoreboard-related functionality.
+ */
+public final class ScoreboardModule extends AbstractModule {
 
     public ScoreboardModule(KireiWalls plugin) {
         super(plugin, "Scoreboard");
     }
 
+    @Override
     public void onEnable() {
     }
 
+    @Override
     public void onDisable() {
-        for (PluginScoreboard boards : this.loadedScoreboards.values()) {
-            boards.removeScoreboardFromAllPlayers();
-        }
-        loadedScoreboards.clear();
-
     }
 
+    /**
+     * Sets a scoreboard for a player.
+     *
+     * @param playerModel     The player model.
+     * @param pluginScoreboard The scoreboard to set.
+     */
     public void setScoreboard(PlayerModel playerModel, PluginScoreboard pluginScoreboard) {
         pluginScoreboard.setScoreboard(playerModel);
-    }
-
-    public PluginScoreboard getBoard(Class<? extends PluginScoreboard> board) {
-        return this.loadedScoreboards.get(board);
     }
 }

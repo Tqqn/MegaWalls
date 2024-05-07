@@ -7,7 +7,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class GamePlayerJoinEvent extends Event implements Cancellable {
+/**
+ * The GamePlayerJoinEvent class represents an event that occurs when a player joins a game.
+ * This event is fired when a player's data model is created upon joining a game.
+ * !! Use this event instead of the PlayerJoinEvent. As this guarantees a PlayerModel Object.
+ */
+public final class GamePlayerJoinEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     @Getter private final PlayerModel playerModel;

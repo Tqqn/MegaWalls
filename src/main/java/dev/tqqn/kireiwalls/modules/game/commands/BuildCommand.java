@@ -8,7 +8,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildCommand implements CommandExecutor {
+/**
+ * The BuildCommand class implements the CommandExecutor interface and represents a command executor for the build command.
+ * It allows players to toggle their build mode.
+ */
+public final class BuildCommand implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player player) {
@@ -20,12 +24,8 @@ public class BuildCommand implements CommandExecutor {
                     PlayerModule.getPlayerModel(player.getUniqueId()).setBuildMode(true);
                     player.sendMessage(ChatUtil.format("<green>You have enabled build mode."));
                 }
-                return true;
-            } else {
-                return true;
             }
-        } else {
-            return true;
         }
+        return true;
     }
 }

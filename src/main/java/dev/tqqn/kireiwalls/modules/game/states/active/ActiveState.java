@@ -5,13 +5,17 @@ import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.listeners.ActiveListeners;
+import dev.tqqn.kireiwalls.modules.game.states.active.runnables.EnergyRunnable;
 import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class ActiveState extends AbstractGameState {
+/**
+ * The ActiveState class represents the active state of the game, managing various game cycles and timers.
+ */
+public final class ActiveState extends AbstractGameState {
     @Getter
     private static Cycle currentCycle;
     @Getter
@@ -19,10 +23,13 @@ public class ActiveState extends AbstractGameState {
     private boolean areWithersDead;
     private boolean initHealth;
 
+    private EnergyRunnable energyRunnable;
+
     public ActiveState(GameModule gameModule) {
         super(gameModule, GameStates.ACTIVE, "Active");
     }
 
+    @Override
     public void onEnable() {
         this.getGameModule().shufflePlayers();
         setTimer(3600);
@@ -32,15 +39,25 @@ public class ActiveState extends AbstractGameState {
         cycleTimer = 60;
         this.areWithersDead = false;
         this.initHealth = false;
+        this.energyRunnable = new EnergyRunnable(this.getGameModule());
+        this.energyRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 10L);
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
     }
 
+    @Override
     public void onDisable() {
+        this.energyRunnable.cancel();
         this.cancel();
     }
 
+    /**
+     * Runs the game cycle.
+     */
     public void run() {
+        // Decrement timer
         --timer;
+
+        // Handle cycle transitions and countdowns
         if (currentCycle == ActiveState.Cycle.PREPARE) {
             --cycleTimer;
             if (cycleTimer <= 0) {
@@ -54,8 +71,10 @@ public class ActiveState extends AbstractGameState {
         if (currentCycle == ActiveState.Cycle.COUNTDOWN_TO_DM) {
             --cycleTimer;
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage(MessageUtil.DM_COUNTDOWN.getMessage(String.valueOf(cycleTimer)));
+            if (cycleTimer != 0) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.sendMessage(MessageUtil.DM_COUNTDOWN.getMessage(String.valueOf(cycleTimer)));
+                }
             }
 
             if (cycleTimer <= 0) {
@@ -63,11 +82,13 @@ public class ActiveState extends AbstractGameState {
             }
         }
 
+        // Initialize health on Tab during Deathmatch cycle
         if (currentCycle == Cycle.DM && !initHealth) {
             getGameModule().initHealthOnTab();
             initHealth = true;
         }
 
+        // Start Deathmatch countdown when all withers are dead
         if (this.getGameModule().areAllWithersDead() && currentCycle != ActiveState.Cycle.DM && currentCycle != ActiveState.Cycle.END && !this.areWithersDead) {
             currentCycle = ActiveState.Cycle.COUNTDOWN_TO_DM;
             this.areWithersDead = true;
@@ -80,6 +101,7 @@ public class ActiveState extends AbstractGameState {
             System.out.println("DM Countdown started.");
         }
 
+        // End the game if timer runs out
         if (timer <= 0) {
             currentCycle = ActiveState.Cycle.END;
             this.getGameModule().endGame();
@@ -87,6 +109,9 @@ public class ActiveState extends AbstractGameState {
 
     }
 
+    /**
+     * Represents the various cycles of the game.
+     */
     public enum Cycle {
         PREPARE,
         PRE_DM,

@@ -16,7 +16,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-public class GameWither {
+/**
+ * The GameWither class represents a game wither entity associated with a specific game team.
+ * It manages the health, status, and boss bar of the wither.
+ */
+public final class GameWither {
 
     private final GameTeam gameTeam;
 
@@ -24,9 +28,14 @@ public class GameWither {
     @Getter @Setter private WitherStatus witherStatus;
     @Getter private Entity bukkitEntity;
     private ICustomWither nmsEntity;
-    @Getter private BossBar witherBar;
+    @Getter private final BossBar witherBar;
     private final String bossBarName;
 
+    /**
+     * Constructs a GameWither object associated with the specified game team.
+     *
+     * @param gameTeam The game team associated with the wither.
+     */
     public GameWither(GameTeam gameTeam) {
         this.gameTeam = gameTeam;
         this.health = 1000;
@@ -52,6 +61,9 @@ public class GameWither {
         this.witherBar.setProgress(1);
     }
 
+    /**
+     * Removes the wither entity and updates the wither status.
+     */
     public void kill() {
         if (bukkitEntity != null) {
             this.bukkitEntity.remove();
@@ -65,6 +77,11 @@ public class GameWither {
         }
     }
 
+    /**
+     * Gets the scoreboard status of the wither.
+     *
+     * @return The scoreboard status of the wither.
+     */
     public String getScoreboardStatus() {
         if (witherStatus == WitherStatus.DEATH) {
             if (gameTeam.getAlivePlayers().isEmpty()) {
@@ -75,15 +92,26 @@ public class GameWither {
         return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Wither ❤: " + health;
     }
 
+    /**
+     * Updates the health of the wither name.
+     */
     public void updateHealth() {
         bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
     }
 
+    /**
+     * Updates the boss bar of the wither entity.
+     */
     public void updateWitherBar() {
         witherBar.setTitle(bukkitEntity.getName());
         witherBar.setProgress((double) health / 1000);
     }
 
+    /**
+     * Inflicts damage to the wither entity.
+     *
+     * @param damage The amount of damage to inflict.
+     */
     public void damage(int damage) {
         if (this.health <= 500) {
             nmsEntity.setPowered(false);
@@ -98,10 +126,12 @@ public class GameWither {
         updateWitherBar();
     }
 
+    /**
+     * The status of the wither entity.
+     */
     public enum WitherStatus {
         PROTECTED,
         NON_PROTECTED,
         DEATH
     }
-
 }

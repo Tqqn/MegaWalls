@@ -8,8 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class SpectateCommand implements CommandExecutor {
+/**
+ * The SpectateCommand class implements the CommandExecutor interface and represents a command executor for the spectate command.
+ * It allows players to toggle their spectator mode.
+ */
+public final class SpectateCommand implements CommandExecutor {
 
+    @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player player) {
             if (strings.length == 0) {

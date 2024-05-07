@@ -39,11 +39,16 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GameModule extends AbstractModule {
+/**
+ * The GameModule class manages the game state and settings.
+ */
+public final class GameModule extends AbstractModule {
     @Getter
     private static AbstractGameState currentState;
     @Getter
@@ -54,6 +59,7 @@ public class GameModule extends AbstractModule {
     private final Set<PlayerModel> ingamePlayers;
     @Getter
     private final Set<PlayerModel> spectators;
+    private EditSession[] wallsEditSession;
 
     public GameModule(KireiWalls plugin, DatabaseModule databaseModule) {
         super(plugin, "Game");
@@ -63,6 +69,7 @@ public class GameModule extends AbstractModule {
         this.databaseModule = databaseModule;
     }
 
+    @Override
     public void onEnable() {
         this.teamModule = (TeamModule)this.getPlugin().getModuleManager().getModule(TeamModule.class);
         this.addComponent(DebugCommand.class, "debug");
@@ -73,10 +80,12 @@ public class GameModule extends AbstractModule {
         currentState.enable();
     }
 
+    @Override
     public void onDisable() {
         currentState.disable();
     }
 
+    /** Ends the game. */
     public void endGame() {
         if (!Bukkit.isPrimaryThread()) {
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill()));
@@ -98,6 +107,11 @@ public class GameModule extends AbstractModule {
         Bukkit.getServer().shutdown();
     }
 
+    /**
+     * Sets the game state.
+     *
+     * @param gameState The new game state.
+     */
     public void setGameState(GameStates gameState) {
         if (currentState.getGameStates() != gameState) {
             if (currentState.getGameStates() != GameStates.ACTIVE || gameState != GameStates.WAITING) {
@@ -117,6 +131,7 @@ public class GameModule extends AbstractModule {
         }
     }
 
+    /** Shuffles players and assigns teams. */
     public void shufflePlayers() {
         for (PlayerModel playerModel : this.getIngamePlayers()) {
 
@@ -142,6 +157,7 @@ public class GameModule extends AbstractModule {
 
     }
 
+    /** Initializes health display below player names. */
     private void initHealthBelowName() {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
@@ -150,6 +166,7 @@ public class GameModule extends AbstractModule {
         underName.setRenderType(RenderType.INTEGER);
     }
 
+    /** Initializes health display on the player list tab. */
     public void initHealthOnTab() {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 
@@ -164,27 +181,41 @@ public class GameModule extends AbstractModule {
         }
     }
 
+    /** Spawns players in their team locations. */
     private void spawnPlayers() {
         initHealthBelowName();
         for (PlayerModel playerModel : this.getIngamePlayers()) {
             if (!playerModel.isSpectatorMode()) {
+                double health = 40.0;
+                if (playerModel.getCurrentClass().isPrestigeOne()) health = 44.0;
                 playerModel.getPlayer().teleport(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
-                playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0);
+                playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
                 playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
             }
         }
     }
 
+    /** Makes walls fall. */
     public void wallsFall() {
+        List<EditSession> editSessions = new ArrayList<>();
         for (Cuboid cuboid : this.databaseModule.getDefaultConfig().getWallCuboids()) {
-            try (EditSession editSession = Fawe.instance().getWorldEdit().newEditSession(BukkitAdapter.adapt(cuboid.getWorld()))) {
-                Region region = new CuboidRegion(BlockVector3.at(cuboid.getPoint1().x(), cuboid.getPoint1().y(), cuboid.getPoint1().z()), BlockVector3.at(cuboid.getPoint2().x(), cuboid.getPoint2().y(), cuboid.getPoint2().z()));
-                editSession.setBlocks(region, BlockTypes.AIR);
-                editSession.flushQueue();
-            }
+            EditSession editSession = Fawe.instance().getWorldEdit().newEditSession(BukkitAdapter.adapt(cuboid.getWorld()));
+            Region region = new CuboidRegion(BlockVector3.at(cuboid.getPoint1().x(), cuboid.getPoint1().y(), cuboid.getPoint1().z()), BlockVector3.at(cuboid.getPoint2().x(), cuboid.getPoint2().y(), cuboid.getPoint2().z()));
+            editSession.setBlocks(region, BlockTypes.AIR);
+            editSession.flushQueue();
+            editSessions.add(editSession);
+        }
+        this.wallsEditSession = editSessions.toArray(EditSession[]::new);
+    }
+
+    /** Undoes wall fall. */
+    public void undoWallsFall() {
+        for (EditSession editSession : this.wallsEditSession) {
+            editSession.undo(editSession);
         }
     }
 
+    /** Checks if all withers are dead. */
     public boolean areAllWithersDead() {
         int count = 0;
         for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
@@ -195,8 +226,9 @@ public class GameModule extends AbstractModule {
         return count == 4;
     }
 
+    /** Checks if the game can start. */
     public boolean canStart() {
-        return true;
+        return true; // For debug purposes still on force true
     }
 
 }

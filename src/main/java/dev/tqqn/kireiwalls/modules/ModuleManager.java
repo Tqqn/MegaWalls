@@ -14,6 +14,9 @@ import dev.tqqn.kireiwalls.modules.scoreboard.ScoreboardModule;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * The ModuleManager class manages the initialization and disabling of modules within the plugin.
+ */
 public final class ModuleManager {
 
     private final Map<Class<? extends AbstractModule>, AbstractModule> modules = new LinkedHashMap<>();
@@ -29,27 +32,41 @@ public final class ModuleManager {
         this.modules.put(MenuModule.class, new MenuModule(plugin));
     }
 
+    /**
+     * Initializes all modules.
+     */
     public void init() {
         this.registerModules();
     }
 
+    /**
+     * Disables all modules.
+     */
     public void disable() {
         this.unregisterModules();
     }
 
+    /**
+     * Registers all modules by enabling them.
+     */
     private void registerModules() {
-        this.modules.forEach((key, value) -> {
-            value.enable();
-        });
+        this.modules.values().forEach(AbstractModule::enable);
     }
 
+    /**
+     * Unregisters all modules by disabling them and clearing the module map.
+     */
     private void unregisterModules() {
-        this.modules.forEach((key, value) -> {
-            value.disable();
-        });
+        this.modules.values().forEach(AbstractModule::disable);
         this.modules.clear();
     }
 
+    /**
+     * Retrieves a module instance by its class.
+     *
+     * @param moduleClass The class of the module to retrieve.
+     * @return The module instance.
+     */
     public AbstractModule getModule(Class<? extends AbstractModule> moduleClass) {
         return this.modules.get(moduleClass);
     }

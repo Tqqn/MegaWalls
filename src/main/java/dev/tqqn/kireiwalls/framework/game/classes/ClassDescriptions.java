@@ -3,8 +3,42 @@ package dev.tqqn.kireiwalls.framework.game.classes;
 import lombok.Getter;
 import org.bukkit.Material;
 
-public class ClassDescriptions {
+/**
+ * The ClassDescriptions class contains enums representing various aspects of class descriptions,
+ * including energy consumption, class types, difficulties, styles, diamond equipment, and skill descriptions.
+ * Each enum provides information related to a specific aspect of a player class.
+ */
+public final class ClassDescriptions {
 
+    /**
+     * Enum representing energy consumption details for different classes.
+     */
+    @Getter
+    public enum ClassEnergy {
+        HEROBRINE(100, 100, 20, 0, 20, 0),
+        SKELETON(100, 100, 0, 1, 20, 0),
+        ZOMBIE(100, 100, 12, 0, 10, 10);
+
+        private final int neededEnergyForAbility;
+        private final int maxEnergy;
+        private final int energyPerHit;
+        private final int energyPerSecond;
+        private final int energyPerBowShot;
+        private final int energyPerGettingHit;
+
+        ClassEnergy(int neededEnergyForAbility, int maxEnergy, int energyPerHit, int energyPerSecond, int energyPerBowShow, int energyPerGettingHit) {
+            this.neededEnergyForAbility = neededEnergyForAbility;
+            this.maxEnergy = maxEnergy;
+            this.energyPerHit = energyPerHit;
+            this.energyPerSecond = energyPerSecond;
+            this.energyPerBowShot = energyPerBowShow;
+            this.energyPerGettingHit = energyPerGettingHit;
+        }
+    }
+
+    /**
+     * Enum representing class types with their corresponding icons and types.
+     */
     @Getter
     public enum ClassType {
         HEROBRINE(Material.DIAMOND_SWORD, "&8Regular Class"),
@@ -20,6 +54,9 @@ public class ClassDescriptions {
         }
     }
 
+    /**
+     * Enum representing class difficulties.
+     */
     @Getter
     public enum ClassDifficulty {
         HEROBRINE("&a●&7●●●"),
@@ -33,6 +70,9 @@ public class ClassDescriptions {
         }
     }
 
+    /**
+     * Enum representing class styles.
+     */
     @Getter
     public enum ClassStyle {
         DAMAGE("&cDamage&7: Dealing a lot of damage."),
@@ -48,6 +88,9 @@ public class ClassDescriptions {
 
     }
 
+    /**
+     * Enum representing diamond equipment for different classes.
+     */
     @Getter
     public enum ClassDiamond {
         HEROBRINE("&bSword"),
@@ -61,11 +104,14 @@ public class ClassDescriptions {
         }
     }
 
+    /**
+     * Enum representing skill descriptions for different classes.
+     */
     @Getter
     public enum ClassSkillDescription {
         HEROBRINE("&7Wrath", new String[]{"&7･ Unleash the wrath of Herobrine striking all nearby", "&7enemies in a 5 block radius for &a5 &7damage.", "&7･ How to activate: Left Click with your Bow Right Click", "&7with your Sword.", "&7･ Energy Per Hit (Melee & Bow): 25"}),
-        SKELETON("&7Explosive Arrow", new String[]{}),
-        ZOMBIE("&7Circle of Healing", new String[]{});
+        SKELETON("&7Explosive Arrow", new String[]{"&7･ You will fire an explosive arrow that deals &a6&7 damage in", "&7 in a 6 block radius and breaks blocks", "&7･ Uncharged bow shots give 50% energy, and Medium", "&7charged bow shots give 75% Energy.", "&7･ How to activate: Left Click with your Bow", "&7･ Energy Per Hit (Melee): 0", "&7･ Energy Per Hit (Bow): 20", "&7･ Energy Per Second (Deathmatch): 1"}),
+        ZOMBIE("&7Circle of Healing", new String[]{"&7･ Heal yourself for &a8 HP &7and nearby teammates in a 5", " block radius for &a5 HP&7.", "&7･ How to Activate: Left Click with your Bow or Right Click", "&7 with your Sword", "&7･ Energy Per Hit (Melee & Bow): 12", "&7･ Energy When Hit (Melee): 1", "&7･ Energy When Hit (Bow): 2"}),;
 
         private final String name;
         private final String[] description;

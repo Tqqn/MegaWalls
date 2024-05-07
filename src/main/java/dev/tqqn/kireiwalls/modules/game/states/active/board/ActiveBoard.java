@@ -13,10 +13,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class ActiveBoard extends PluginScoreboard {
+/**
+ * The ActiveBoard class represents a scoreboard displayed to players during active gameplay.
+ */
+public final class ActiveBoard extends PluginScoreboard {
 
     private final Map<String, GameTeam> teams = TeamModule.getGameTeams();
 
+    /**
+     * Constructs an ActiveBoard object for the specified player model.
+     *
+     * @param playerModel The player model.
+     */
     public ActiveBoard(PlayerModel playerModel) {
         super("Active", playerModel);
         LocalDateTime date = LocalDateTime.now();
@@ -43,6 +51,7 @@ public class ActiveBoard extends PluginScoreboard {
         this.addLines("§edev.tqqn.kireiwalls");
     }
 
+    @Override
     public void update() {
         if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
             this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs((long)ActiveState.getCycleTimer()), 12);

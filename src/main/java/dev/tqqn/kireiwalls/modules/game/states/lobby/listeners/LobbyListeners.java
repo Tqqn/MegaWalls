@@ -17,7 +17,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class LobbyListeners implements Listener {
+/**
+ * The LobbyListeners class contains event handlers for actions that occur in the lobby.
+ */
+public final class LobbyListeners implements Listener {
     private final DatabaseModule databaseModule;
     private final GameModule gameModule;
 
@@ -27,6 +30,11 @@ public class LobbyListeners implements Listener {
         this.gameModule = (GameModule)moduleManager.getModule(GameModule.class);
     }
 
+    /**
+     * Handles the event when a player joins the lobby.
+     *
+     * @param event The GamePlayerJoinEvent
+     */
     @EventHandler
     public void onJoin(GamePlayerJoinEvent event) {
         this.gameModule.getIngamePlayers().add(event.getPlayerModel());
@@ -45,26 +53,51 @@ public class LobbyListeners implements Listener {
         event.getPlayerModel().getPlayer().setFoodLevel(20);
     }
 
+    /**
+     * Handles the event when a player quits the game.
+     *
+     * @param event The PlayerQuitEvent
+     */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         this.databaseModule.getPlayerModule().removePlayerFromCache(event.getPlayer().getUniqueId());
     }
 
+    /**
+     * Handles the event when a block is broken in the lobby.
+     *
+     * @param event The BlockBreakEvent
+     */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         event.setCancelled(true);
     }
 
+    /**
+     * Handles the event when a block is placed in the lobby.
+     *
+     * @param event The BlockPlaceEvent
+     */
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         event.setCancelled(true);
     }
 
+    /**
+     * Handles the event when an entity is damaged in the lobby.
+     *
+     * @param event The EntityDamageEvent
+     */
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         event.setCancelled(true);
     }
 
+    /**
+     * Handles the event when a player loses hunger in the lobby.
+     *
+     * @param event The FoodLevelChangeEvent
+     */
     @EventHandler
     public void onHungerLose(FoodLevelChangeEvent event) {
         event.setCancelled(true);

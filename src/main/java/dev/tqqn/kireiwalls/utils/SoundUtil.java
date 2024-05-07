@@ -5,6 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+/**
+ * Utility enum for managing sound effects.
+ */
 public enum SoundUtil {
 
     COUNTDOWN_SOUND(Sound.BLOCK_DISPENSER_FAIL, 0.5f, 1.5f);
@@ -19,18 +22,32 @@ public enum SoundUtil {
         this.pitch = pitch;
     }
 
+    /**
+     * Plays the sound at the specified location for the given player.
+     *
+     * @param player   The player to hear the sound.
+     * @param location The location where the sound is played.
+     */
     private void playSound(Player player, Location location) {
         player.playSound(location, this.sound, this.volume, this.pitch);
     }
 
+    /**
+     * Plays the sound at the player's current location.
+     *
+     * @param player The player to hear the sound.
+     */
     public void playSoundOnPlayerLoc(Player player) {
         playSound(player, player.getLocation());
     }
+
+    /**
+     * Plays the sound at the current location of every online player.
+     */
 
     public void playSoundForEveryPlayerLoc() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             playSound(player, player.getLocation());
         }
     }
-
 }

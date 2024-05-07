@@ -9,7 +9,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class WitherDamageByPlayerEvent extends Event implements Cancellable {
+/**
+ * The WitherDamageByPlayerEvent class represents an event where a player damages the wither.
+ * It provides information about the wither's team and the attacking player.
+ */
+public final class WitherDamageByPlayerEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     @Getter private final GameTeam witherTeam;
@@ -17,6 +21,12 @@ public class WitherDamageByPlayerEvent extends Event implements Cancellable {
 
     private boolean cancelled = false;
 
+    /**
+     * Constructs a WitherDamageByPlayerEvent object with the specified parameters.
+     *
+     * @param witherTeam The team that the wither belongs to.
+     * @param attacker The player model of the attacker.
+     */
     public WitherDamageByPlayerEvent(GameTeam witherTeam, PlayerModel attacker) {
         this.witherTeam = witherTeam;
         this.attacker = attacker;

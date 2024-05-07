@@ -18,8 +18,12 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.UUID;
 
+/**
+ * The PlayerModel class represents a decorator for player-related data and functionality.
+ * It encapsulates attributes and methods related to player statistics, game state, and behavior.
+ */
 @Getter
-public class PlayerModel {
+public final class PlayerModel {
 
     private final UUID uuid;
     @Setter private String name;
@@ -32,12 +36,20 @@ public class PlayerModel {
     @Setter private GameTeam gameTeam;
     @Setter private boolean isAlive;
     @Setter private boolean isProtected;
+    private int energy;
 
     private int coins;
 
     private boolean buildMode;
     private boolean spectatorMode;
 
+    /**
+     * Constructs a PlayerModel object with the specified UUID, name, and player statistics.
+     *
+     * @param uuid        The UUID of the player.
+     * @param name        The name of the player.
+     * @param playerStats The statistics of the player.
+     */
     public PlayerModel(UUID uuid, String name, PlayerStats playerStats) {
         this.uuid = uuid;
         this.name = name;
@@ -45,16 +57,28 @@ public class PlayerModel {
         this.gameTeam = null;
         this.isAlive = false;
         this.isProtected = true;
+        this.energy = 0;
         this.coins = 0;
         this.buildMode = false;
         this.spectatorMode = false;
         this.currentClass = null;
     }
 
+    /**
+     * Constructs a PlayerModel object with the specified UUID and name.
+     *
+     * @param uuid The UUID of the player.
+     * @param name The name of the player.
+     */
     public PlayerModel(UUID uuid, String name) {
         this(uuid, name, new PlayerStats());
     }
 
+    /**
+     * Retrieves the Bukkit Player object associated with this player model.
+     *
+     * @return The Bukkit Player object, or null if the player is offline.
+     */
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid) : null;
     }
@@ -63,6 +87,24 @@ public class PlayerModel {
         this.coins += coins;
     }
 
+    public void increaseEnergy(int energy) {
+        if ((this.energy + energy) < 100) return;
+        this.energy += energy;
+    }
+
+    public void decreaseEnergy(int energy) {
+        this.energy -= energy;
+    }
+
+    public void resetEnergy() {
+        this.energy = 0;
+    }
+
+    /**
+     * Sets the build mode for the player.
+     *
+     * @param buildMode {@code true} to enable build mode, {@code false} to disable it.
+     */
     public void setBuildMode(boolean buildMode) {
         this.buildMode = buildMode;
 
@@ -76,7 +118,14 @@ public class PlayerModel {
         getPlayer().setGameMode(gameMode);
     }
 
+    /**
+     * Sends the appropriate name tag to the player based on spectator mode.
+     *
+     * @param spectatorMode {@code true} if the player is in spectator mode, {@code false} otherwise.
+     */
     public void sendSpectatorTag(boolean spectatorMode) {
+
+        // If the player is not in a team, send the default name tag for spectator or normal mode
         if (gameTeam == null) {
             if (spectatorMode) {
                 KireiWalls.getReflectionLayer().sendNameTag(getPlayer(), "spectator", "GRAY", "§7✖", "");
@@ -85,6 +134,7 @@ public class PlayerModel {
             }
 
         } else {
+            // If the player is in a team, send the team's name tag for spectator or normal mode
             if (spectatorMode) {
                 getGameTeam().sendSpectatorTag(this);
             } else {
@@ -93,6 +143,11 @@ public class PlayerModel {
         }
     }
 
+    /**
+     * Sets the spectator mode for the player.
+     *
+     * @param spectatorMode {@code true} to enable spectator mode, {@code false} to disable it.
+     */
     public void setSpectatorMode(boolean spectatorMode) {
         this.spectatorMode = spectatorMode;
 
@@ -126,8 +181,6 @@ public class PlayerModel {
                         getPlayer().hidePlayer(KireiWalls.getInstance(), playerModel.getPlayer());
                     }
                 }
-
-
             }
         }
     }

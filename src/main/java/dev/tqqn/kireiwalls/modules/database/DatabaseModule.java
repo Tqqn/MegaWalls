@@ -14,6 +14,10 @@ import org.bukkit.Bukkit;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The DatabaseModule class extends AbstractModule and represents a module responsible for database-related operations.
+ * It manages connections to the database, player data storage, and other database-related tasks.
+ */
 @Getter
 public final class DatabaseModule extends AbstractModule {
     private DefaultConfig defaultConfig;
@@ -24,14 +28,16 @@ public final class DatabaseModule extends AbstractModule {
         super(plugin, "Database");
     }
 
-    public void onEnable() {
+    @Override
+    protected void onEnable() {
         this.addComponent(PlayerLoadListeners.class, "");
         this.databaseDriver.connect("players", "dev-toon-mongodb-1", "27017");
         this.defaultConfig = new DefaultConfig(this);
         this.playerModule = (PlayerModule)this.getPlugin().getModuleManager().getModule(PlayerModule.class);
     }
 
-    public void onDisable() {
+    @Override
+    protected void onDisable() {
         Bukkit.getOnlinePlayers().forEach((player) -> {
             Bukkit.getLogger().info("Saving player: " + player.getName() + "!");
             savePlayer(PlayerModule.getPlayerModel(player.getUniqueId()));
@@ -40,20 +46,37 @@ public final class DatabaseModule extends AbstractModule {
         });
     }
 
+    /**
+     * Creates a player template in the database asynchronously with the given UUID and name.
+     *
+     * @param uuid The UUID of the player.
+     * @param name The name of the player.
+     */
     public void createPlayerTemplate(UUID uuid, String name) {
         CompletableFuture.runAsync(() -> {
             this.databaseDriver.createPlayerTemplate(uuid, name);
         });
     }
 
+    /**
+     * Saves player data to the database asynchronously.
+     *
+     * @param playerModel The PlayerModel containing the player data to be saved.
+     */
     public void savePlayer(PlayerModel playerModel) {
         CompletableFuture.runAsync(() -> {
             this.databaseDriver.savePlayer(playerModel);
         });
     }
 
+    /**
+     * Retrieves a PlayerModel from the database using the UUID and name of the player.
+     *
+     * @param uuid The UUID of the player.
+     * @param name The name of the player.
+     * @return The PlayerModel object containing the player data.
+     */
     public PlayerModel getPlayer(UUID uuid, String name) {
         return new PlayerModel(uuid, name);
     }
-
 }

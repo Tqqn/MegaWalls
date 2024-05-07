@@ -1,9 +1,7 @@
 package dev.tqqn.kireiwalls.framework.game.classes.menu;
 
-import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.game.classes.ClassDescriptions;
 import dev.tqqn.kireiwalls.framework.menu.Menu;
 import dev.tqqn.kireiwalls.framework.menu.MenuButton;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;
@@ -16,7 +14,12 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassChooseMenu extends Menu {
+/**
+ * The ClassChooseMenu class represents a menu for choosing player classes.
+ * It extends the Menu class and provides functionality to display class options
+ * and select a class for the player.
+ */
+public final class ClassChooseMenu extends Menu {
 
     /**
      * Constructs a new Menu object with the specified title, number of rows, and MenuModule.
@@ -25,14 +28,15 @@ public class ClassChooseMenu extends Menu {
      */
     public ClassChooseMenu(PlayerModel viewer) {
         super("<red>Choose a Class!", 3, viewer.getPlayer());
-        ClassModule classModule = (ClassModule) KireiWalls.getInstance().getModuleManager().getModule(ClassModule.class);
         int slot = 0;
-        for (AbstractClass abstractClass : classModule.getClasses()) {
+        for (AbstractClass abstractClass : ClassModule.getClasses()) {
             registerButton(new MenuButton(abstractClass.getKitIcon(viewer)).setClicker(clicked -> {
                 PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
 
                 if (playerModel.getCurrentClass() == abstractClass) {
-                    playerModel.getPlayer().sendMessage(ChatUtil.format("<green>"));
+                    playerModel.getPlayer().sendMessage(ChatUtil.format("<red>You have already selected this class!"));
+                    close();
+                    return;
                 }
 
                 playerModel.setCurrentClass(abstractClass);
@@ -45,8 +49,14 @@ public class ClassChooseMenu extends Menu {
         registerButton(getRandomButton(), getInventory().getSize() -4);
     }
 
+    /**
+     * Creates and returns a MenuButton for selecting a random class.
+     *
+     * @return The MenuButton for selecting a random class.
+     */
     public MenuButton getRandomButton() {
 
+        final PlayerModel playerModel = PlayerModule.getPlayerModel(getViewer().getUniqueId());
         List<String> lore = new ArrayList<>();
 
         lore.add("&7Picks a random class from your");
@@ -64,7 +74,12 @@ public class ClassChooseMenu extends Menu {
 
         MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("&aRandom!").setLore(lore).build());
         randomButton.setClicker(player -> {
-            PlayerModule.getPlayerModel(player.getUniqueId()).setCurrentClass(null);
+            if (playerModel.getCurrentClass() == null) {
+                player.sendMessage(ChatUtil.format("<red>You have already selected the random class!"));
+                close();
+                return;
+            }
+            playerModel.setCurrentClass(null);
             player.sendMessage(ChatUtil.format("<green>You have selected the <yellow>Random <green>option!"));
             close();
         });

@@ -2,6 +2,9 @@ package dev.tqqn.kireiwalls.utils;
 
 import net.kyori.adventure.text.Component;
 
+/**
+ * Utility enum for managing message templates.
+ */
 public enum MessageUtil {
 
     NO_PERMISSION("<redYou do not have <blue>%s <red>permission to do this."),
@@ -23,15 +26,37 @@ public enum MessageUtil {
 
     MessageUtil(String message) { this.message = message; }
 
+    /**
+     * Gets the string representation of the message with optional placeholders.
+     *
+     * @param placeholder The placeholders to replace in the message template.
+     * @return The formatted message.
+     */
     public String getStringMessage(String... placeholder) {
         return String.format(message, placeholder);
     }
 
+    /**
+     * Gets the string representation of the message without any placeholders.
+     *
+     * @return The formatted message.
+     */
     public String getStringMessage() {
         return message;
     }
 
+    /**
+     * Gets the message as a Component object.
+     *
+     * @return The message as a Component.
+     */
     public Component getMessage() { return ChatUtil.format(message); }
 
+    /**
+     * Gets the message as a Component object with optional placeholders.
+     *
+     * @param placeholder The placeholders to replace in the message template.
+     * @return The formatted message as a Component.
+     */
     public Component getMessage(String... placeholder) { return ChatUtil.format(String.format(message, placeholder)); }
 }

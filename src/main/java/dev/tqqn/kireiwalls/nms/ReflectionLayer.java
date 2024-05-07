@@ -8,25 +8,21 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 /**
- * The ReflectionLayer interface defines methods for interacting with Minecraft's server code.
- * It provides methods for retrieving the server version string, sending packets to players.
+ * The ReflectionLayer interface defines methods for interacting with Minecraft
+ * server reflection to manipulate game entities and events at a low level.
  */
 public interface ReflectionLayer {
 
     /**
      * Sends a packet to the specified player using server reflection.
-     * This method sends a packet object to the given player using server reflection,
-     * allowing for the manipulation of game entities and events at a low level.
      *
-     * @param player      The player to whom the packet is being sent.
-     * @param packet      The packet object to be sent to the player.
+     * @param player The player to whom the packet is being sent.
+     * @param packet The packet object to be sent to the player.
      */
     void sendPacket(Player player, Object packet);
 
     /**
      * Sends a custom name tag to the specified player.
-     * This method creates a custom team with the specified name, color, prefix, and suffix,
-     * adds the player to the team, and sends packets to all online players to display the custom name tag for the player.
      *
      * @param player   The player to whom the custom name tag is being sent.
      * @param teamName The name of the custom team.
@@ -36,12 +32,40 @@ public interface ReflectionLayer {
      */
     void sendNameTag(Player player, String teamName, String color, String prefix, String suffix);
 
+    /**
+     * Sends a sidebar scoreboard to the specified player.
+     *
+     * @param name        The name of the scoreboard.
+     * @param player      The player to whom the scoreboard is being sent.
+     * @param displayName The display name of the scoreboard.
+     * @param board       The collection of lines to be displayed on the scoreboard.
+     */
     void sendSideBarScoreboard(String name, Player player, String displayName, Collection<String> board);
 
+    /**
+     * Updates a line of the sidebar scoreboard for the specified player.
+     *
+     * @param name  The name of the scoreboard.
+     * @param player The player whose scoreboard line is being updated.
+     * @param line  The new line content.
+     * @param index The index of the line to be updated.
+     */
     void updateSidebarScoreboardLine(String name, Player player, String line, int index);
 
+    /**
+     * Removes a player from the sidebar scoreboard.
+     *
+     * @param name   The name of the scoreboard.
+     * @param player The player to be removed from the scoreboard.
+     */
     void removePlayerFromScoreboard(String name, Player player);
 
+    /**
+     * Creates a custom wither entity associated with the specified game team.
+     *
+     * @param gameTeam The game team for which the custom wither is being created.
+     * @return An instance of the custom wither.
+     */
     ICustomWither createCustomWither(GameTeam gameTeam);
 }
 

@@ -8,10 +8,7 @@ import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
-import io.papermc.paper.scoreboard.numbers.StyledFormat;
 import lombok.Getter;
-import lombok.NonNull;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -23,7 +20,9 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-
+/**
+ * Represents the main class of the KireiWalls plugin.
+ */
 @Getter
 public final class KireiWalls extends JavaPlugin {
 
@@ -68,6 +67,9 @@ public final class KireiWalls extends JavaPlugin {
         moduleManager.disable();
     }
 
+    /**
+     * Finds the appropriate reflection layer for the server version.
+     */
     private void findReflectionLayer() {
         String bukkitVersion = Bukkit.getServer().getClass().getPackage().getName();
         String version = bukkitVersion.substring(bukkitVersion.lastIndexOf('.') + 1);
@@ -81,19 +83,26 @@ public final class KireiWalls extends JavaPlugin {
         }
     }
 
+    /**
+     * Initializes the scoreboard update task.
+     */
     private void initScoreboardTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard() == null) return;
                 PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard().update();
                 if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
-                    //KireiWalls.getReflectionLayer().updateHealth(player);
                     updateHealth(player);
                 }
             }
         }, 0, 10L);
     }
 
+    /**
+     * Updates player health on the scoreboard.
+     *
+     * @param player The player whose health to update.
+     */
     private void updateHealth(Player player) {
         Scoreboard scoreboard = player.getScoreboard();
         Objective underName = scoreboard.getObjective("underName");

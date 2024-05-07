@@ -8,13 +8,17 @@ import dev.tqqn.kireiwalls.utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class LobbyState extends AbstractGameState {
+/**
+ * The LobbyState class represents the waiting state of the game in the lobby.
+ */
+public final class LobbyState extends AbstractGameState {
     private boolean canStart = false;
 
     public LobbyState(GameModule gameModule) {
         super(gameModule, GameStates.WAITING, "Lobby");
     }
 
+    @Override
     public void run() {
         --timer;
         if (this.getGameModule().canStart() && timer <= 0) {
@@ -56,12 +60,14 @@ public class LobbyState extends AbstractGameState {
         }
     }
 
+    @Override
     public void onEnable() {
         setTimer(this.getGameModule().getGameSettings().getLobbyCount());
         this.addListener(LobbyListeners.class);
         this.runTaskTimer(this.getGameModule().getPlugin(), 0L, 20L);
     }
 
+    @Override
     public void onDisable() {
         this.cancel();
     }

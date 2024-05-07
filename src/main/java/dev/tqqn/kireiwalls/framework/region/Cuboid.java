@@ -1,19 +1,18 @@
 package dev.tqqn.kireiwalls.framework.region;
 
-import dev.tqqn.kireiwalls.KireiWalls;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class Cuboid {
+/**
+ * The Cuboid class represents a cuboid region in the game world defined by two diagonal points.
+ * It provides various methods to work with and manipulate cuboids.
+ * @Author: https://www.spigotmc.org/threads/region-cuboid.329859/
+ */
+public final class Cuboid {
 
     private final int xMin;
     private final int xMax;
@@ -29,6 +28,12 @@ public class Cuboid {
     private final double zMaxCentered;
     @Getter private final World world;
 
+    /**
+     * Constructs a Cuboid object with two diagonal points defining the boundaries of the cuboid.
+     *
+     * @param point1 The first diagonal point.
+     * @param point2 The second diagonal point.
+     */
     public Cuboid(final Location point1, final Location point2) {
         this.xMin = Math.min(point1.getBlockX(), point2.getBlockX());
         this.xMax = Math.max(point1.getBlockX(), point2.getBlockX());
@@ -45,35 +50,6 @@ public class Cuboid {
         this.zMaxCentered = this.zMax + 0.5;
     }
 
-    public Iterator<Block> blockList() {
-        List<Block> bL = new ArrayList<>();
-        for (int x = this.xMin; x <= this.xMax; ++x) {
-            for (int y = this.yMin; y <= this.yMax; ++y) {
-                for (int z = this.zMin; z <= this.zMax; ++z) {
-                    Block b = this.world.getBlockAt(x, y, z);
-                    bL.add(b);
-                }
-            }
-        }
-        return bL.iterator();
-    }
-
-    public Location getCenter() {
-        return new Location(this.world, (this.xMax - this.xMin) / 2 + this.xMin, (this.yMax - this.yMin) / 2 + this.yMin, (this.zMax - this.zMin) / 2 + this.zMin);
-    }
-
-    public double getDistance() {
-        return this.getPoint1().distance(this.getPoint2());
-    }
-
-    public double getDistanceSquared() {
-        return this.getPoint1().distanceSquared(this.getPoint2());
-    }
-
-    public int getHeight() {
-        return this.yMax - this.yMin + 1;
-    }
-
     public Location getPoint1() {
         return new Location(this.world, this.xMin, this.yMin, this.zMin);
     }
@@ -82,38 +58,9 @@ public class Cuboid {
         return new Location(this.world, this.xMax, this.yMax, this.zMax);
     }
 
-    public Location getRandomLocation() {
-        final ThreadLocalRandom rand = ThreadLocalRandom.current();
-        final int x = rand.nextInt(Math.abs(this.xMax - this.xMin) + 1) + this.xMin;
-        final int y = rand.nextInt(Math.abs(this.yMax - this.yMin) + 1) + this.yMin;
-        final int z = rand.nextInt(Math.abs(this.zMax - this.zMin) + 1) + this.zMin;
-        return new Location(this.world, x, y, z);
-    }
-
-    public int getTotalBlockSize() {
-        return this.getHeight() * this.getXWidth() * this.getZWidth();
-    }
-
-    public int getXWidth() {
-        return this.xMax - this.xMin + 1;
-    }
-
-    public int getZWidth() {
-        return this.zMax - this.zMin + 1;
-    }
-
     public boolean isIn(final Location loc) {
         return loc.getWorld() == this.world && loc.getBlockX() >= this.xMin && loc.getBlockX() <= this.xMax && loc.getBlockY() >= this.yMin && loc.getBlockY() <= this.yMax && loc
                 .getBlockZ() >= this.zMin && loc.getBlockZ() <= this.zMax;
-    }
-
-    public boolean isIn(Player player) {
-        return this.isIn(player.getLocation());
-    }
-
-    public boolean isInWithMarge(final Location loc, final double marge) {
-        return loc.getWorld() == this.world && loc.getX() >= this.xMinCentered - marge && loc.getX() <= this.xMaxCentered + marge && loc.getY() >= this.yMinCentered - marge && loc
-                .getY() <= this.yMaxCentered + marge && loc.getZ() >= this.zMinCentered - marge && loc.getZ() <= this.zMaxCentered + marge;
     }
 
     public List<Location> getHollowCube(double particleDistance) {

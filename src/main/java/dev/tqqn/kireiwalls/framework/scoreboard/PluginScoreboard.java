@@ -11,6 +11,10 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The PluginScoreboard class represents a scoreboard for a player in the plugin.
+ * It provides methods to update, add lines, set, and remove the scoreboard for a player.
+ */
 public abstract class PluginScoreboard {
 
     @Getter
@@ -25,7 +29,8 @@ public abstract class PluginScoreboard {
     /**
      * Constructs a new PluginScoreboard object with the specified name.
      *
-     * @param name The name of the scoreboard.
+     * @param name        The name of the scoreboard.
+     * @param playerModel The PlayerModel associated with the scoreboard.
      */
     public PluginScoreboard(String name, PlayerModel playerModel) {
         this.name = name;
@@ -33,12 +38,16 @@ public abstract class PluginScoreboard {
         this.boardLines = new ArrayList<>();
     }
 
+    /**
+     * Updates the scoreboard.
+     * This method must be implemented by subclasses to define how the scoreboard should be updated.
+     */
     public abstract void update();
 
     /**
-     * Adds a String line to the boardLines Collection.
+     * Adds a line to the scoreboard.
      *
-     * @param line The String for the new line.
+     * @param line The line to add to the scoreboard.
      */
     public void addLines(String line) {
         boardLines.add(line);
@@ -58,11 +67,17 @@ public abstract class PluginScoreboard {
         KireiWalls.getReflectionLayer().sendSideBarScoreboard(name, playerModel.getPlayer(), displayName, boardLines);
     }
 
+    /**
+     * Removes the scoreboard for the associated player model.
+     */
     public void removeScoreboard() {
         playerModel.setCurrentScoreboard(null);
         KireiWalls.getReflectionLayer().removePlayerFromScoreboard(name, playerModel.getPlayer());
     }
 
+    /**
+     * Removes the scoreboard for all players.
+     */
     public void removeScoreboardFromAllPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             PlayerModule.getPlayerModel(player.getUniqueId()).setCurrentScoreboard(null);
@@ -70,6 +85,12 @@ public abstract class PluginScoreboard {
         }
     }
 
+    /**
+     * Updates a specific line of the scoreboard.
+     *
+     * @param line  The new line content.
+     * @param index The index of the line to update.
+     */
     public void updateLine(String line, int index) {
         KireiWalls.getReflectionLayer().updateSidebarScoreboardLine(name, playerModel.getPlayer(), line, index);
     }

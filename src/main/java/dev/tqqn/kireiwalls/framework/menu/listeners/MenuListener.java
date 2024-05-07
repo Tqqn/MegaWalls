@@ -7,7 +7,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
 
-public class MenuListener implements Listener {
+/**
+ * The MenuListener class represents a listener for menu-related events such as clicks and closures.
+ */
+public final class MenuListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {

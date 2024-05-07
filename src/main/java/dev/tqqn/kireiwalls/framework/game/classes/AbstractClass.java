@@ -5,12 +5,19 @@ import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The AbstractClass abstract class defines the basic structure and behavior of a player class in the game.
+ * It provides methods for handling main abilities, secondary abilities, gathering abilities, and other class-related actions.
+ * Classes extending this abstract class must implement specific abilities and behaviors.
+ */
 @Getter
 public abstract class AbstractClass implements Listener {
 
@@ -23,6 +30,14 @@ public abstract class AbstractClass implements Listener {
     @Setter private boolean isPrestigeThree;
     @Setter private boolean isPrestigeFour;
 
+    /**
+     * Constructs an AbstractClass object with the specified name, tag, class options, and inventory slot.
+     *
+     * @param name The name of the class.
+     * @param tag The tag representing the class.
+     * @param classOptions The options associated with the class.
+     * @param inventorySlot The inventory slot for the class icon.
+     */
     public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot) {
         this.name = name;
         this.tag = "[" + tag + "]";
@@ -34,11 +49,28 @@ public abstract class AbstractClass implements Listener {
         this.isPrestigeFour = false;
     }
 
+
     public abstract void onMainAbility();
     public abstract void onAbilityOne();
     public abstract void onAbilityTwo();
     public abstract void onGatheringAbility();
 
+    /**
+     * Checks if the player can use an ability based on energy level.
+     *
+     * @param playerModel The PlayerModel object representing the player.
+     * @return {@code true} if the player can use the ability, {@code false} otherwise.
+     */
+    public boolean canUseAbility(PlayerModel playerModel) {
+        return playerModel.getEnergy() <= 100;
+    }
+
+    /**
+     * Retrieves the ItemStack representing the class icon for the specified player.
+     *
+     * @param playerModel The PlayerModel object representing the player.
+     * @return The ItemStack representing the class icon.
+     */
     public ItemStack getKitIcon(PlayerModel playerModel) {
         List<String> lore = new ArrayList<>();
 
@@ -68,6 +100,12 @@ public abstract class AbstractClass implements Listener {
         return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("&a" + name).setLore(lore).hideAttributes().build();
     }
 
+    /**
+     * Retrieves the tag representing the class for the specified player.
+     *
+     * @param playerModel The PlayerModel object representing the player.
+     * @return The tag representing the class.
+     */
     public String getTag(PlayerModel playerModel) {
         String tagColor = "§7";
         if (playerModel.getCurrentClass().isPrestigeFour) {
@@ -76,4 +114,39 @@ public abstract class AbstractClass implements Listener {
         return tagColor + tag;
     }
 
+    /**
+     * Handles the event when a player hits another player with a bow.
+     *
+     * @param playerModel The PlayerModel object representing the player.
+     */
+    public void onPlayerHitBow(PlayerModel playerModel) {
+        playerModel.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerBowShot());
+    }
+
+    /**
+     * Handles the event when a player hits another player.
+     *
+     * @param damager The PlayerModel object representing the player causing the damage.
+     */
+    public void onPlayerHit(PlayerModel damager) {
+        damager.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit());
+    }
+
+    /**
+     * Handles the event when a player interacts with the environment.
+     *
+     * @param event The PlayerInteractEvent representing the interaction event.
+     */
+    public void onInteract(PlayerInteractEvent event) {
+        // Empty Method to override!
+    }
+
+    /**
+     * Handles the event when a player places a block.
+     *
+     * @param event The BlockPlaceEvent representing the block placement event.
+     */
+    public void onBuild(BlockPlaceEvent event) {
+        //Empty Method to override!
+    }
 }

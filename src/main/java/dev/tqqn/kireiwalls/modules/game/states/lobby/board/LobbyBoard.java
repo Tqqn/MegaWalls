@@ -9,7 +9,10 @@ import dev.tqqn.kireiwalls.utils.MessageUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LobbyBoard extends PluginScoreboard {
+/**
+ * The LobbyBoard class represents the scoreboard displayed in the lobby for players.
+ */
+public final class LobbyBoard extends PluginScoreboard {
 
     public LobbyBoard(PlayerModel playerModel) {
         super("Lobby", playerModel);
@@ -29,6 +32,7 @@ public class LobbyBoard extends PluginScoreboard {
         this.addLines("§edev.tqqn.kireiwalls");
     }
 
+    @Override
     public void update() {
         this.updateLine("§fStarting in §a" + ChatUtil.convertSecondsToHMmSs(LobbyState.getTimer()) + " §fif", 6);
         String selectedClass = "§aRandom!";

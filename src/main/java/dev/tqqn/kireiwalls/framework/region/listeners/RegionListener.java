@@ -10,8 +10,17 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-public class RegionListener implements Listener {
+/**
+ * The RegionListener class listens for events related to player movement, block interactions,
+ * and entity damage within defined regions.
+ */
+public final class RegionListener implements Listener {
 
+    /**
+     * Handles player movement events.
+     *
+     * @param event The PlayerMoveEvent.
+     */
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
@@ -30,6 +39,11 @@ public class RegionListener implements Listener {
         }
     }
 
+    /**
+     * Handles player entry events.
+     *
+     * @param event The PlayerMoveEvent.
+     */
     @EventHandler
     public void onEntry(PlayerMoveEvent event) {
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
@@ -44,6 +58,11 @@ public class RegionListener implements Listener {
         }
     }
 
+    /**
+     * Handles block break events.
+     *
+     * @param event The BlockBreakEvent.
+     */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         for (AbstractRegion abstractRegion : AbstractRegion.getRegions()) {
@@ -53,6 +72,11 @@ public class RegionListener implements Listener {
         }
     }
 
+    /**
+     * Handles block place events.
+     *
+     * @param event The BlockPlaceEvent.
+     */
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         for (AbstractRegion abstractRegion : AbstractRegion.getRegions()) {
@@ -62,6 +86,11 @@ public class RegionListener implements Listener {
         }
     }
 
+    /**
+     * Handles entity damage events.
+     *
+     * @param event The EntityDamageEvent.
+     */
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
@@ -73,6 +102,11 @@ public class RegionListener implements Listener {
         }
     }
 
+    /**
+     * Handles entity damage by entity events.
+     *
+     * @param event The EntityDamageByEntityEvent.
+     */
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player player) {
