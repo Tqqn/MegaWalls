@@ -4,21 +4,14 @@ import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
-import dev.tqqn.kireiwalls.utils.ChatUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.numbers.BlankFormat;
-import net.minecraft.network.chat.numbers.FixedFormat;
-import net.minecraft.network.chat.numbers.NumberFormat;
-import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
@@ -105,5 +98,10 @@ public final class v1_20_R3 implements ReflectionLayer {
     @Override
     public ICustomWither createCustomWither(GameTeam gameTeam) {
         return new CustomWither(gameTeam);
+    }
+
+    @Override
+    public void sendEnergy(Player player, int experience, float progress) {
+        sendPacket(player, new ClientboundSetExperiencePacket(progress, 0, experience));
     }
 }

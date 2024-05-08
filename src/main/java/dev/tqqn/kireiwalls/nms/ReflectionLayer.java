@@ -2,7 +2,6 @@ package dev.tqqn.kireiwalls.nms;
 
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -67,5 +66,13 @@ public interface ReflectionLayer {
      * @return An instance of the custom wither.
      */
     ICustomWither createCustomWither(GameTeam gameTeam);
+
+    /**
+     * Sends a EXP change to the player.
+     * @param player The player -> target
+     * @param experience the experience level that should be showed.
+     * @param progress the experience progress bar (0.0-1.0)
+     */
+    void sendEnergy(Player player, int experience, float progress);
 }
 
