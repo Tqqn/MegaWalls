@@ -1,4 +1,4 @@
-package dev.tqqn.kireiwalls.framework.game.classes;
+package dev.tqqn.kireiwalls.framework.classes;
 
 import lombok.Getter;
 import org.bukkit.Material;
@@ -17,7 +17,7 @@ public final class ClassDescriptions {
     public enum ClassEnergy {
         HEROBRINE(100, 100, 20, 0, 20, 0),
         SKELETON(100, 100, 0, 1, 20, 0),
-        ZOMBIE(100, 100, 12, 0, 10, 10);
+        ZOMBIE(100, 100, 12, 0, 10, 1);
 
         private final int neededEnergyForAbility;
         private final int maxEnergy;
@@ -41,16 +41,18 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassType {
-        HEROBRINE(Material.DIAMOND_SWORD, "&8Regular Class"),
-        SKELETON(Material.BOW, "&8Regular Class"),
-        ZOMBIE(Material.ROTTEN_FLESH, "&8Regular Class");
+        HEROBRINE(Material.DIAMOND_SWORD, "&8Regular Class", "&e"),
+        SKELETON(Material.BOW, "&8Regular Class", "&b"),
+        ZOMBIE(Material.ROTTEN_FLESH, "&8Regular Class", "&2");
 
         private final Material icon;
         private final String type;
+        private final String color;
 
-        ClassType(Material icon, String type) {
+        ClassType(Material icon, String type, String color) {
             this.icon = icon;
             this.type = type;
+            this.color = color;
         }
     }
 
@@ -111,7 +113,7 @@ public final class ClassDescriptions {
     public enum ClassSkillDescription {
         HEROBRINE("&7Wrath", new String[]{"&7･ Unleash the wrath of Herobrine striking all nearby", "&7enemies in a 5 block radius for &a5 &7damage.", "&7･ How to activate: Left Click with your Bow Right Click", "&7with your Sword.", "&7･ Energy Per Hit (Melee & Bow): 25"}),
         SKELETON("&7Explosive Arrow", new String[]{"&7･ You will fire an explosive arrow that deals &a6&7 damage in", "&7 in a 6 block radius and breaks blocks", "&7･ Uncharged bow shots give 50% energy, and Medium", "&7charged bow shots give 75% Energy.", "&7･ How to activate: Left Click with your Bow", "&7･ Energy Per Hit (Melee): 0", "&7･ Energy Per Hit (Bow): 20", "&7･ Energy Per Second (Deathmatch): 1"}),
-        ZOMBIE("&7Circle of Healing", new String[]{"&7･ Heal yourself for &a8 HP &7and nearby teammates in a 5", " block radius for &a5 HP&7.", "&7･ How to Activate: Left Click with your Bow or Right Click", "&7 with your Sword", "&7･ Energy Per Hit (Melee & Bow): 12", "&7･ Energy When Hit (Melee): 1", "&7･ Energy When Hit (Bow): 2"}),;
+        ZOMBIE("&7Circle of Healing", new String[]{"&7･ Heal yourself for &a8 HP &7and nearby teammates in a 5", " &7block radius for &a5 HP&7.", "&7･ How to Activate: Left Click with your Bow or Right Click", "&7 with your Sword", "&7･ Energy Per Hit (Melee & Bow): 12", "&7･ Energy When Hit (Melee): 1", "&7･ Energy When Hit (Bow): 2"}),;
 
         private final String name;
         private final String[] description;

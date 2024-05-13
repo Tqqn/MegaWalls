@@ -3,6 +3,7 @@ package dev.tqqn.kireiwalls.framework.game.teams.wither;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import org.bukkit.scoreboard.Team;
  */
 public final class GameWither {
 
-    private final GameTeam gameTeam;
+    @Getter private final GameTeam gameTeam;
 
     @Getter private int health;
     @Getter @Setter private WitherStatus witherStatus;
@@ -118,6 +119,13 @@ public final class GameWither {
         }
 
         if ((this.health - damage) <= 0) {
+            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+                playerModel.awardWitherDamage(this);
+            }
+            if (!Bukkit.isPrimaryThread()) {
+                Bukkit.getScheduler().runTask(KireiWalls.getInstance(), this::kill);
+                return;
+            }
             kill();
             return;
         }

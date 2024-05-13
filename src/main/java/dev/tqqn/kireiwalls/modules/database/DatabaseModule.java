@@ -18,11 +18,12 @@ import java.util.concurrent.CompletableFuture;
  * The DatabaseModule class extends AbstractModule and represents a module responsible for database-related operations.
  * It manages connections to the database, player data storage, and other database-related tasks.
  */
-@Getter
+
 public final class DatabaseModule extends AbstractModule {
-    private DefaultConfig defaultConfig;
+
     private final IDatabaseDriver databaseDriver = new TestDriver();
-    private PlayerModule playerModule;
+    @Getter private DefaultConfig defaultConfig;
+    @Getter private PlayerModule playerModule;
 
     public DatabaseModule(KireiWalls plugin) {
         super(plugin, "Database");

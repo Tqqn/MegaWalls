@@ -1,10 +1,13 @@
 package dev.tqqn.kireiwalls.utils;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +38,31 @@ public final class ItemBuilder {
      */
     public ItemBuilder setDisplayName(String name) {
         this.itemMeta.setDisplayName(ChatUtil.translateLegacy(name));
+        return this;
+    }
+
+    public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
+        this.itemMeta.addEnchant(enchantment, level, true);
+        return this;
+    }
+
+    public ItemBuilder setUnbreakable() {
+        this.itemMeta.setUnbreakable(true);
+        return this;
+    }
+
+    public ItemBuilder addPDCTag(String key, String tag) {
+        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(KireiWalls.getInstance(), key), PersistentDataType.STRING, tag);
+        return this;
+    }
+
+    public ItemBuilder setLocalizedName(String name) {
+        this.itemMeta.setLocalizedName(name);
+        return this;
+    }
+
+    public ItemBuilder setAmount(int amount) {
+        this.itemStack.setAmount(amount);
         return this;
     }
 
@@ -103,5 +131,9 @@ public final class ItemBuilder {
      */
     public static ItemBuilder getBuilder(Material material) {
         return new ItemBuilder(new ItemStack(material, 1));
+    }
+
+    public static ItemBuilder getBuilder(ItemStack itemStack) {
+        return new ItemBuilder(itemStack);
     }
 }

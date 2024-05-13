@@ -1,5 +1,6 @@
 package dev.tqqn.kireiwalls.nms;
 
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import org.bukkit.entity.Player;
@@ -74,5 +75,9 @@ public interface ReflectionLayer {
      * @param progress the experience progress bar (0.0-1.0)
      */
     void sendEnergy(Player player, int experience, float progress);
+
+    void sendActionBar(PlayerModel playerModel);
+
+    void sendZombieParticle(PlayerModel playerModel);
 }
 

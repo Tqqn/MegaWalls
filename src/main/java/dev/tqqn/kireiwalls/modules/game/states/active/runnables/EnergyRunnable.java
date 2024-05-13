@@ -1,5 +1,6 @@
 package dev.tqqn.kireiwalls.modules.game.states.active.runnables;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,12 +24,12 @@ public final class EnergyRunnable extends BukkitRunnable {
             if (playerModel.isSpectatorMode()) continue;
             if (playerModel.getCurrentClass().canUseAbility(playerModel)) {
                 if (flicker) {
-                    flicker = false;
+                    KireiWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getEnergy(), 0);
                 } else {
-                    flicker = true;
+                    KireiWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getEnergy(), 1);
                 }
-                // TODO: Flickering Energy Bar
             }
         }
+        flicker = !flicker;
     }
 }

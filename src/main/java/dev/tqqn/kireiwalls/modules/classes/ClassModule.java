@@ -2,7 +2,8 @@ package dev.tqqn.kireiwalls.modules.classes;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.listener.ClassesListener;
 import lombok.Getter;
 
 import java.util.*;
@@ -23,9 +24,14 @@ public final class ClassModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
+        addComponent(ClassesListener.class, "");
         classes.add(new Herobrine());
         classes.add(new Skeleton());
         classes.add(new Zombie());
+
+        for (AbstractClass abstractClass : classes) {
+            abstractClass.initKitItems();
+        }
     }
 
     @Override

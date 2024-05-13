@@ -1,17 +1,24 @@
-package dev.tqqn.kireiwalls.framework.game.classes;
+package dev.tqqn.kireiwalls.framework.classes;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * The AbstractClass abstract class defines the basic structure and behavior of a player class in the game.
@@ -25,6 +32,9 @@ public abstract class AbstractClass implements Listener {
     private final String tag;
     private final ClassOptions classOptions;
     private final int inventorySlot;
+    private final Map<Integer, ItemStack> kitItems;
+    private final Collection<ItemStack> kitArmor;
+
     @Setter private boolean isPrestigeOne;
     @Setter private boolean isPrestigeTwo;
     @Setter private boolean isPrestigeThree;
@@ -43,17 +53,24 @@ public abstract class AbstractClass implements Listener {
         this.tag = "[" + tag + "]";
         this.classOptions = classOptions;
         this.inventorySlot = inventorySlot;
+        this.kitItems = new HashMap<>();
+        this.kitArmor = new ArrayList<>();
         this.isPrestigeOne = false;
         this.isPrestigeTwo = false;
         this.isPrestigeThree = false;
         this.isPrestigeFour = false;
     }
 
+    public abstract void initKitItems();
+    public abstract void executeAbility(PlayerModel playerModel);
+    public abstract String getActionBar(PlayerModel playerModel);
 
-    public abstract void onMainAbility();
-    public abstract void onAbilityOne();
-    public abstract void onAbilityTwo();
-    public abstract void onGatheringAbility();
+    public void applyKit(PlayerModel playerModel) {
+        for (Map.Entry<Integer, ItemStack> entry : kitItems.entrySet()) {
+            playerModel.getPlayer().getInventory().setItem(entry.getKey(), entry.getValue());
+        }
+        playerModel.getPlayer().getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
+    }
 
     /**
      * Checks if the player can use an ability based on energy level.
@@ -62,7 +79,16 @@ public abstract class AbstractClass implements Listener {
      * @return {@code true} if the player can use the ability, {@code false} otherwise.
      */
     public boolean canUseAbility(PlayerModel playerModel) {
-        return playerModel.getEnergy() <= 100;
+        return playerModel.getEnergy() >= 100;
+    }
+
+    public List<String> getKitAbilityLore() {
+        List<String> lore = new ArrayList<>();
+        lore.add("&7Ability: &c" + classOptions.getClassSkillDescription().getName());
+        lore.add(" ");
+        lore.addAll(Arrays.asList(classOptions.getClassSkillDescription().getDescription()));
+
+        return lore;
     }
 
     /**
@@ -128,8 +154,20 @@ public abstract class AbstractClass implements Listener {
      *
      * @param damager The PlayerModel object representing the player causing the damage.
      */
-    public void onPlayerHit(PlayerModel damager) {
+    public void onChargedPlayerHit(PlayerModel damager) {
         damager.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit());
+    }
+
+    public void onNonChargedPlayerHit(PlayerModel damager) {
+        damager.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit() / 2);
+    }
+
+    public void onTakenHit(PlayerModel playerModel) {
+        //Empty Method to override!
+    }
+
+    public void onTakenBowHit(PlayerModel playerModel) {
+        // Empty Method to override!
     }
 
     /**
@@ -148,5 +186,30 @@ public abstract class AbstractClass implements Listener {
      */
     public void onBuild(BlockPlaceEvent event) {
         //Empty Method to override!
+    }
+
+    public void onBreak(BlockBreakEvent event) {
+        //Empty Method to override!
+    }
+
+    public void onPotionConsume(PlayerItemConsumeEvent event) {
+        if (event.getItem().getType() != Material.POTION) return;
+        final Player player = event.getPlayer();
+        ItemMeta itemMeta = event.getItem().getItemMeta();
+        if (!itemMeta.getPersistentDataContainer().has(new NamespacedKey(KireiWalls.getInstance(), "heal" + getName()))) return;
+        double heal = Integer.parseInt(itemMeta.getPersistentDataContainer().get(new NamespacedKey(KireiWalls.getInstance(), "heal" + getName()), PersistentDataType.STRING));
+        if (heal == 0) return;
+
+        double newHealth = player.getHealth() + heal;
+        if (newHealth >= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
+            newHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        }
+
+        player.setHealth(newHealth);
+        extraPotionConsume(event);
+    }
+
+    public void extraPotionConsume(PlayerItemConsumeEvent event) {
+        // Empty Method to override!
     }
 }

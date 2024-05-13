@@ -3,8 +3,10 @@ package dev.tqqn.kireiwalls.modules.game.states.active;
 import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.listeners.ActiveListeners;
+import dev.tqqn.kireiwalls.modules.game.states.active.runnables.ActionBarRunnable;
 import dev.tqqn.kireiwalls.modules.game.states.active.runnables.EnergyRunnable;
 import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
@@ -20,10 +22,12 @@ public final class ActiveState extends AbstractGameState {
     private static Cycle currentCycle;
     @Getter
     private static int cycleTimer;
+    private int witherDamageTimer;
     private boolean areWithersDead;
     private boolean initHealth;
 
     private EnergyRunnable energyRunnable;
+    private ActionBarRunnable actionBarRunnable;
 
     public ActiveState(GameModule gameModule) {
         super(gameModule, GameStates.ACTIVE, "Active");
@@ -36,17 +40,21 @@ public final class ActiveState extends AbstractGameState {
         this.addListener(ActiveListeners.class);
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
         currentCycle = ActiveState.Cycle.PREPARE;
-        cycleTimer = 60;
+        cycleTimer = 10;
         this.areWithersDead = false;
         this.initHealth = false;
         this.energyRunnable = new EnergyRunnable(this.getGameModule());
-        this.energyRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 10L);
+        this.actionBarRunnable = new ActionBarRunnable(this.getGameModule());
+
+        this.energyRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 5L);
+        this.actionBarRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 10L);
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
     }
 
     @Override
     public void onDisable() {
         this.energyRunnable.cancel();
+        this.actionBarRunnable.cancel();
         this.cancel();
     }
 
@@ -64,6 +72,7 @@ public final class ActiveState extends AbstractGameState {
                 cycleTimer = 0;
                 currentCycle = ActiveState.Cycle.PRE_DM;
                 getGameModule().wallsFall();
+                witherDamageTimer = 5;
                 System.out.println("Walls fall");
             }
         }
@@ -79,6 +88,20 @@ public final class ActiveState extends AbstractGameState {
 
             if (cycleTimer <= 0) {
                 currentCycle = ActiveState.Cycle.DM;
+            }
+        }
+
+        if (currentCycle == Cycle.PRE_DM) {
+            witherDamageTimer--;
+            if (witherDamageTimer == 0) {
+                witherDamageTimer = 5;
+                for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
+                    if (gameTeam.getGameWither().getWitherStatus() != GameWither.WitherStatus.DEATH) {
+                        if (gameTeam.getGameWither().getHealth()-2 >= 1) {
+                            gameTeam.getGameWither().damage(2);
+                        }
+                    }
+                }
             }
         }
 

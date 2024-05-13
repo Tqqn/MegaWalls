@@ -1,7 +1,7 @@
-package dev.tqqn.kireiwalls.framework.game.classes.menu;
+package dev.tqqn.kireiwalls.framework.classes.menu;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.menu.Menu;
 import dev.tqqn.kireiwalls.framework.menu.MenuButton;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;

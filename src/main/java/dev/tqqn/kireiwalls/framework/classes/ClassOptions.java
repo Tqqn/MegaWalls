@@ -1,4 +1,4 @@
-package dev.tqqn.kireiwalls.framework.game.classes;
+package dev.tqqn.kireiwalls.framework.classes;
 
 import lombok.Getter;
 

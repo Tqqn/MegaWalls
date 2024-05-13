@@ -1,10 +1,13 @@
 package dev.tqqn.kireiwalls.nms.v1_20_R3;
 
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.BlankFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -24,6 +27,7 @@ public final class v1_20_R3 implements ReflectionLayer {
 
     @Override
     public void sendPacket(Player player, Object packetObject) {
+        if (player == null) return;
         Packet packet = (Packet) packetObject;
         ((CraftPlayer)player).getHandle().connection.send(packet);
     }
@@ -47,7 +51,6 @@ public final class v1_20_R3 implements ReflectionLayer {
             playerTeam.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
             created = false;
         }
-
 
         ClientboundSetPlayerTeamPacket add = ClientboundSetPlayerTeamPacket.createPlayerPacket(playerTeam, player.getName(), ClientboundSetPlayerTeamPacket.Action.ADD);
         ClientboundSetPlayerTeamPacket createTeam = ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(playerTeam, true);
@@ -103,5 +106,25 @@ public final class v1_20_R3 implements ReflectionLayer {
     @Override
     public void sendEnergy(Player player, int experience, float progress) {
         sendPacket(player, new ClientboundSetExperiencePacket(progress, 0, experience));
+    }
+
+    @Override
+    public void sendActionBar(PlayerModel playerModel) {
+        Component message = CraftChatMessage.fromStringOrNull(" ");
+        if (!playerModel.isSpectatorMode()) {
+            message = CraftChatMessage.fromStringOrNull(playerModel.getCurrentClass().getActionBar(playerModel));
+        }
+        sendPacket(playerModel.getPlayer(), new ClientboundSetActionBarTextPacket(message));
+    }
+
+    @Override
+    public void sendZombieParticle(PlayerModel playerModel) {
+        final Player player = playerModel.getPlayer();
+        if (player == null) return;
+
+        ClientboundLevelParticlesPacket clientboundLevelParticlesPacket = new ClientboundLevelParticlesPacket(ParticleTypes.ANGRY_VILLAGER, false, player.getX(), player.getY()+1, player.getZ(), 0, 0, 0, 10, 1);
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            sendPacket(players, clientboundLevelParticlesPacket);
+        }
     }
 }

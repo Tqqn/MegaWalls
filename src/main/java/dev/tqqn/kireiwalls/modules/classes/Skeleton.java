@@ -1,8 +1,9 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
-import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.game.classes.ClassDescriptions;
-import dev.tqqn.kireiwalls.framework.game.classes.ClassOptions;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
+import dev.tqqn.kireiwalls.framework.classes.ClassOptions;
 
 import java.util.Arrays;
 
@@ -16,15 +17,18 @@ public final class Skeleton extends AbstractClass {
         super("Skeleton", "SKE", new ClassOptions(ClassDescriptions.ClassEnergy.SKELETON, ClassDescriptions.ClassType.SKELETON, ClassDescriptions.ClassDifficulty.SKELETON, Arrays.asList(ClassDescriptions.ClassStyle.RANGED, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.SKELETON, ClassDescriptions.ClassSkillDescription.SKELETON), 4);
     }
 
-    public void onMainAbility() {
+    @Override
+    public void initKitItems() {
+
     }
 
-    public void onAbilityOne() {
+    @Override
+    public void executeAbility(PlayerModel playerModel) {
+
     }
 
-    public void onAbilityTwo() {
-    }
-
-    public void onGatheringAbility() {
+    @Override
+    public String getActionBar(PlayerModel playerModel) {
+        return " ";
     }
 }

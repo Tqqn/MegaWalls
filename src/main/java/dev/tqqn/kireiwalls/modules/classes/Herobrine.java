@@ -1,8 +1,9 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
-import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.game.classes.ClassDescriptions;
-import dev.tqqn.kireiwalls.framework.game.classes.ClassOptions;
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
+import dev.tqqn.kireiwalls.framework.classes.ClassOptions;
 
 import java.util.Arrays;
 
@@ -18,18 +19,17 @@ public final class Herobrine extends AbstractClass {
     }
 
     @Override
-    public void onMainAbility() {
+    public void initKitItems() {
+
     }
 
     @Override
-    public void onAbilityOne() {
+    public void executeAbility(PlayerModel playerModel) {
+
     }
 
     @Override
-    public void onAbilityTwo() {
-    }
-
-    @Override
-    public void onGatheringAbility() {
+    public String getActionBar(PlayerModel playerModel) {
+        return " ";
     }
 }

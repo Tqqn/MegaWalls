@@ -18,6 +18,7 @@ public final class WitherDamageByPlayerEvent extends Event implements Cancellabl
     private static final HandlerList handlers = new HandlerList();
     @Getter private final GameTeam witherTeam;
     @Getter private final PlayerModel attacker;
+    @Getter private final int damage;
 
     private boolean cancelled = false;
 
@@ -27,9 +28,10 @@ public final class WitherDamageByPlayerEvent extends Event implements Cancellabl
      * @param witherTeam The team that the wither belongs to.
      * @param attacker The player model of the attacker.
      */
-    public WitherDamageByPlayerEvent(GameTeam witherTeam, PlayerModel attacker) {
+    public WitherDamageByPlayerEvent(GameTeam witherTeam, PlayerModel attacker, int damage) {
         this.witherTeam = witherTeam;
         this.attacker = attacker;
+        this.damage = damage;
     }
 
     @Override

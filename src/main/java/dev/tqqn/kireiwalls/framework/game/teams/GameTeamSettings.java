@@ -25,7 +25,7 @@ public final class GameTeamSettings {
      * @param spawnLocation The spawn location of the team.
      * @param witherLocation The wither location of the team.
      */
-    public GameTeamSettings(TeamProtectionRegion teamProtectionRegion, WitherProtectionRegion witherProtectionRegion, Location spawnLocation, Location witherLocation) {
+    public GameTeamSettings(String mapName, TeamProtectionRegion teamProtectionRegion, WitherProtectionRegion witherProtectionRegion, Location spawnLocation, Location witherLocation) {
         this.teamProtectionRegion = teamProtectionRegion;
         this.witherProtectionRegion = witherProtectionRegion;
         this.spawnLocation = spawnLocation;

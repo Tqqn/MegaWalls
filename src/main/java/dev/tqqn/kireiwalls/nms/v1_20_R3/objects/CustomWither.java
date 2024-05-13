@@ -65,7 +65,7 @@ public final class CustomWither extends WitherBoss implements ICustomWither {
         Entity attacker = damagesource.getEntity().getBukkitEntity();
 
         if (attacker instanceof org.bukkit.entity.Player player) {
-            WitherDamageByPlayerEvent witherDamageByPlayerEvent = new WitherDamageByPlayerEvent(gameTeam, PlayerModule.getPlayerModel(player.getUniqueId()));
+            WitherDamageByPlayerEvent witherDamageByPlayerEvent = new WitherDamageByPlayerEvent(gameTeam, PlayerModule.getPlayerModel(player.getUniqueId()), Math.round(damage));
             Bukkit.getPluginManager().callEvent(witherDamageByPlayerEvent);
 
             if (witherDamageByPlayerEvent.isCancelled()) return false;

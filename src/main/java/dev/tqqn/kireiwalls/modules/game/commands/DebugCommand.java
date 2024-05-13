@@ -3,7 +3,7 @@ package dev.tqqn.kireiwalls.modules.game.commands;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.game.classes.menu.ClassChooseMenu;
+import dev.tqqn.kireiwalls.framework.classes.menu.ClassChooseMenu;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;

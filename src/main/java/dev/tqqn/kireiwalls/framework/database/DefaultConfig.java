@@ -52,8 +52,7 @@ public final class DefaultConfig {
                 plugin.getConfig().getDouble("teams." + team + ".spawn-location.y"),
                 plugin.getConfig().getDouble("teams." + team + ".spawn-location.z"),
                 (float) plugin.getConfig().getDouble("teams." + team + ".spawn-location.yaw"),
-                (float) plugin.getConfig().getDouble("teams." + team + ".spawn-location.pitch")
-                );
+                (float) plugin.getConfig().getDouble("teams." + team + ".spawn-location.pitch"));
     }
 
     public Location getTeamWitherLocation(String team) {
@@ -62,8 +61,7 @@ public final class DefaultConfig {
                 plugin.getConfig().getDouble("teams." + team + ".wither-location.y"),
                 plugin.getConfig().getDouble("teams." + team + ".wither-location.z"),
                 (float) plugin.getConfig().getDouble("teams." + team + ".wither-location.yaw"),
-                (float) plugin.getConfig().getDouble("teams." + team + ".wither-location.pitch")
-        );
+                (float) plugin.getConfig().getDouble("teams." + team + ".wither-location.pitch"));
     }
 
     public Cuboid getCuboid(String path) {
@@ -75,8 +73,7 @@ public final class DefaultConfig {
                 new Location(Bukkit.getWorld(plugin.getConfig().getString(path + ".point-2.world")),
                         plugin.getConfig().getDouble(path + ".point-2.x"),
                         plugin.getConfig().getDouble(path + ".point-2.y"),
-                        plugin.getConfig().getDouble(path + ".point-2.z"))
-        );
+                        plugin.getConfig().getDouble(path + ".point-2.z")));
     }
 
     public Cuboid getTeamProtectionCuboid(String team) {

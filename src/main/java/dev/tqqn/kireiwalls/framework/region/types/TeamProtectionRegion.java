@@ -43,6 +43,7 @@ public final class TeamProtectionRegion extends AbstractRegion {
     public void onExit(Player player) {
 
         final PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
+        if (playerModel.getGameTeam() != gameTeam) return;
         if (playerModel.isProtected()) {
             player.sendMessage(ChatUtil.format("<red>You lost your protection because you left your spawn zone!"));
             playerModel.setProtected(false);

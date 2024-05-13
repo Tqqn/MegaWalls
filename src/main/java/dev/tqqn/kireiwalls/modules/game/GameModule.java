@@ -6,8 +6,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.util.gson.BlockVectorAdapter;
-import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
@@ -23,6 +21,7 @@ import dev.tqqn.kireiwalls.modules.game.commands.BuildCommand;
 import dev.tqqn.kireiwalls.modules.game.commands.DebugCommand;
 import dev.tqqn.kireiwalls.modules.game.commands.SpectateCommand;
 import dev.tqqn.kireiwalls.modules.game.commands.WitherDebugCommand;
+import dev.tqqn.kireiwalls.modules.game.disabledfunctions.DisabledFunctionsListener;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.game.states.active.board.ActiveBoard;
 import dev.tqqn.kireiwalls.modules.game.states.lobby.LobbyState;
@@ -49,29 +48,25 @@ import java.util.concurrent.ThreadLocalRandom;
  * The GameModule class manages the game state and settings.
  */
 public final class GameModule extends AbstractModule {
-    @Getter
-    private static AbstractGameState currentState;
-    @Getter
-    private GameSettings gameSettings;
+    @Getter private static AbstractGameState currentState;
+    @Getter private static final Set<PlayerModel> ingamePlayers = new HashSet<>();
+    @Getter private GameSettings gameSettings;
     private final DatabaseModule databaseModule;
     private TeamModule teamModule;
-    @Getter
-    private final Set<PlayerModel> ingamePlayers;
-    @Getter
-    private final Set<PlayerModel> spectators;
+    @Getter private final Set<PlayerModel> spectators;
     private EditSession[] wallsEditSession;
 
     public GameModule(KireiWalls plugin, DatabaseModule databaseModule) {
         super(plugin, "Game");
         currentState = new LobbyState(this);
         this.spectators = new HashSet<>();
-        this.ingamePlayers = new HashSet<>();
         this.databaseModule = databaseModule;
     }
 
     @Override
     public void onEnable() {
         this.teamModule = (TeamModule)this.getPlugin().getModuleManager().getModule(TeamModule.class);
+        this.addComponent(DisabledFunctionsListener.class, "");
         this.addComponent(DebugCommand.class, "debug");
         this.addComponent(WitherDebugCommand.class, "witherdebug");
         this.addComponent(BuildCommand.class, "build");
@@ -95,7 +90,7 @@ public final class GameModule extends AbstractModule {
             });
         }
 
-        this.getIngamePlayers().forEach((playerModel) -> {
+        getIngamePlayers().forEach((playerModel) -> {
             this.databaseModule.savePlayer(playerModel);
             if (playerModel.getPlayer() != null) {
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
@@ -133,7 +128,8 @@ public final class GameModule extends AbstractModule {
 
     /** Shuffles players and assigns teams. */
     public void shufflePlayers() {
-        for (PlayerModel playerModel : this.getIngamePlayers()) {
+        for (PlayerModel playerModel : getIngamePlayers()) {
+            if (playerModel.getPlayer() == null) return;
 
             if (playerModel.getCurrentClass() == null) {
                 playerModel.setCurrentClass(ClassModule.getClasses().get(ThreadLocalRandom.current().nextInt(ClassModule.getClasses().size()))); // Random Class
@@ -174,7 +170,7 @@ public final class GameModule extends AbstractModule {
         onTab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         onTab.setRenderType(RenderType.INTEGER);
 
-        for (PlayerModel playerModel : this.getIngamePlayers()) {
+        for (PlayerModel playerModel : getIngamePlayers()) {
             Score score = onTab.getScore(playerModel.getPlayer());
             int maxHealth = (int) playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
             score.numberFormat(NumberFormat.styled(Style.style().color(TextColor.color(ChatUtil.getHealthColor(maxHealth, (int) playerModel.getPlayer().getHealth()))).build()));
@@ -184,13 +180,14 @@ public final class GameModule extends AbstractModule {
     /** Spawns players in their team locations. */
     private void spawnPlayers() {
         initHealthBelowName();
-        for (PlayerModel playerModel : this.getIngamePlayers()) {
+        for (PlayerModel playerModel : getIngamePlayers()) {
             if (!playerModel.isSpectatorMode()) {
                 double health = 40.0;
                 if (playerModel.getCurrentClass().isPrestigeOne()) health = 44.0;
                 playerModel.getPlayer().teleport(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
                 playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                playerModel.getCurrentClass().applyKit(playerModel);
             }
         }
     }

@@ -1,21 +1,21 @@
 package dev.tqqn.kireiwalls.framework.database.models;
 
-import com.fastasyncworldedit.bukkit.adapter.DelegateLock;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.game.classes.AbstractClass;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
+import dev.tqqn.kireiwalls.utils.ChatUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,6 +38,7 @@ public final class PlayerModel {
     @Setter private boolean isProtected;
     private int energy;
 
+    private final Map<GameWither, Integer> witherDamageMap;
     private int coins;
 
     private boolean buildMode;
@@ -58,6 +59,7 @@ public final class PlayerModel {
         this.isAlive = false;
         this.isProtected = true;
         this.energy = 0;
+        this.witherDamageMap = new HashMap<>();
         this.coins = 0;
         this.buildMode = false;
         this.spectatorMode = false;
@@ -87,9 +89,33 @@ public final class PlayerModel {
         this.coins += coins;
     }
 
+    public void addWitherDamage(GameWither gameWither, int damage) {
+        if (witherDamageMap.containsKey(gameWither)) {
+            witherDamageMap.put(gameWither, witherDamageMap.get(gameWither)+damage);
+            return;
+        }
+
+        witherDamageMap.put(gameWither, damage);
+    }
+
+    public void awardWitherDamage(GameWither gameWither) {
+        if (!witherDamageMap.containsKey(gameWither)) return;
+        final int damage = witherDamageMap.get(gameWither);
+
+        increaseCoins(damage);
+        if (getPlayer() == null) return;
+
+        getPlayer().sendMessage(ChatUtil.format("<green>You have received <gold>" + damage + " coins<green> for damaging the " + gameWither.getGameTeam().getColor() + "[" + gameWither.getGameTeam().getName() + "] Wither<green>!"));
+    }
+
     public void increaseEnergy(int energy) {
-        if ((this.energy + energy) < 100) return;
-        this.energy += energy;
+        if ((this.energy + energy) > 100) {
+            this.energy = 100;
+        } else {
+            this.energy += energy;
+        }
+        System.out.println("Increased energy: " + this.energy);
+        KireiWalls.getReflectionLayer().sendEnergy(getPlayer(), this.energy, (float) ((double) this.energy / 100));
     }
 
     public void decreaseEnergy(int energy) {
@@ -98,6 +124,7 @@ public final class PlayerModel {
 
     public void resetEnergy() {
         this.energy = 0;
+        KireiWalls.getReflectionLayer().sendEnergy(getPlayer(), this.energy, (float) ((double) this.energy / 100));
     }
 
     /**
@@ -152,6 +179,8 @@ public final class PlayerModel {
         this.spectatorMode = spectatorMode;
 
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+
+            KireiWalls.getReflectionLayer().sendActionBar(this);
 
             if (gameTeam != null) {
                 gameTeam.removeAlive(this);

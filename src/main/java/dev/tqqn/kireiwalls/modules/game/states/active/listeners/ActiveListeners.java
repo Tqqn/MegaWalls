@@ -19,12 +19,15 @@ import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * The ActiveListeners class implements various event listeners for active gameplay.
@@ -135,6 +138,12 @@ public final class ActiveListeners implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         event.deathMessage(Component.empty());
+        if (event.getDrops().isEmpty()) return;
+
+        event.getDrops().removeIf(itemStack -> {
+            if (!itemStack.getItemMeta().hasLocalizedName()) return false;
+            return itemStack.getItemMeta().getLocalizedName().equals("kit");
+        });
     }
 
     /**
@@ -190,6 +199,7 @@ public final class ActiveListeners implements Listener {
         } else {
             event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
             playerModel.setProtected(true);
+            playerModel.getCurrentClass().applyKit(playerModel);
         }
     }
 
@@ -202,7 +212,11 @@ public final class ActiveListeners implements Listener {
     public void onWitherDamage(WitherDamageByPlayerEvent event) {
         if (event.getAttacker().getGameTeam() == event.getWitherTeam()) {
             event.setCancelled(true);
+            return;
         }
+
+        event.getAttacker().addWitherDamage(event.getWitherTeam().getGameWither(), event.getDamage());
+
     }
 
     /**
@@ -245,5 +259,20 @@ public final class ActiveListeners implements Listener {
                 Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> damagedPlayer.spigot().respawn(), 2L);
             }
         }
+    }
+
+    @EventHandler
+    public void onDeath(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (player.getHealth() - event.getFinalDamage() > 0) return;
+        if (event.getCause() == EntityDamageEvent.DamageCause.CONTACT || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return;
+        GamePlayerKilledEvent gamePlayerKilledEvent = new GamePlayerKilledEvent(PlayerModule.getPlayerModel(event.getEntity().getUniqueId()), null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+        Bukkit.getPluginManager().callEvent(gamePlayerKilledEvent);
+    }
+
+    @EventHandler
+    public void onPotionConsume(PlayerItemConsumeEvent event) {
+        if (event.getItem().getType() != Material.POTION) return;
+        Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> event.getPlayer().getInventory().remove(Material.GLASS_BOTTLE), 1L);
     }
 }
