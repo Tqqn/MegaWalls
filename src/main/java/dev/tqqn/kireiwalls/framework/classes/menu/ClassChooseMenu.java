@@ -1,10 +1,12 @@
 package dev.tqqn.kireiwalls.framework.classes.menu;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.menu.Menu;
 import dev.tqqn.kireiwalls.framework.menu.MenuButton;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
@@ -98,6 +100,6 @@ public final class ClassChooseMenu extends Menu {
 
     @Override
     public void onClose(Player viewer) {
-
+        KireiWalls.getInstance().getModuleManager().getModule(GameModule.class).giveLobbyItems(PlayerModule.getPlayerModel(viewer.getUniqueId()));
     }
 }

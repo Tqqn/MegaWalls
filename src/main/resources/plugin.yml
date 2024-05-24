@@ -3,6 +3,12 @@ version: '${project.version}'
 main: dev.tqqn.kireiwalls.KireiWalls
 api-version: '1.20'
 commands:
+  setup:
+    description: Setup command
+    usage: /<command>
+  select:
+    description: Select command
+    usage: /<command>
   debug:
     description: Debug command
     usage: /<command>
@@ -14,4 +20,7 @@ commands:
     usage: /<command>
   spectate:
     description: Spectate command
+    usage: /<command>
+  shout:
+    description: Shout command
     usage: /<command>

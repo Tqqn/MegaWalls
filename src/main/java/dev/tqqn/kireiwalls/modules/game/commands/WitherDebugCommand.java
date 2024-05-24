@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game.commands;
 
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.modules.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

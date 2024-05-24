@@ -1,15 +1,21 @@
 package dev.tqqn.kireiwalls.framework.database.models;
 
 import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
+import dev.tqqn.kireiwalls.modules.database.drivers.mongo.MongoItem;
+import dev.tqqn.kireiwalls.modules.database.drivers.mongo.MongoObject;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
+import dev.tqqn.kireiwalls.utils.MessageUtil;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -23,26 +29,27 @@ import java.util.UUID;
  * It encapsulates attributes and methods related to player statistics, game state, and behavior.
  */
 @Getter
-public final class PlayerModel {
+@MongoItem("players")
+public final class PlayerModel extends MongoObject<UUID> {
 
     private final UUID uuid;
     @Setter private String name;
-    private final PlayerStats playerStats;
+    private transient final PlayerStats playerStats;
 
-    @Setter private AbstractClass currentClass;
+    private transient AbstractClass currentClass;
 
-    @Setter private PluginScoreboard currentScoreboard = null;
+    @Setter private transient PluginScoreboard currentScoreboard = null;
 
-    @Setter private GameTeam gameTeam;
-    @Setter private boolean isAlive;
-    @Setter private boolean isProtected;
-    private int energy;
+    @Setter private transient GameTeam gameTeam;
+    @Setter private transient boolean isAlive;
+    @Setter private transient boolean isProtected;
+    private transient int energy;
 
-    private final Map<GameWither, Integer> witherDamageMap;
-    private int coins;
+    private transient final Map<GameWither, Integer> witherDamageMap;
+    private transient int coins;
 
-    private boolean buildMode;
-    private boolean spectatorMode;
+    private transient boolean buildMode;
+    private transient boolean spectatorMode;
 
     /**
      * Constructs a PlayerModel object with the specified UUID, name, and player statistics.
@@ -52,6 +59,7 @@ public final class PlayerModel {
      * @param playerStats The statistics of the player.
      */
     public PlayerModel(UUID uuid, String name, PlayerStats playerStats) {
+        super(uuid);
         this.uuid = uuid;
         this.name = name;
         this.playerStats = playerStats;
@@ -178,9 +186,11 @@ public final class PlayerModel {
     public void setSpectatorMode(boolean spectatorMode) {
         this.spectatorMode = spectatorMode;
 
+        if (getPlayer() == null) return;
+
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
 
-            KireiWalls.getReflectionLayer().sendActionBar(this);
+            if (this.currentClass != null) KireiWalls.getReflectionLayer().sendActionBar(this);
 
             if (gameTeam != null) {
                 gameTeam.removeAlive(this);
@@ -191,12 +201,13 @@ public final class PlayerModel {
 
             sendSpectatorTag(spectatorMode);
 
-            GameModule gameModule = (GameModule) KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
-
-            for (PlayerModel playerModel : gameModule.getIngamePlayers()) {
+            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
                 if (playerModel == this) continue;
+                if (playerModel.getPlayer() == null) continue;
 
                 if (spectatorMode) { // if spectator: show all spectators to new spectator, show all spectators to new spectator.
+                    GameModule.getSpectators().add(this);
+
                     if (playerModel.isSpectatorMode()) {
                         getPlayer().showPlayer(KireiWalls.getInstance(), playerModel.getPlayer());
                         playerModel.getPlayer().showPlayer(KireiWalls.getInstance(), getPlayer());
@@ -204,13 +215,51 @@ public final class PlayerModel {
                     }
 
                     playerModel.getPlayer().hidePlayer(KireiWalls.getInstance(), getPlayer());
+                    GameModule.getSpectators().add(this);
                 } else { // if no spectator: show non spectators the user, hide all spectators from removed spectator
+                    GameModule.getSpectators().remove(this);
+
                     playerModel.getPlayer().showPlayer(KireiWalls.getInstance(), getPlayer());
+                    GameModule.getSpectators().remove(this);
                     if (playerModel.isSpectatorMode()) {
                         getPlayer().hidePlayer(KireiWalls.getInstance(), playerModel.getPlayer());
                     }
                 }
             }
+        }
+    }
+
+    public void setCurrentClass(AbstractClass abstractClass) {
+        if (abstractClass == getCurrentClass()) return;
+        this.currentClass = abstractClass;
+        if (abstractClass != null) abstractClass.applySkin(this);
+        if (abstractClass == null) KireiWalls.getReflectionLayer().changeSkin(Skins.RANDOM, this);
+    }
+
+    public NamedTextColor getChatColor() {
+        if (getPlayer() == null) return null;
+        if (getPlayer().hasPermission("mw.admin")) {
+            return NamedTextColor.WHITE;
+        }
+        return NamedTextColor.GRAY;
+    }
+
+    public String getRank() {
+        if (getPlayer() == null) return "";
+        if (getPlayer().hasPermission("mw.admin")) {
+            return MessageUtil.ADMIN_PREFIX.getStringMessage() + " ";
+        }
+
+        return "<gray>";
+    }
+
+    public Component getChatMessage(Component text) {
+
+        if (GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
+            return ChatUtil.format(MessageUtil.CHAT_LOBBY_FORMAT.getStringMessage(getRank(), getName())).append(text.color(getChatColor()));
+        } else {
+            String spectator = isSpectatorMode() ? MessageUtil.SPECTATOR_PREFIX.getStringMessage() + " " : "";
+            return ChatUtil.format(spectator + MessageUtil.CHAT_TEAM_FORMAT.getStringMessage(getGameTeam().getColor(), getGameTeam().getChatPrefix(), getRank(), getName())).append(text.color(getChatColor()));
         }
     }
 }

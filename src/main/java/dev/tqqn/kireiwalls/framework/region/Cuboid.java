@@ -20,12 +20,6 @@ public final class Cuboid {
     private final int yMax;
     private final int zMin;
     private final int zMax;
-    private final double xMinCentered;
-    private final double xMaxCentered;
-    private final double yMinCentered;
-    private final double yMaxCentered;
-    private final double zMinCentered;
-    private final double zMaxCentered;
     @Getter private final World world;
 
     /**
@@ -42,12 +36,6 @@ public final class Cuboid {
         this.zMin = Math.min(point1.getBlockZ(), point2.getBlockZ());
         this.zMax = Math.max(point1.getBlockZ(), point2.getBlockZ());
         this.world = point1.getWorld();
-        this.xMinCentered = this.xMin + 0.5;
-        this.xMaxCentered = this.xMax + 0.5;
-        this.yMinCentered = this.yMin + 0.5;
-        this.yMaxCentered = this.yMax + 0.5;
-        this.zMinCentered = this.zMin + 0.5;
-        this.zMaxCentered = this.zMax + 0.5;
     }
 
     public Location getPoint1() {

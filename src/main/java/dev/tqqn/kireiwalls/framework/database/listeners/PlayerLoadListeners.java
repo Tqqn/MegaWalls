@@ -31,8 +31,8 @@ public final class PlayerLoadListeners implements Listener {
     private final ConcurrentHashMap<UUID, PlayerModel> joiningPlayers = new ConcurrentHashMap<>();
 
     public PlayerLoadListeners() {
-        this.databaseModule = (DatabaseModule) KireiWalls.getInstance().getModuleManager().getModule(DatabaseModule.class);
-        this.playerModule = (PlayerModule) databaseModule.getPlugin().getModuleManager().getModule(PlayerModule.class);
+        this.databaseModule = KireiWalls.getInstance().getModuleManager().getModule(DatabaseModule.class);
+        this.playerModule = databaseModule.getPlugin().getModuleManager().getModule(PlayerModule.class);
     }
 
     /**

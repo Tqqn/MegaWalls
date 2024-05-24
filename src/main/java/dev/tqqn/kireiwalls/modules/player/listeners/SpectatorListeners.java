@@ -15,6 +15,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -35,6 +37,20 @@ public final class SpectatorListeners implements Listener {
             }
         } else {
             event.getPlayerModel().setSpectatorMode(false);
+        }
+    }
+
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onItemPickup(PlayerAttemptPickupItemEvent event) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+            event.setCancelled(true);
         }
     }
 

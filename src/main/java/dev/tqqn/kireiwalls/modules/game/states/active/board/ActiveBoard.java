@@ -2,10 +2,10 @@ package dev.tqqn.kireiwalls.modules.game.states.active.board;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
-import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
+import dev.tqqn.kireiwalls.modules.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
 
@@ -48,15 +48,15 @@ public final class ActiveBoard extends PluginScoreboard {
         this.addLines("§a0 §fFinals §a0 §fF.Assists");
         this.addLines(String.format("§6%s §fCoins", getPlayerModel().getCoins()));
         this.addLines(" ");
-        this.addLines("§edev.tqqn.kireiwalls");
+        this.addLines(MessageUtil.SCOREBOARD_UNDERNAME.getStringMessage());
     }
 
     @Override
     public void update() {
         if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs((long)ActiveState.getCycleTimer()), 12);
+            this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getCycleTimer()), 12);
         } else {
-            this.updateLine("§fGame End: §a" + ChatUtil.convertSecondsToHMmSs((long)ActiveState.getTimer()), 12);
+            this.updateLine("§fGame End: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getTimer()), 12);
         }
 
         this.updateLine("§e0 §8/ §90 §8/ §c0 §8/ §a0", 11);

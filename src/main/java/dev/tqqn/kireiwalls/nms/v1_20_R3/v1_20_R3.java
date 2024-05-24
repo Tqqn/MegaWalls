@@ -1,24 +1,40 @@
 package dev.tqqn.kireiwalls.nms.v1_20_R3;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
+import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.BlankFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
-import java.util.Collection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * The v1_20_R3 class implements the ReflectionLayer interface for version 1.20_R3.
@@ -28,6 +44,7 @@ public final class v1_20_R3 implements ReflectionLayer {
     @Override
     public void sendPacket(Player player, Object packetObject) {
         if (player == null) return;
+
         Packet packet = (Packet) packetObject;
         ((CraftPlayer)player).getHandle().connection.send(packet);
     }
@@ -127,4 +144,80 @@ public final class v1_20_R3 implements ReflectionLayer {
             sendPacket(players, clientboundLevelParticlesPacket);
         }
     }
-}
+
+    @Override
+    public void changeSkin(Skins skins, PlayerModel playerModel) {
+        final Player player = playerModel.getPlayer();
+
+        ServerPlayer serverPlayer = ((CraftPlayer)player).getHandle();
+        setSkin(serverPlayer, skins.getTexture(), skins.getSignature());
+
+        final Location oldLoc = player.getLocation().clone();
+
+        GameType gameType = GameType.SURVIVAL;
+        switch (player.getGameMode()) {
+            case CREATIVE -> gameType = GameType.CREATIVE;
+            case SPECTATOR -> gameType = GameType.SPECTATOR;
+        }
+
+        CommonPlayerSpawnInfo playerInfo = new CommonPlayerSpawnInfo(serverPlayer.level().dimensionTypeId(), serverPlayer.level().dimension(), serverPlayer.server.overworld().getSeed(), gameType, gameType, false, false, Optional.of(GlobalPos.of(serverPlayer.level().dimension(), serverPlayer.getOnPos())), 0);
+
+        ClientboundPlayerInfoRemovePacket clientboundPlayerInfoRemovePacket = new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId()));
+
+        ClientboundRemoveEntitiesPacket clientboundRemoveEntitiesPacket = new ClientboundRemoveEntitiesPacket(player.getEntityId());
+
+        ClientboundAddEntityPacket clientboundAddEntityPacket = new ClientboundAddEntityPacket(serverPlayer);
+
+        ClientboundPlayerInfoUpdatePacket clientboundPlayerInfoUpdatePacket = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singletonList(serverPlayer));
+
+        ClientboundRespawnPacket clientboundRespawnPacket = new ClientboundRespawnPacket(playerInfo, (byte) 0);
+
+        ClientboundGameEventPacket eventPacket = new ClientboundGameEventPacket(ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0);
+
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            sendPacket(players, clientboundPlayerInfoRemovePacket);
+
+            if (!players.equals(player)) {
+                sendPacket(players, clientboundRemoveEntitiesPacket);
+            }
+
+            sendPacket(players, clientboundPlayerInfoUpdatePacket);
+            if (!players.equals(player)) sendPacket(players, clientboundAddEntityPacket);
+        }
+
+        sendPacket(player, clientboundRespawnPacket);
+        sendPacket(player, eventPacket);
+        player.teleport(oldLoc);
+        player.updateInventory();
+    }
+
+    @Override
+    public ItemStack getCustomSkull(String texture) {
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
+        PlayerTextures playerTextures = profile.getTextures();
+        URL url = null;
+
+        try {
+            url = new URL("https://textures.minecraft.net/texture/" + texture);
+        } catch (MalformedURLException ignored) {
+
+        }
+        playerTextures.setSkin(url);
+        profile.setTextures(playerTextures);
+
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+        skullMeta.setOwnerProfile(profile);
+        itemStack.setItemMeta(skullMeta);
+
+        return itemStack;
+    }
+
+    private void setSkin(ServerPlayer serverPlayer, String texture, String signature) {
+        Property skinData = new Property("textures", texture, signature);
+        GameProfile gameProfile = serverPlayer.getGameProfile();
+        PropertyMap propertyMap = gameProfile.getProperties();
+        propertyMap.removeAll("textures");
+        propertyMap.put("textures", skinData);
+    }
+ }

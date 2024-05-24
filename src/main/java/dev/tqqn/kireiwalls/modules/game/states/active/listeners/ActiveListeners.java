@@ -7,8 +7,9 @@ import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.framework.game.events.GamePlayerKilledEvent;
 import dev.tqqn.kireiwalls.framework.game.events.WitherDamageByPlayerEvent;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.ModuleManager;
+import dev.tqqn.kireiwalls.modules.arena.ArenaModule;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
@@ -27,7 +28,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * The ActiveListeners class implements various event listeners for active gameplay.
@@ -35,12 +35,10 @@ import org.bukkit.inventory.ItemStack;
 public final class ActiveListeners implements Listener {
 
     private final DatabaseModule databaseModule;
-    private final GameModule gameModule;
 
     public ActiveListeners() {
         ModuleManager moduleManager = KireiWalls.getInstance().getModuleManager();
-        this.databaseModule = (DatabaseModule)moduleManager.getModule(DatabaseModule.class);
-        this.gameModule = (GameModule) moduleManager.getModule(GameModule.class);
+        this.databaseModule = moduleManager.getModule(DatabaseModule.class);
     }
 
     /**
@@ -51,7 +49,7 @@ public final class ActiveListeners implements Listener {
     @EventHandler
     public void onJoin(GamePlayerJoinEvent event) {
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
-            ScoreboardModule scoreboardModule = (ScoreboardModule) this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
+            ScoreboardModule scoreboardModule = this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
             scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -115,7 +113,7 @@ public final class ActiveListeners implements Listener {
         }
 
         if (isFinal) {
-            for (PlayerModel playerModel : gameModule.getIngamePlayers()) {
+            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
                 if (event.getKiller() == playerModel) {
                     playerModel.getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
                 } else {
@@ -163,6 +161,11 @@ public final class ActiveListeners implements Listener {
         PlayerModel hitPlayerModel = PlayerModule.getPlayerModel(hitPlayer.getUniqueId());
         if (event.getDamager() instanceof Projectile projectile) {
             if (projectile.getShooter() instanceof Player shooter) {
+                if (shooter == hitPlayer) {
+                    event.setCancelled(true);
+                    projectile.remove();
+                    return;
+                }
                 PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
                 if (shooterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
                     event.setCancelled(true);
@@ -171,6 +174,7 @@ public final class ActiveListeners implements Listener {
         }
 
         if (event.getDamager() instanceof Player hitter) {
+            if (hitter == hitPlayer) return;
             PlayerModel hitterModel = PlayerModule.getPlayerModel(hitter.getUniqueId());
             if (hitterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
                 event.setCancelled(true);
@@ -228,7 +232,7 @@ public final class ActiveListeners implements Listener {
     public void onEntityDamageDeath(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player damagedPlayer) {
 
-            if ((damagedPlayer.getHealth()) - event.getDamage() <= 0) {
+            if ((damagedPlayer.getHealth()) - event.getFinalDamage() <= 0) {
 
                 final PlayerModel damagedPlayerModel = PlayerModule.getPlayerModel(damagedPlayer.getUniqueId());
 
@@ -256,7 +260,7 @@ public final class ActiveListeners implements Listener {
                     Bukkit.getPluginManager().callEvent(gamePlayerKilledEvent);
                 }
 
-                Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> damagedPlayer.spigot().respawn(), 2L);
+                Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> damagedPlayer.spigot().respawn(), 1L);
             }
         }
     }

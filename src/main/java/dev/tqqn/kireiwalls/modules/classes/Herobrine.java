@@ -1,5 +1,6 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
+import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public final class Herobrine extends AbstractClass {
 
     public Herobrine() {
-        super("Herobrine", "HBR", new ClassOptions(ClassDescriptions.ClassEnergy.HEROBRINE, ClassDescriptions.ClassType.HEROBRINE, ClassDescriptions.ClassDifficulty.HEROBRINE, Arrays.asList(ClassDescriptions.ClassStyle.DAMAGE, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.HEROBRINE, ClassDescriptions.ClassSkillDescription.HEROBRINE), 3);
+        super("Herobrine", "HBR", new ClassOptions(ClassDescriptions.ClassEnergy.HEROBRINE, ClassDescriptions.ClassType.HEROBRINE, ClassDescriptions.ClassDifficulty.HEROBRINE, Arrays.asList(ClassDescriptions.ClassStyle.DAMAGE, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.HEROBRINE, ClassDescriptions.ClassSkillDescription.HEROBRINE), 3, Skins.HEROBRINE);
         setPrestigeFour(true);
     }
 

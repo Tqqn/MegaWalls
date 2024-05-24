@@ -1,6 +1,7 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
 import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
@@ -39,7 +40,7 @@ public final class Zombie extends AbstractClass {
     @Getter private final Map<UUID, ZombieStrenghtRunnable> strenghtRunnableMap;
 
     public Zombie() {
-        super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5);
+        super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, Skins.ZOMBIE);
         this.toughnessHits = new HashMap<>();
         this.blocksThatCanBeBroken = new HashSet<>();
         this.isStrenght = new ArrayList<>();

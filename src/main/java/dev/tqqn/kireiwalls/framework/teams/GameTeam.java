@@ -1,20 +1,14 @@
-package dev.tqqn.kireiwalls.framework.game.teams;
+package dev.tqqn.kireiwalls.framework.teams;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
-import dev.tqqn.kireiwalls.framework.region.Cuboid;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.region.types.TeamProtectionRegion;
 import dev.tqqn.kireiwalls.framework.region.types.WitherProtectionRegion;
-import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import lombok.Getter;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.antlr.v4.runtime.tree.xpath.XPathLexerErrorListener;
-import org.bukkit.Location;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -35,6 +29,9 @@ public final class GameTeam {
     private final GameTeamSettings gameTeamSettings;
     private final Set<PlayerModel> currentPlayers;
     private final Set<PlayerModel> alivePlayers;
+    private final TeamProtectionRegion teamProtectionRegion;
+    private final WitherProtectionRegion witherProtectionRegion;
+    private final String chatPrefix;
 
     /**
      * Constructs a GameTeam object with the specified attributes.
@@ -51,22 +48,6 @@ public final class GameTeam {
      * /@param spawnLocation The spawn location of the team.
      * /@param witherLocation The wither location of the team.
      */
-//    public GameTeam(String name, String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor adventureColor, Cuboid spawnRegion, Cuboid witherRegion, Location spawnLocation, Location witherLocation) {
-//        this.name = name;
-//        this.prettyName = prettyName;
-//        this.tagName = tagName;
-//        this.prefix = "[" + prefix + "]";
-//        this.color = color;
-//        this.legacyColor = legacyColor;
-//        this.namedTextColor = adventureColor;
-//
-//        TeamProtectionRegion teamProtectionRegion = new TeamProtectionRegion(name, spawnRegion, this);
-//        WitherProtectionRegion witherProtectionRegion = new WitherProtectionRegion(name, witherRegion, this);
-//
-//        this.gameTeamSettings = new GameTeamSettings(teamProtectionRegion, witherProtectionRegion, spawnLocation, witherLocation);
-//        this.currentPlayers = new HashSet<>();
-//        this.alivePlayers = new HashSet<>();
-//    }
 
     public GameTeam(String name, String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor adventureColor, GameTeamSettings gameTeamSettings) {
         this.name = name;
@@ -79,6 +60,9 @@ public final class GameTeam {
         this.gameTeamSettings = gameTeamSettings;
         this.currentPlayers = new HashSet<>();
         this.alivePlayers = new HashSet<>();
+        this.teamProtectionRegion = new TeamProtectionRegion(name, gameTeamSettings.getTeamProtectionCuboid(), this);
+        this.witherProtectionRegion = new WitherProtectionRegion(name, gameTeamSettings.getWitherProtectionCuboid(), this);
+        this.chatPrefix = color + "[" + name + "]";
     }
 
     /**

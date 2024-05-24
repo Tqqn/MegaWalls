@@ -1,8 +1,8 @@
-package dev.tqqn.kireiwalls.framework.game.teams.wither;
+package dev.tqqn.kireiwalls.framework.teams.wither;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.utils.ChatUtil;

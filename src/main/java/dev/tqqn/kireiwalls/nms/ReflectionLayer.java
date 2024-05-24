@@ -1,9 +1,11 @@
 package dev.tqqn.kireiwalls.nms;
 
+import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 
@@ -79,5 +81,9 @@ public interface ReflectionLayer {
     void sendActionBar(PlayerModel playerModel);
 
     void sendZombieParticle(PlayerModel playerModel);
+
+    void changeSkin(Skins skins, PlayerModel playerModel);
+
+    ItemStack getCustomSkull(String texture);
 }
 

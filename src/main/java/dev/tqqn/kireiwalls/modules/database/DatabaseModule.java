@@ -3,10 +3,9 @@ package dev.tqqn.kireiwalls.modules.database;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
 import dev.tqqn.kireiwalls.framework.database.DefaultConfig;
-import dev.tqqn.kireiwalls.framework.database.driver.IDatabaseDriver;
 import dev.tqqn.kireiwalls.framework.database.listeners.PlayerLoadListeners;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.modules.database.drivers.TestDriver;
+import dev.tqqn.kireiwalls.modules.database.drivers.MongoDriver;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -19,22 +18,31 @@ import java.util.concurrent.CompletableFuture;
  * It manages connections to the database, player data storage, and other database-related tasks.
  */
 
+@Getter
 public final class DatabaseModule extends AbstractModule {
 
-    private final IDatabaseDriver databaseDriver = new TestDriver();
-    @Getter private DefaultConfig defaultConfig;
-    @Getter private PlayerModule playerModule;
+    private MongoDriver mongoDriver;
+    private DefaultConfig defaultConfig;
+    private PlayerModule playerModule;
 
     public DatabaseModule(KireiWalls plugin) {
         super(plugin, "Database");
     }
 
     @Override
-    protected void onEnable() {
-        this.addComponent(PlayerLoadListeners.class, "");
-        this.databaseDriver.connect("players", "dev-toon-mongodb-1", "27017");
+    protected void onLoad() {
+        this.mongoDriver = new MongoDriver(this);
         this.defaultConfig = new DefaultConfig(this);
-        this.playerModule = (PlayerModule)this.getPlugin().getModuleManager().getModule(PlayerModule.class);
+        this.mongoDriver.connect("mw", "dev-toon-mongodb-1", "27017");
+    }
+
+    @Override
+    protected void onEnable() {
+        if (getPlugin().isSetup()) return;
+
+        this.addComponent(PlayerLoadListeners.class, "");
+
+        this.playerModule = this.getPlugin().getModuleManager().getModule(PlayerModule.class);
     }
 
     @Override
@@ -48,26 +56,12 @@ public final class DatabaseModule extends AbstractModule {
     }
 
     /**
-     * Creates a player template in the database asynchronously with the given UUID and name.
-     *
-     * @param uuid The UUID of the player.
-     * @param name The name of the player.
-     */
-    public void createPlayerTemplate(UUID uuid, String name) {
-        CompletableFuture.runAsync(() -> {
-            this.databaseDriver.createPlayerTemplate(uuid, name);
-        });
-    }
-
-    /**
      * Saves player data to the database asynchronously.
      *
      * @param playerModel The PlayerModel containing the player data to be saved.
      */
     public void savePlayer(PlayerModel playerModel) {
-        CompletableFuture.runAsync(() -> {
-            this.databaseDriver.savePlayer(playerModel);
-        });
+        this.mongoDriver.saveAsync(playerModel);
     }
 
     /**

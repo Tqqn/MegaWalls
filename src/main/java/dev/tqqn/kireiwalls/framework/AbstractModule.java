@@ -40,6 +40,10 @@ public abstract class AbstractModule {
         this.prefix = "Module: " + name;
     }
 
+    protected void onLoad() {
+        // Empty Constructor to override!
+    }
+
     /**
      * Called when the module is being enabled.
      * Subclasses must implement this method to perform initialization tasks.
@@ -52,15 +56,21 @@ public abstract class AbstractModule {
      */
     protected abstract void onDisable();
 
+    public void load() {
+        plugin.getLogger().info(prefix + " is loading...");
+        onLoad();
+        plugin.getLogger().info(prefix + " finished loading!");
+    }
+
     /**
      * Enables the module by registering listeners and commands.
      */
     public void enable() {
-        plugin.getLogger().info(prefix + " is loading...");
+        plugin.getLogger().info(prefix + " is enabling...");
         onEnable();
         registerListeners();
         registerCommands();
-        plugin.getLogger().info(prefix + " finished loading!");
+        plugin.getLogger().info(prefix + " finished enabling!");
     }
 
     /**

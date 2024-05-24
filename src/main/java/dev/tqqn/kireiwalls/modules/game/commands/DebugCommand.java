@@ -28,11 +28,11 @@ public final class DebugCommand implements CommandExecutor {
             } else {
                 GameModule gameModule;
                 if (strings[0].equalsIgnoreCase("end")) {
-                    gameModule = (GameModule) KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
+                    gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                     gameModule.endGame();
                     return true;
                 } else if (strings[0].equalsIgnoreCase("start")) {
-                    gameModule = (GameModule)KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
+                    gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                     gameModule.setGameState(GameStates.ACTIVE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("kit")) {

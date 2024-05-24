@@ -7,12 +7,18 @@ import net.kyori.adventure.text.Component;
  */
 public enum MessageUtil {
 
+    CHAT_LOBBY_FORMAT("%s%s: "),
+    CHAT_TEAM_FORMAT("%s%s %s%s: "),
+    SHOUT_PREFIX("<gold>[SHOUT]"),
+    ADMIN_PREFIX("<red>[ADMIN]"),
+    SPECTATOR_PREFIX("<gray>[SPECTATOR]"),
     NO_PERMISSION("<redYou do not have <blue>%s <red>permission to do this."),
+    SCOREBOARD_UNDERNAME("§edev.tqqn.megawalls"),
     PLAYER_JOIN("%s%s <yellow>has joined the game (<aqua%s<yellow>/<aqua>%s<yellow>)!"),
     PLAYER_QUIT("%s%s <yellow> has left the game!"),
     ALL_WITHERS_DEAD("<red>All Withers are dead."),
     DM_COUNTDOWN("<red>Death-Match starting in <green>%s<red>."),
-    SCOREBOARD_TITLE("§lKIREI WALLS"),
+    SCOREBOARD_TITLE("§lMEGA WALLS"),
     KILLED_BY_KILLER_HAND("%s%s <white>was killed by %s%s"),
     KILLED_BY_KILLER_BOW("%s%s <white>was shot and killed by %s%s"),
     KILLED_NO_KILLER("%s%s <white>died."),

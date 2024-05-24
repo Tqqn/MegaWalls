@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.framework.region.types;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.region.AbstractRegion;
 import dev.tqqn.kireiwalls.framework.region.Cuboid;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;

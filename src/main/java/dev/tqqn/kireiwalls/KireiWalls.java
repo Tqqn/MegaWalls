@@ -26,8 +26,9 @@ import org.bukkit.scoreboard.Team;
 @Getter
 public final class KireiWalls extends JavaPlugin {
 
-    @Getter
-    private static KireiWalls instance;
+    private boolean isSetup;
+
+    @Getter private static KireiWalls instance;
     private ModuleManager moduleManager;
     @Getter private static ReflectionLayer reflectionLayer;
 
@@ -35,7 +36,9 @@ public final class KireiWalls extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        isSetup = getConfig().getBoolean("setup");
         moduleManager = new ModuleManager(this);
+        moduleManager.load();
     }
 
     @Override
@@ -43,8 +46,6 @@ public final class KireiWalls extends JavaPlugin {
         instance = this;
 
         moduleManager.init();
-        findReflectionLayer();
-        initScoreboardTask();
 
         Bukkit.getScheduler().runTask(this, () -> {
             Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -60,6 +61,11 @@ public final class KireiWalls extends JavaPlugin {
                 team.unregister();
             }
         });
+
+        if (isSetup) return;
+
+        findReflectionLayer();
+        initScoreboardTask();
     }
 
     @Override

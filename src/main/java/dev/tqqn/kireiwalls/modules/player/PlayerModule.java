@@ -14,6 +14,7 @@ import java.util.UUID;
  * The PlayerModule class manages player-related functionality and data caching.
  */
 public final class PlayerModule extends AbstractModule {
+
     private static final Map<UUID, PlayerModel> CACHED_PLAYERS = new HashMap<>();
 
     public PlayerModule(KireiWalls plugin) {

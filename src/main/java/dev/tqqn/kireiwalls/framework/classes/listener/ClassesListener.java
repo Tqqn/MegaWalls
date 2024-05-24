@@ -34,6 +34,7 @@ public final class ClassesListener implements Listener {
         PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
 
         if (event.getDamager() instanceof Player damager) {
+            if (damager == player) return;
             PlayerModel damageModel = PlayerModule.getPlayerModel(damager.getUniqueId());
 
             if (damageModel.getCurrentClass() == null) return;
@@ -46,6 +47,7 @@ public final class ClassesListener implements Listener {
             playerModel.getCurrentClass().onTakenHit(playerModel);
         } else if (event.getDamager() instanceof Projectile projectile) {
             if (projectile.getShooter() instanceof Player shooter) {
+                if (shooter == player) return;
                 PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
                 if (shooterModel.getCurrentClass() == null) return;
                 shooterModel.getCurrentClass().onPlayerHitBow(shooterModel);

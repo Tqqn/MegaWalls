@@ -9,26 +9,27 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
+import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.region.Cuboid;
+import dev.tqqn.kireiwalls.modules.arena.ArenaModule;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
-import dev.tqqn.kireiwalls.modules.game.commands.BuildCommand;
-import dev.tqqn.kireiwalls.modules.game.commands.DebugCommand;
-import dev.tqqn.kireiwalls.modules.game.commands.SpectateCommand;
-import dev.tqqn.kireiwalls.modules.game.commands.WitherDebugCommand;
-import dev.tqqn.kireiwalls.modules.game.disabledfunctions.DisabledFunctionsListener;
+import dev.tqqn.kireiwalls.modules.game.commands.*;
+import dev.tqqn.kireiwalls.modules.game.listeners.GlobalGameListeners;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.game.states.active.board.ActiveBoard;
 import dev.tqqn.kireiwalls.modules.game.states.lobby.LobbyState;
-import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
+import dev.tqqn.kireiwalls.modules.teams.TeamModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.modules.scoreboard.ScoreboardModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
+import dev.tqqn.kireiwalls.utils.FinalItems;
+import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import lombok.Getter;
 import net.kyori.adventure.text.format.Style;
@@ -38,40 +39,39 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The GameModule class manages the game state and settings.
  */
 public final class GameModule extends AbstractModule {
+
     @Getter private static AbstractGameState currentState;
     @Getter private static final Set<PlayerModel> ingamePlayers = new HashSet<>();
-    @Getter private GameSettings gameSettings;
     private final DatabaseModule databaseModule;
+    @Getter private ArenaModule arenaModule;
     private TeamModule teamModule;
-    @Getter private final Set<PlayerModel> spectators;
+    @Getter private static final Set<PlayerModel> spectators = new HashSet<>();
     private EditSession[] wallsEditSession;
 
     public GameModule(KireiWalls plugin, DatabaseModule databaseModule) {
         super(plugin, "Game");
         currentState = new LobbyState(this);
-        this.spectators = new HashSet<>();
         this.databaseModule = databaseModule;
+
     }
 
     @Override
     public void onEnable() {
-        this.teamModule = (TeamModule)this.getPlugin().getModuleManager().getModule(TeamModule.class);
-        this.addComponent(DisabledFunctionsListener.class, "");
+        this.arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
+        this.teamModule = this.getPlugin().getModuleManager().getModule(TeamModule.class);
+        this.addComponent(GlobalGameListeners.class, "");
         this.addComponent(DebugCommand.class, "debug");
         this.addComponent(WitherDebugCommand.class, "witherdebug");
         this.addComponent(BuildCommand.class, "build");
         this.addComponent(SpectateCommand.class, "spectate");
-        this.gameSettings = new GameSettings("DragonKeep", this.databaseModule.getDefaultConfig().getLobbyLocation(), this.databaseModule.getDefaultConfig().getLobbyTimer(), this.databaseModule.getDefaultConfig().getMiddleCuboid());
+        this.addComponent(ShoutCommand.class, "shout");
         currentState.enable();
     }
 
@@ -110,17 +110,15 @@ public final class GameModule extends AbstractModule {
     public void setGameState(GameStates gameState) {
         if (currentState.getGameStates() != gameState) {
             if (currentState.getGameStates() != GameStates.ACTIVE || gameState != GameStates.WAITING) {
-                switch (gameState) {
-                    case ACTIVE:
-                        currentState.disable();
-                        currentState = new ActiveState(this);
-                        currentState.enable();
+                if (gameState == GameStates.ACTIVE) {
+                    currentState.disable();
+                    currentState = new ActiveState(this);
+                    currentState.enable();
 
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            ScoreboardModule scoreboardModule = (ScoreboardModule) this.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
-                            scoreboardModule.setScoreboard(PlayerModule.getPlayerModel(player.getUniqueId()), new ActiveBoard(PlayerModule.getPlayerModel(player.getUniqueId())));
-                        }
-                    default:
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        ScoreboardModule scoreboardModule = this.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
+                        scoreboardModule.setScoreboard(PlayerModule.getPlayerModel(player.getUniqueId()), new ActiveBoard(PlayerModule.getPlayerModel(player.getUniqueId())));
+                    }
                 }
             }
         }
@@ -187,7 +185,9 @@ public final class GameModule extends AbstractModule {
                 playerModel.getPlayer().teleport(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
                 playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                playerModel.getPlayer().getInventory().clear();
                 playerModel.getCurrentClass().applyKit(playerModel);
+                playerModel.getCurrentClass().applySkin(playerModel);
             }
         }
     }
@@ -195,7 +195,7 @@ public final class GameModule extends AbstractModule {
     /** Makes walls fall. */
     public void wallsFall() {
         List<EditSession> editSessions = new ArrayList<>();
-        for (Cuboid cuboid : this.databaseModule.getDefaultConfig().getWallCuboids()) {
+        for (Cuboid cuboid : arenaModule.getCurrentArena().getArenaSettings().getMiddleCuboids()) {
             EditSession editSession = Fawe.instance().getWorldEdit().newEditSession(BukkitAdapter.adapt(cuboid.getWorld()));
             Region region = new CuboidRegion(BlockVector3.at(cuboid.getPoint1().x(), cuboid.getPoint1().y(), cuboid.getPoint1().z()), BlockVector3.at(cuboid.getPoint2().x(), cuboid.getPoint2().y(), cuboid.getPoint2().z()));
             editSession.setBlocks(region, BlockTypes.AIR);
@@ -226,6 +226,19 @@ public final class GameModule extends AbstractModule {
     /** Checks if the game can start. */
     public boolean canStart() {
         return true; // For debug purposes still on force true
+    }
+
+    public void giveLobbyItems(PlayerModel playerModel) {
+        if (playerModel.getPlayer() == null) return;
+        final Player player = playerModel.getPlayer();
+        player.getInventory().clear();
+
+        player.getInventory().setItem(0, ItemBuilder.getBuilder(FinalItems.CLASS_SELECTOR.getItem()).setLocalizedName("class_selector").build());
+        if (playerModel.getCurrentClass() == null) return;
+
+        final AbstractClass currentClass = playerModel.getCurrentClass();
+
+        player.getInventory().setItem(1, ItemBuilder.getBuilder(KireiWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").setLocalizedName("skin_selector").build());
     }
 
 }

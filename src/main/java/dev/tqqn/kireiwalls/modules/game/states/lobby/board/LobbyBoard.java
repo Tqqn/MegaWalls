@@ -2,6 +2,7 @@ package dev.tqqn.kireiwalls.modules.game.states.lobby.board;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.lobby.LobbyState;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
@@ -27,13 +28,14 @@ public final class LobbyBoard extends PluginScoreboard {
         this.addLines("§a29 §fmore players join");
         this.addLines(" ");
         this.addLines("§fSelected Class:");
-        this.addLines("§aHerobrine");
+        this.addLines("§aRandom");
         this.addLines(" ");
-        this.addLines("§edev.tqqn.kireiwalls");
+        this.addLines(MessageUtil.SCOREBOARD_UNDERNAME.getStringMessage());
     }
 
     @Override
     public void update() {
+        this.updateLine("§fPlayers: §a" + GameModule.getIngamePlayers().size() +  "/100", 8);
         this.updateLine("§fStarting in §a" + ChatUtil.convertSecondsToHMmSs(LobbyState.getTimer()) + " §fif", 6);
         String selectedClass = "§aRandom!";
 

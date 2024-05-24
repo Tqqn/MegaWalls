@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.framework.region.types;
 
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.framework.region.AbstractRegion;
 import dev.tqqn.kireiwalls.framework.region.Cuboid;
 import org.bukkit.entity.Player;

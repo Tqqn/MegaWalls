@@ -1,15 +1,39 @@
-package dev.tqqn.kireiwalls.modules.game.disabledfunctions;
+package dev.tqqn.kireiwalls.modules.game.listeners;
 
+import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
+import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
+import dev.tqqn.kireiwalls.modules.player.PlayerModule;
+import dev.tqqn.kireiwalls.utils.ChatUtil;
+import dev.tqqn.kireiwalls.utils.MessageUtil;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class DisabledFunctionsListener implements Listener {
+public final class GlobalGameListeners implements Listener {
+
+    @EventHandler
+    public void onAsyncChat(AsyncChatEvent event) {
+        event.setCancelled(true);
+
+        final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
+        ChatUtil.sendPlayerMessage(playerModel, event.message());
+    }
+
+    @EventHandler
+    public void onFoodChange(FoodLevelChangeEvent event) {
+        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
+        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PRE_DM || ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) event.setCancelled(true);
+    }
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
@@ -49,4 +73,5 @@ public final class DisabledFunctionsListener implements Listener {
         if (!itemMeta.hasLocalizedName()) return;
         if (itemMeta.getLocalizedName().equals("kit")) event.setCancelled(true);
     }
+
 }

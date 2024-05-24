@@ -2,13 +2,13 @@ package dev.tqqn.kireiwalls.modules.game.states.active;
 
 import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.game.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.listeners.ActiveListeners;
 import dev.tqqn.kireiwalls.modules.game.states.active.runnables.ActionBarRunnable;
 import dev.tqqn.kireiwalls.modules.game.states.active.runnables.EnergyRunnable;
-import dev.tqqn.kireiwalls.modules.game.teams.TeamModule;
+import dev.tqqn.kireiwalls.modules.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -40,7 +40,7 @@ public final class ActiveState extends AbstractGameState {
         this.addListener(ActiveListeners.class);
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
         currentCycle = ActiveState.Cycle.PREPARE;
-        cycleTimer = 10;
+        cycleTimer = 30;
         this.areWithersDead = false;
         this.initHealth = false;
         this.energyRunnable = new EnergyRunnable(this.getGameModule());

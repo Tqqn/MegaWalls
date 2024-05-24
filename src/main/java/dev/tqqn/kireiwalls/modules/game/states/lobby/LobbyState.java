@@ -62,7 +62,7 @@ public final class LobbyState extends AbstractGameState {
 
     @Override
     public void onEnable() {
-        setTimer(this.getGameModule().getGameSettings().getLobbyCount());
+        setTimer(100);
         this.addListener(LobbyListeners.class);
         this.runTaskTimer(this.getGameModule().getPlugin(), 0L, 20L);
     }

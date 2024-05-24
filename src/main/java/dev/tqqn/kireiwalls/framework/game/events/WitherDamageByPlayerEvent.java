@@ -1,8 +1,7 @@
 package dev.tqqn.kireiwalls.framework.game.events;
 
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.teams.GameTeam;
-import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
+import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

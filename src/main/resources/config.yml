@@ -1,3 +1,4 @@
+setup: true
 game:
   lobby-timer:
   lobby-location:
