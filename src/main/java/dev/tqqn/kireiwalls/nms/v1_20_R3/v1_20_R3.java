@@ -3,7 +3,6 @@ package dev.tqqn.kireiwalls.nms.v1_20_R3;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.classes.Skins;
 import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.teams.GameTeam;
@@ -177,9 +176,7 @@ public final class v1_20_R3 implements ReflectionLayer {
         for (Player players : Bukkit.getOnlinePlayers()) {
             sendPacket(players, clientboundPlayerInfoRemovePacket);
 
-            if (!players.equals(player)) {
-                sendPacket(players, clientboundRemoveEntitiesPacket);
-            }
+            if (!players.equals(player)) sendPacket(players, clientboundRemoveEntitiesPacket);
 
             sendPacket(players, clientboundPlayerInfoUpdatePacket);
             if (!players.equals(player)) sendPacket(players, clientboundAddEntityPacket);
