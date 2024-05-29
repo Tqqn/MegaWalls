@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -100,6 +101,12 @@ public final class PlayerLoadListeners implements Listener {
         Bukkit.getPluginManager().callEvent(gamePlayerJoinEvent);
 
         if (!playerModel.getName().equals(player.getName())) playerModel.setName(player.getName());
+        KireiWalls.getReflectionLayer().injectPlayer(player);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        KireiWalls.getReflectionLayer().unInjectPlayer(event.getPlayer());
     }
 
     /**

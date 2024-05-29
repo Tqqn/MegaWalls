@@ -7,6 +7,7 @@ import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.MessageUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,10 +43,12 @@ public class ShoutCommand implements CommandExecutor {
                     message.append(args[i]);
                 }
 
+                TextComponent shoutMessage = Component.text().content(message.toString()).build();
+
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    //player.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " " + playerModel.getGameTeam().getChatPrefix() + " " + playerModel.getRank() + " " + player.getName() + ": " + playerModel.getChatColor()).append(Component.text().content(message.toString()).color(NamedTextColor.WHITE).build()));
-                    player.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " ").append(playerModel.getChatMessage(Component.text().content(message.toString()).build())));
+                    player.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " ").append(playerModel.getChatMessage(shoutMessage)));
                 }
+                Bukkit.getLogger().info("[SHOUT]" + ((TextComponent) playerModel.getChatMessage(shoutMessage)).content() + shoutMessage.content());
             }
         }
 

@@ -11,7 +11,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The DatabaseModule class extends AbstractModule and represents a module responsible for database-related operations.

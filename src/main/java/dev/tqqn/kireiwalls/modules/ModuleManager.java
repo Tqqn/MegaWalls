@@ -3,6 +3,7 @@ package dev.tqqn.kireiwalls.modules;
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.framework.AbstractModule;
 import dev.tqqn.kireiwalls.modules.arena.ArenaModule;
+import dev.tqqn.kireiwalls.modules.chest.ChestModule;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
@@ -39,6 +40,7 @@ public final class ModuleManager {
         this.modules.put(ClassModule.class, new ClassModule(plugin));
         this.modules.put(ScoreboardModule.class, new ScoreboardModule(plugin));
         this.modules.put(MenuModule.class, new MenuModule(plugin));
+        this.modules.put(ChestModule.class, new ChestModule(plugin));
     }
 
     public void load() {

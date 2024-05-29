@@ -40,7 +40,7 @@ public final class ActiveState extends AbstractGameState {
         this.addListener(ActiveListeners.class);
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
         currentCycle = ActiveState.Cycle.PREPARE;
-        cycleTimer = 30;
+        cycleTimer = 120;
         this.areWithersDead = false;
         this.initHealth = false;
         this.energyRunnable = new EnergyRunnable(this.getGameModule());

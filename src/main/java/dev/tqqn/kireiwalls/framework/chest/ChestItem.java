@@ -24,9 +24,23 @@ public final class ChestItem {
     }
 
     public ItemStack getItem() {
-        int amount = ThreadLocalRandom.current().nextInt(minAmount, maxAmount + 1);
+        int amount;
+
+        if (minAmount == maxAmount) {
+            amount = maxAmount;
+        } else {
+            amount = ThreadLocalRandom.current().nextInt(minAmount, maxAmount + 1);
+        }
+
         ItemStack returnItem = new ItemStack(itemStack);
         returnItem.setAmount(amount);
         return returnItem;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        ChestItem chestItem = (ChestItem) object;
+        return chestItem.itemStack.getType() == this.itemStack.getType();
     }
 }

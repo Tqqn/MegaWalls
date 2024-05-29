@@ -4,6 +4,7 @@ import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
 import dev.tqqn.kireiwalls.framework.game.GameStates;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,11 +31,10 @@ public final class ChatUtil {
 
     public static void sendPlayerMessage(PlayerModel playerModel, Component component) {
         if (playerModel.getPlayer() == null) return;
-        final Player player = playerModel.getPlayer();
 
+        Bukkit.getLogger().info(((TextComponent) playerModel.getChatMessage(component)).content() + ((TextComponent) component).content());
         if (GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
             for (Player players : Bukkit.getOnlinePlayers()) {
-                //players.sendMessage(format(playerModel.getRank() + player.getName() + ": " + playerModel.getChatColor()).append(component));
                 players.sendMessage(playerModel.getChatMessage(component));
             }
             return;
@@ -43,10 +43,8 @@ public final class ChatUtil {
         if (playerModel.getGameTeam() == null) return;
 
         if (GameModule.getCurrentState().getGameStates() == GameStates.END) {
-            String spectator = playerModel.isSpectatorMode() ? MessageUtil.SPECTATOR_PREFIX.getStringMessage() + " " : "";
 
             for (Player players : Bukkit.getOnlinePlayers()) {
-                //players.sendMessage(ChatUtil.format(spectator + playerModel.getGameTeam().getPrefix() + " " + playerModel.getRank() + player.getName() + ": " + playerModel.getChatColor()).append(component));
                 players.sendMessage(playerModel.getChatMessage(component));
             }
             return;
@@ -56,13 +54,11 @@ public final class ChatUtil {
             for (PlayerModel playerModels : GameModule.getSpectators()) {
                 System.out.println(playerModels.getName());
                 if (playerModels.getPlayer() == null) return;
-                //playerModels.getPlayer().sendMessage(ChatUtil.format(MessageUtil.SPECTATOR_PREFIX.getStringMessage() + playerModel.getGameTeam().getPrefix() + " " + playerModel.getRank() + player.getName() + ": " + playerModel.getChatColor()).append(component));
                 playerModels.getPlayer().sendMessage(playerModel.getChatMessage(component));
             }
         } else {
             for (PlayerModel playerModels : playerModel.getGameTeam().getCurrentPlayers()) {
                 if (playerModels.getPlayer() == null) return;
-                //playerModels.getPlayer().sendMessage(ChatUtil.format(playerModel.getGameTeam().getPrefix() + " " + playerModel.getRank() + player.getName() + ": " + playerModel.getChatColor()).append(component));
                 playerModels.getPlayer().sendMessage(playerModel.getChatMessage(component));
             }
         }

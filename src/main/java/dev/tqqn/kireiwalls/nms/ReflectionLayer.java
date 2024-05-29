@@ -83,6 +83,9 @@ public interface ReflectionLayer {
     void sendZombieParticle(PlayerModel playerModel);
 
     void changeSkin(Skins skins, PlayerModel playerModel);
+    void injectPlayer(Player player);
+    void unInjectPlayer(Player player);
+    Object getConnection(Player player);
 
     ItemStack getCustomSkull(String texture);
 }

@@ -73,14 +73,13 @@ public final class LobbyListeners implements Listener {
         playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         playerModel.getPlayer().setFoodLevel(20);
 
-        gameModule.giveLobbyItems(playerModel);
-
         if (playerModel.getCurrentClass() != null) {
             playerModel.getCurrentClass().applySkin(event.getPlayerModel());
         } else {
             KireiWalls.getReflectionLayer().changeSkin(Skins.RANDOM, playerModel);
         }
 
+        KireiWalls.getInstance().getServer().getScheduler().runTaskLater(KireiWalls.getInstance(), () -> gameModule.giveLobbyItems(playerModel), 1L);
     }
 
     @EventHandler

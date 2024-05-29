@@ -9,14 +9,17 @@ import dev.tqqn.kireiwalls.framework.teams.GameTeam;
 import dev.tqqn.kireiwalls.nms.ReflectionLayer;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import dev.tqqn.kireiwalls.nms.v1_20_R3.objects.CustomWither;
+import io.netty.channel.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.BlankFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -31,6 +34,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -146,7 +150,9 @@ public final class v1_20_R3 implements ReflectionLayer {
 
     @Override
     public void changeSkin(Skins skins, PlayerModel playerModel) {
+        if (playerModel.getPlayer() == null) return;
         final Player player = playerModel.getPlayer();
+        final int currentSlot = player.getInventory().getHeldItemSlot();
 
         ServerPlayer serverPlayer = ((CraftPlayer)player).getHandle();
         setSkin(serverPlayer, skins.getTexture(), skins.getSignature());
@@ -186,6 +192,50 @@ public final class v1_20_R3 implements ReflectionLayer {
         sendPacket(player, eventPacket);
         player.teleport(oldLoc);
         player.updateInventory();
+        player.getInventory().setHeldItemSlot(currentSlot);
+    }
+
+    @Override
+    public void injectPlayer(Player player) {
+        ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
+            @Override
+            public void channelRead(ChannelHandlerContext channelHandlerContext, Object packet) throws Exception {
+                super.channelRead(channelHandlerContext, packet);
+            }
+
+            @Override
+            public void write(ChannelHandlerContext channelHandlerContext, Object packet, ChannelPromise channelPromise) throws Exception {
+                super.write(channelHandlerContext, packet, channelPromise);
+            }
+        };
+
+        Connection connection = (Connection) getConnection(player);
+        ChannelPipeline pipeline = connection.channel.pipeline();
+        pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+    }
+
+    @Override
+    public void unInjectPlayer(Player player) {
+        Connection connection = (Connection) getConnection(player);
+        Channel channel = connection.channel;
+        channel.eventLoop().submit(() -> {
+            channel.pipeline().remove(player.getName());
+            return null;
+        });
+    }
+
+    @Override
+    public Object getConnection(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        Connection connection = null;
+        try {
+            Field connectionField = ServerCommonPacketListenerImpl.class.getDeclaredField("c");
+            connectionField.setAccessible(true);
+            connection = (Connection) connectionField.get(craftPlayer.getHandle().connection);
+        } catch (NoSuchFieldException | IllegalAccessException exception) {
+            exception.printStackTrace();
+        }
+        return connection;
     }
 
     @Override
