@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.modules.setup.menu;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.menu.Menu;
-import dev.tqqn.kireiwalls.framework.menu.MenuButton;
+import dev.tqqn.kireiwalls.modules.menu.framework.Menu;
+import dev.tqqn.kireiwalls.modules.menu.framework.MenuButton;
 import dev.tqqn.kireiwalls.modules.setup.SetupModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;

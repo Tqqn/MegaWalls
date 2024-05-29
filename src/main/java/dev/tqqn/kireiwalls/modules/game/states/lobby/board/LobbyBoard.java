@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game.states.lobby.board;
 
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.scoreboard.framework.PluginScoreboard;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.lobby.LobbyState;
 import dev.tqqn.kireiwalls.utils.ChatUtil;

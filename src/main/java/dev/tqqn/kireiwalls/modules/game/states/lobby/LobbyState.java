@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game.states.lobby;
 
-import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
-import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.modules.game.framework.AbstractGameState;
+import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.lobby.listeners.LobbyListeners;
 import dev.tqqn.kireiwalls.utils.ChatUtil;

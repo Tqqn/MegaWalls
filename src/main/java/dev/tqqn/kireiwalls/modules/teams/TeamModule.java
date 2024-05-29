@@ -1,9 +1,9 @@
 package dev.tqqn.kireiwalls.modules.teams;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.teams.GameTeamSettings;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
+import dev.tqqn.kireiwalls.modules.teams.framework.GameTeamSettings;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.modules.arena.ArenaModule;
 import lombok.Getter;

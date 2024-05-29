@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.utils;
 
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.game.GameStates;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

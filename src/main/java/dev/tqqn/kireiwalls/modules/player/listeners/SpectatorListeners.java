@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.modules.player.listeners;
 
-import dev.tqqn.kireiwalls.framework.database.events.GamePlayerJoinEvent;
-import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.game.events.WitherDamageByPlayerEvent;
+import dev.tqqn.kireiwalls.modules.database.framework.events.GamePlayerJoinEvent;
+import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
+import dev.tqqn.kireiwalls.modules.game.framework.events.WitherDamageByPlayerEvent;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import org.bukkit.entity.Entity;

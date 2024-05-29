@@ -1,11 +1,11 @@
 package dev.tqqn.kireiwalls.modules.chest;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.chest.AbstractProtectedContainer;
-import dev.tqqn.kireiwalls.framework.chest.ChestItem;
-import dev.tqqn.kireiwalls.framework.chest.listeners.ChestListeners;
-import dev.tqqn.kireiwalls.framework.chest.types.GatheringChest;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.chest.framework.AbstractProtectedContainer;
+import dev.tqqn.kireiwalls.modules.chest.framework.ChestItem;
+import dev.tqqn.kireiwalls.modules.chest.framework.listeners.ChestListeners;
+import dev.tqqn.kireiwalls.modules.chest.framework.types.GatheringChest;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;

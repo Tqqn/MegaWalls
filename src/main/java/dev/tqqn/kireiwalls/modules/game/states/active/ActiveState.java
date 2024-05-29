@@ -1,9 +1,9 @@
 package dev.tqqn.kireiwalls.modules.game.states.active;
 
-import dev.tqqn.kireiwalls.framework.game.AbstractGameState;
-import dev.tqqn.kireiwalls.framework.game.GameStates;
-import dev.tqqn.kireiwalls.framework.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.teams.wither.GameWither;
+import dev.tqqn.kireiwalls.modules.game.framework.AbstractGameState;
+import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
+import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
+import dev.tqqn.kireiwalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import dev.tqqn.kireiwalls.modules.game.states.active.listeners.ActiveListeners;
 import dev.tqqn.kireiwalls.modules.game.states.active.runnables.ActionBarRunnable;

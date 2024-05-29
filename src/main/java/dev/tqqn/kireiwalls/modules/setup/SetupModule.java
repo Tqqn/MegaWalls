@@ -1,14 +1,14 @@
 package dev.tqqn.kireiwalls.modules.setup;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.setup.data.SetupGameSettings;
-import dev.tqqn.kireiwalls.framework.setup.data.SetupTeamSettings;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.setup.framework.data.SetupGameSettings;
+import dev.tqqn.kireiwalls.modules.setup.framework.data.SetupTeamSettings;
 import dev.tqqn.kireiwalls.modules.setup.commands.BuildCommand;
 import dev.tqqn.kireiwalls.modules.setup.commands.SelectCommand;
 import dev.tqqn.kireiwalls.modules.setup.commands.SetupCommand;
 import dev.tqqn.kireiwalls.modules.setup.listeners.SetupListener;
-import dev.tqqn.kireiwalls.framework.setup.model.SetupPlayer;
+import dev.tqqn.kireiwalls.modules.setup.framework.model.SetupPlayer;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import lombok.Getter;

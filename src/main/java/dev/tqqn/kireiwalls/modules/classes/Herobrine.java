@@ -1,10 +1,10 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
-import dev.tqqn.kireiwalls.framework.classes.Skins;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
-import dev.tqqn.kireiwalls.framework.classes.ClassOptions;
+import dev.tqqn.kireiwalls.modules.classes.framework.Skins;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.kireiwalls.modules.classes.framework.ClassDescriptions;
+import dev.tqqn.kireiwalls.modules.classes.framework.ClassOptions;
 
 import java.util.Arrays;
 

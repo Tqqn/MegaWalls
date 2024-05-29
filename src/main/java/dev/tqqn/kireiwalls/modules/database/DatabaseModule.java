@@ -1,10 +1,10 @@
 package dev.tqqn.kireiwalls.modules.database;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.database.DefaultConfig;
-import dev.tqqn.kireiwalls.framework.database.listeners.PlayerLoadListeners;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.database.framework.DefaultConfig;
+import dev.tqqn.kireiwalls.modules.database.framework.listeners.PlayerLoadListeners;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.database.drivers.MongoDriver;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import lombok.Getter;

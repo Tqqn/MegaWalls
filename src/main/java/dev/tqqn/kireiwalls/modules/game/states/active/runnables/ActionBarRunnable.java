@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game.states.active.runnables;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import org.bukkit.scheduler.BukkitRunnable;
 

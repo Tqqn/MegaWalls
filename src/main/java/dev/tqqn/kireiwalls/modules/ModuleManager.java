@@ -1,7 +1,6 @@
 package dev.tqqn.kireiwalls.modules;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
 import dev.tqqn.kireiwalls.modules.arena.ArenaModule;
 import dev.tqqn.kireiwalls.modules.chest.ChestModule;
 import dev.tqqn.kireiwalls.modules.classes.ClassModule;

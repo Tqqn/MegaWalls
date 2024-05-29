@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.modules.arena;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.arena.Arena;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.arena.framework.Arena;
 import dev.tqqn.kireiwalls.modules.database.DatabaseModule;
 import dev.tqqn.kireiwalls.utils.WorldUtils;
 import lombok.Getter;

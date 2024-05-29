@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.modules.region;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.region.listeners.RegionListener;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.region.framework.listeners.RegionListener;
 
 /**
  * The RegionModule class manages region-related functionality.

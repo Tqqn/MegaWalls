@@ -1,9 +1,9 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.classes.listener.ClassesListener;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.kireiwalls.modules.classes.framework.listener.ClassesListener;
 import lombok.Getter;
 
 import java.util.*;

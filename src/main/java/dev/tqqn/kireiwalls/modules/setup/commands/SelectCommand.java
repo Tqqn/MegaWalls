@@ -1,6 +1,6 @@
 package dev.tqqn.kireiwalls.modules.setup.commands;
 
-import dev.tqqn.kireiwalls.framework.setup.model.SetupPlayer;
+import dev.tqqn.kireiwalls.modules.setup.framework.model.SetupPlayer;
 import dev.tqqn.kireiwalls.modules.setup.SetupModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import org.bukkit.command.Command;

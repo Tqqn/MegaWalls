@@ -1,10 +1,10 @@
 package dev.tqqn.kireiwalls.modules.setup.listeners;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.region.Cuboid;
-import dev.tqqn.kireiwalls.framework.setup.data.SetupTeamSettings;
+import dev.tqqn.kireiwalls.modules.region.framework.Cuboid;
+import dev.tqqn.kireiwalls.modules.setup.framework.data.SetupTeamSettings;
 import dev.tqqn.kireiwalls.modules.setup.SetupModule;
-import dev.tqqn.kireiwalls.framework.setup.model.SetupPlayer;
+import dev.tqqn.kireiwalls.modules.setup.framework.model.SetupPlayer;
 import dev.tqqn.kireiwalls.modules.setup.menu.SetupMenu;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import org.bukkit.GameMode;
@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.C;
 
 public final class SetupListener implements Listener {
 

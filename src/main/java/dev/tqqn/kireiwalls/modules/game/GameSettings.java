@@ -1,7 +1,7 @@
 package dev.tqqn.kireiwalls.modules.game;
 
-import dev.tqqn.kireiwalls.framework.region.Cuboid;
-import dev.tqqn.kireiwalls.framework.region.types.MiddleProtectionRegion;
+import dev.tqqn.kireiwalls.modules.region.framework.Cuboid;
+import dev.tqqn.kireiwalls.modules.region.framework.types.MiddleProtectionRegion;
 import lombok.Getter;
 import org.bukkit.Location;
 

@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.nms;
 
-import dev.tqqn.kireiwalls.framework.classes.Skins;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.teams.GameTeam;
+import dev.tqqn.kireiwalls.modules.classes.framework.Skins;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -1,8 +1,8 @@
 package dev.tqqn.kireiwalls.modules.menu;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.menu.listeners.MenuListener;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.menu.framework.listeners.MenuListener;
 
 /**
  * The MenuModule class represents a module for managing menus.

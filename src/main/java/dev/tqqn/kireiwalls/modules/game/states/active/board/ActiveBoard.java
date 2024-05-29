@@ -1,9 +1,9 @@
 package dev.tqqn.kireiwalls.modules.game.states.active.board;
 
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerStats;
-import dev.tqqn.kireiwalls.framework.teams.GameTeam;
-import dev.tqqn.kireiwalls.framework.scoreboard.PluginScoreboard;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerStats;
+import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
+import dev.tqqn.kireiwalls.modules.scoreboard.framework.PluginScoreboard;
 import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.teams.TeamModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;

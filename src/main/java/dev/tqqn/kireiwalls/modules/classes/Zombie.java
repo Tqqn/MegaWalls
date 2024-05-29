@@ -1,11 +1,11 @@
 package dev.tqqn.kireiwalls.modules.classes;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.classes.Skins;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
-import dev.tqqn.kireiwalls.framework.classes.AbstractClass;
-import dev.tqqn.kireiwalls.framework.classes.ClassDescriptions;
-import dev.tqqn.kireiwalls.framework.classes.ClassOptions;
+import dev.tqqn.kireiwalls.modules.classes.framework.Skins;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.kireiwalls.modules.classes.framework.ClassDescriptions;
+import dev.tqqn.kireiwalls.modules.classes.framework.ClassOptions;
 import dev.tqqn.kireiwalls.modules.classes.runnables.ZombieStrenghtRunnable;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
 import dev.tqqn.kireiwalls.utils.PotionBuilder;
@@ -13,16 +13,11 @@ import dev.tqqn.kireiwalls.utils.cooldown.CooldownUtil;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 

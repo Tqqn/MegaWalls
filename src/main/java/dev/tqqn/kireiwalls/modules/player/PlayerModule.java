@@ -1,10 +1,9 @@
 package dev.tqqn.kireiwalls.modules.player;
 
 import dev.tqqn.kireiwalls.KireiWalls;
-import dev.tqqn.kireiwalls.framework.AbstractModule;
-import dev.tqqn.kireiwalls.framework.database.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.player.listeners.SpectatorListeners;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
