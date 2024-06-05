@@ -9,12 +9,29 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * The RegionListener class listens for events related to player movement, block interactions,
  * and entity damage within defined regions.
  */
 public final class RegionListener implements Listener {
+
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockY() == event.getTo().getBlockY() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;
+
+        for (AbstractRegion abstractRegion : AbstractRegion.getRegions()) {
+            if (abstractRegion.getCuboid().isIn(event.getFrom()) && !abstractRegion.getCuboid().isIn(event.getTo())) {
+                abstractRegion.exit(event.getPlayer());
+                return;
+            }
+            if (abstractRegion.getCuboid().isIn(event.getTo()) && !abstractRegion.getCuboid().isIn(event.getFrom())) {
+                abstractRegion.entry(event.getPlayer());
+                return;
+            }
+        }
+    }
 
     /**
      * Handles player movement events.

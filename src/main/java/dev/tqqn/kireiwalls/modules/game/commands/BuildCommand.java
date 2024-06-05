@@ -17,11 +17,11 @@ public final class BuildCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player player) {
             if (strings.length == 0) {
-                if (PlayerModule.getPlayerModel(player.getUniqueId()).isBuildMode()) {
-                    PlayerModule.getPlayerModel(player.getUniqueId()).setBuildMode(false);
+                if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().isBuildMode()) {
+                    PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().setBuildMode(false);
                     player.sendMessage(ChatUtil.format("<red>You have disabled build mode."));
                 } else {
-                    PlayerModule.getPlayerModel(player.getUniqueId()).setBuildMode(true);
+                    PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().setBuildMode(true);
                     player.sendMessage(ChatUtil.format("<green>You have enabled build mode."));
                 }
             }

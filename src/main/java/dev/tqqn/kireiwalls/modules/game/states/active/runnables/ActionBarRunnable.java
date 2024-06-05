@@ -7,17 +7,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarRunnable extends BukkitRunnable {
 
-    private final GameModule gameModule;
-
-    public ActionBarRunnable(GameModule gameModule) {
-        this.gameModule = gameModule;
-    }
-
     @Override
     public void run() {
-        for (PlayerModel playerModel : gameModule.getIngamePlayers()) {
-            if (playerModel.getCurrentClass() == null) continue;
-            if (playerModel.isSpectatorMode()) continue;
+        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+            if (playerModel.getTempPlayerData().getCurrentClass() == null) continue;
+            if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
 
             KireiWalls.getReflectionLayer().sendActionBar(playerModel);
         }

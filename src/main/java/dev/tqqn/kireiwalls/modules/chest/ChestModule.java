@@ -17,7 +17,7 @@ public class ChestModule extends AbstractModule {
 
     private static final Map<Location, AbstractProtectedContainer> chestsMap = new HashMap<>();
 
-    private final Set<ChestItem> gatheringChestItems;
+    private final Set<ChestItem> gatheringChestItemsTemplate;
     @Getter final private int defaultChestSpawnRate;
 
     /**
@@ -27,14 +27,14 @@ public class ChestModule extends AbstractModule {
      */
     public ChestModule(KireiWalls plugin) {
         super(plugin, "Chest");
-        this.gatheringChestItems = new HashSet<>();
+        this.gatheringChestItemsTemplate = new HashSet<>();
         this.defaultChestSpawnRate = 10;
     }
 
     @Override
     protected void onEnable() {
         addComponent(ChestListeners.class, "");
-        this.gatheringChestItems.addAll(List.of(
+        this.gatheringChestItemsTemplate.addAll(List.of(
                 new ChestItem(ItemBuilder.getBuilder(Material.REDSTONE).build(), 0.5, 5, 10),
                 new ChestItem(ItemBuilder.getBuilder(Material.COBBLESTONE).build(), 1.0, 10, 20),
                 new ChestItem(ItemBuilder.getBuilder(Material.COOKED_BEEF).build(), 0.2, 3, 7),
@@ -44,7 +44,7 @@ public class ChestModule extends AbstractModule {
     }
 
     public void spawnChest(Material brokenBlock, Location spawnLocation, UUID ownerUUID) {
-        GatheringChest gatheringChest = new GatheringChest(spawnLocation, gatheringChestItems, ownerUUID);
+        GatheringChest gatheringChest = new GatheringChest(spawnLocation, new HashSet<>(gatheringChestItemsTemplate), ownerUUID);
         gatheringChest.spawn(brokenBlock);
         chestsMap.put(spawnLocation, gatheringChest);
     }
@@ -64,6 +64,6 @@ public class ChestModule extends AbstractModule {
 
     @Override
     protected void onDisable() {
-        gatheringChestItems.clear();
+        gatheringChestItemsTemplate.clear();
     }
 }

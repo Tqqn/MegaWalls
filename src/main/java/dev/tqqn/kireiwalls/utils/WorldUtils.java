@@ -2,8 +2,6 @@ package dev.tqqn.kireiwalls.utils;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +11,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class WorldUtils {
 
-    public static CompletableFuture<Void> asyncCopy(String world) {
-        return CompletableFuture.runAsync(() -> WorldUtils.copyWorld(world));
+    public static void asyncCopy(String world) {
+        CompletableFuture.runAsync(() -> WorldUtils.copyWorld(world));
     }
 
     public static void copyWorld(String worldName) {
@@ -27,6 +25,10 @@ public class WorldUtils {
 
     public static void deleteWorld(String worldName) throws IOException {
         File worldFile = new File(Bukkit.getWorldContainer().getPath() + "/" + worldName);
+        File worldPlayerData = new File(Bukkit.getWorldContainer().getPath() + "/world/playerdata)");
+
+        if (worldPlayerData.exists()) FileUtils.delete(worldPlayerData);
+
         System.out.println(worldFile.getPath());
         if (!worldFile.exists()) return;
 
@@ -38,6 +40,10 @@ public class WorldUtils {
     private static void copy(File src, File dst) throws IOException {
         if (src.getName().equalsIgnoreCase("playerdata")) return;
         if (src.isDirectory()) {
+            if (dst.exists()) {
+                dst.delete();
+            }
+
             if (!dst.exists()) {
                 dst.mkdirs();
             } else if (!dst.isDirectory()) {

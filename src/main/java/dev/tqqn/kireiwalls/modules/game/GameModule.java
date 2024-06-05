@@ -30,6 +30,7 @@ import dev.tqqn.kireiwalls.modules.scoreboard.ScoreboardModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import dev.tqqn.kireiwalls.utils.FinalItems;
 import dev.tqqn.kireiwalls.utils.ItemBuilder;
+import dev.tqqn.kireiwalls.utils.MessageUtil;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import lombok.Getter;
 import net.kyori.adventure.text.format.Style;
@@ -82,24 +83,20 @@ public final class GameModule extends AbstractModule {
 
     /** Ends the game. */
     public void endGame() {
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(this.getPlugin(), () -> TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill()));
-        } else {
-            TeamModule.getGameTeams().values().forEach((gameTeam) -> {
-                gameTeam.getGameWither().kill();
+        Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> {
+            TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill());
+
+            getIngamePlayers().forEach((playerModel) -> {
+                System.out.println("Kicking/Saving player: "  + playerModel.getName());
+                this.databaseModule.savePlayer(playerModel);
+                if (playerModel.getPlayer() != null) {
+                    playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+                    playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                    playerModel.getPlayer().kick(ChatUtil.format("<red>Game ended!"));
+                }
             });
-        }
-
-        getIngamePlayers().forEach((playerModel) -> {
-            this.databaseModule.savePlayer(playerModel);
-            if (playerModel.getPlayer() != null) {
-                playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-                playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-                playerModel.getPlayer().kick(ChatUtil.format("<red>Game ended!"));
-            }
-
-        });
-        Bukkit.getServer().shutdown();
+            Bukkit.getServer().shutdown();
+        }, 200L);
     }
 
     /**
@@ -129,14 +126,14 @@ public final class GameModule extends AbstractModule {
         for (PlayerModel playerModel : getIngamePlayers()) {
             if (playerModel.getPlayer() == null) return;
 
-            if (playerModel.getCurrentClass() == null) {
-                playerModel.setCurrentClass(ClassModule.getClasses().get(ThreadLocalRandom.current().nextInt(ClassModule.getClasses().size()))); // Random Class
-                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You got <gold>" + playerModel.getCurrentClass().getName() + " <green>as random Class!"));
+            if (playerModel.getTempPlayerData().getCurrentClass() == null) {
+                playerModel.getTempPlayerData().setCurrentClass(ClassModule.getClasses().get(ThreadLocalRandom.current().nextInt(ClassModule.getClasses().size()))); // Random Class
+                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You got <gold>" + playerModel.getTempPlayerData().getCurrentClass().getName() + " <green>as random Class!"));
             }
 
-            if (playerModel.getGameTeam() == null) {
-                if (playerModel.isSpectatorMode()) {
-                    playerModel.setSpectatorMode(true);
+            if (playerModel.getTempPlayerData().getGameTeam() == null) {
+                if (playerModel.getTempPlayerData().isSpectatorMode()) {
+                    playerModel.getTempPlayerData().setSpectatorMode(true);
                 } else {
                     this.teamModule.whichTeamIsSmaller().addPlayer(playerModel);
                 }
@@ -179,15 +176,15 @@ public final class GameModule extends AbstractModule {
     private void spawnPlayers() {
         initHealthBelowName();
         for (PlayerModel playerModel : getIngamePlayers()) {
-            if (!playerModel.isSpectatorMode()) {
+            if (!playerModel.getTempPlayerData().isSpectatorMode()) {
                 double health = 40.0;
-                if (playerModel.getCurrentClass().isPrestigeOne()) health = 44.0;
-                playerModel.getPlayer().teleport(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
+                if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeOne()) health = 44.0;
+                playerModel.getPlayer().teleport(playerModel.getTempPlayerData().getGameTeam().getGameTeamSettings().getSpawnLocation());
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
                 playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
                 playerModel.getPlayer().getInventory().clear();
-                playerModel.getCurrentClass().applyKit(playerModel);
-                playerModel.getCurrentClass().applySkin(playerModel);
+                playerModel.getTempPlayerData().getCurrentClass().applyKit(playerModel);
+                playerModel.getTempPlayerData().getCurrentClass().applySkin(playerModel);
             }
         }
     }
@@ -223,6 +220,20 @@ public final class GameModule extends AbstractModule {
         return count == 4;
     }
 
+    public GameTeam getWinningTeamByDraw() {
+
+        GameTeam possibleWinner = null;
+        for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
+            if (possibleWinner == null) {
+                possibleWinner = gameTeam;
+                continue;
+            }
+            if (possibleWinner.getCurrentFinalKills() < gameTeam.getCurrentFinalKills()) possibleWinner = gameTeam;
+        }
+
+        return possibleWinner;
+    }
+
     /** Checks if the game can start. */
     public boolean canStart() {
         return true; // For debug purposes still on force true
@@ -234,11 +245,10 @@ public final class GameModule extends AbstractModule {
         player.getInventory().clear();
 
         player.getInventory().setItem(0, ItemBuilder.getBuilder(FinalItems.CLASS_SELECTOR.getItem()).setLocalizedName("class_selector").build());
-        if (playerModel.getCurrentClass() == null) return;
+        if (playerModel.getTempPlayerData().getCurrentClass() == null) return;
 
-        final AbstractClass currentClass = playerModel.getCurrentClass();
+        final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
 
         player.getInventory().setItem(1, ItemBuilder.getBuilder(KireiWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").setLocalizedName("skin_selector").build());
     }
-
 }

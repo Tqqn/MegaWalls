@@ -1,13 +1,16 @@
 package dev.tqqn.kireiwalls.modules.game.framework;
 
+import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +19,7 @@ import java.util.Set;
  * The AbstractGameState class represents the abstract base class for game states, providing
  * common functionality for enabling, disabling, and managing listeners.
  */
-public abstract class AbstractGameState extends BukkitRunnable {
+public abstract class AbstractGameState extends BukkitRunnable implements Listener {
 
     @Getter private final GameModule gameModule;
     @Getter private final GameStates gameStates;

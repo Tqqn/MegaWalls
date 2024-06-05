@@ -95,8 +95,8 @@ public final class KireiWalls extends JavaPlugin {
     private void initScoreboardTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard() == null) return;
-                PlayerModule.getPlayerModel(player.getUniqueId()).getCurrentScoreboard().update();
+                if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard() == null) return;
+                PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard().update();
                 if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
                     updateHealth(player);
                 }

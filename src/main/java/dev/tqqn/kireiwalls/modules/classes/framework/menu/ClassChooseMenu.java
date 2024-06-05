@@ -35,13 +35,13 @@ public final class ClassChooseMenu extends Menu {
             registerButton(new MenuButton(abstractClass.getKitIcon(viewer)).setClicker(clicked -> {
                 PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
 
-                if (playerModel.getCurrentClass() == abstractClass) {
+                if (playerModel.getTempPlayerData().getCurrentClass() == abstractClass) {
                     playerModel.getPlayer().sendMessage(ChatUtil.format("<red>You have already selected this class!"));
                     close();
                     return;
                 }
 
-                playerModel.setCurrentClass(abstractClass);
+                playerModel.getTempPlayerData().setCurrentClass(abstractClass);
                 playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You have selected the <yellow>" + abstractClass.getName() + "<green> class!"));
                 close();
             }), slot++);
@@ -68,7 +68,7 @@ public final class ClassChooseMenu extends Menu {
         lore.add("&7picking this option!");
         lore.add("");
 
-        if (PlayerModule.getPlayerModel(getViewer().getUniqueId()).getCurrentClass() == null) {
+        if (PlayerModule.getPlayerModel(getViewer().getUniqueId()).getTempPlayerData().getCurrentClass() == null) {
             lore.add("&a&lSelected!");
         } else {
             lore.add("&eClick to select!");
@@ -76,12 +76,12 @@ public final class ClassChooseMenu extends Menu {
 
         MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("&aRandom!").setLore(lore).build());
         randomButton.setClicker(player -> {
-            if (playerModel.getCurrentClass() == null) {
+            if (playerModel.getTempPlayerData().getCurrentClass() == null) {
                 player.sendMessage(ChatUtil.format("<red>You have already selected the random class!"));
                 close();
                 return;
             }
-            playerModel.setCurrentClass(null);
+            playerModel.getTempPlayerData().setCurrentClass(null);
             player.sendMessage(ChatUtil.format("<green>You have selected the <yellow>Random <green>option!"));
             close();
         });

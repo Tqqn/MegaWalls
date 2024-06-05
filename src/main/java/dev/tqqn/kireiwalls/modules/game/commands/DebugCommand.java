@@ -43,7 +43,7 @@ public final class DebugCommand implements CommandExecutor {
                     return true;
                 } else {
                     PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
-                    playerModel.increaseCoins(Integer.parseInt(strings[0]));
+                    playerModel.getTempPlayerData().increaseCoins(Integer.parseInt(strings[0]));
                     player.sendMessage(ChatUtil.format("<green>Increased coins by <gold>" + strings[0] + "<green>."));
                     return true;
                 }

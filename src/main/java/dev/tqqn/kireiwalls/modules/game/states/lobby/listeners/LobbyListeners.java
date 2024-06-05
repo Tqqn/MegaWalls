@@ -51,7 +51,7 @@ public final class LobbyListeners implements Listener {
         final PlayerModel playerModel = event.getPlayerModel();
 
         GameModule.getIngamePlayers().add(event.getPlayerModel());
-        if (playerModel.isBuildMode()) {
+        if (playerModel.getTempPlayerData().isBuildMode()) {
             playerModel.getPlayer().setGameMode(GameMode.CREATIVE);
         } else {
             playerModel.getPlayer().setGameMode(GameMode.SURVIVAL);
@@ -65,8 +65,8 @@ public final class LobbyListeners implements Listener {
         playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         playerModel.getPlayer().setFoodLevel(20);
 
-        if (playerModel.getCurrentClass() != null) {
-            playerModel.getCurrentClass().applySkin(event.getPlayerModel());
+        if (playerModel.getTempPlayerData().getCurrentClass() != null) {
+            playerModel.getTempPlayerData().getCurrentClass().applySkin(event.getPlayerModel());
         } else {
             KireiWalls.getReflectionLayer().changeSkin(Skins.RANDOM, playerModel);
         }

@@ -60,10 +60,10 @@ public abstract class PluginScoreboard {
      * @param playerModel The PlayerModel for which to set the scoreboard.
      */
     public void setScoreboard(PlayerModel playerModel) {
-        if (playerModel.getCurrentScoreboard() != null) {
+        if (playerModel.getTempPlayerData().getCurrentScoreboard() != null) {
             removeScoreboard();
         }
-        playerModel.setCurrentScoreboard(this);
+        playerModel.getTempPlayerData().setCurrentScoreboard(this);
         KireiWalls.getReflectionLayer().sendSideBarScoreboard(name, playerModel.getPlayer(), displayName, boardLines);
     }
 
@@ -71,7 +71,7 @@ public abstract class PluginScoreboard {
      * Removes the scoreboard for the associated player model.
      */
     public void removeScoreboard() {
-        playerModel.setCurrentScoreboard(null);
+        playerModel.getTempPlayerData().setCurrentScoreboard(null);
         KireiWalls.getReflectionLayer().removePlayerFromScoreboard(name, playerModel.getPlayer());
     }
 
@@ -80,7 +80,7 @@ public abstract class PluginScoreboard {
      */
     public void removeScoreboardFromAllPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerModule.getPlayerModel(player.getUniqueId()).setCurrentScoreboard(null);
+            PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().setCurrentScoreboard(null);
             KireiWalls.getReflectionLayer().removePlayerFromScoreboard(name, player);
         }
     }

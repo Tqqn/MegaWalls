@@ -131,8 +131,8 @@ public final class v1_20_R3 implements ReflectionLayer {
     @Override
     public void sendActionBar(PlayerModel playerModel) {
         Component message = CraftChatMessage.fromStringOrNull(" ");
-        if (!playerModel.isSpectatorMode()) {
-            message = CraftChatMessage.fromStringOrNull(playerModel.getCurrentClass().getActionBar(playerModel));
+        if (!playerModel.getTempPlayerData().isSpectatorMode()) {
+            message = CraftChatMessage.fromStringOrNull(playerModel.getTempPlayerData().getCurrentClass().getActionBar(playerModel));
         }
         sendPacket(playerModel.getPlayer(), new ClientboundSetActionBarTextPacket(message));
     }

@@ -43,10 +43,10 @@ public final class TeamProtectionRegion extends AbstractRegion {
     public void onExit(Player player) {
 
         final PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
-        if (playerModel.getGameTeam() != gameTeam) return;
-        if (playerModel.isProtected()) {
+        if (playerModel.getTempPlayerData().getGameTeam() != gameTeam) return;
+        if (playerModel.getTempPlayerData().isProtected()) {
             player.sendMessage(ChatUtil.format("<red>You lost your protection because you left your spawn zone!"));
-            playerModel.setProtected(false);
+            playerModel.getTempPlayerData().setProtected(false);
         }
     }
 
@@ -85,9 +85,9 @@ public final class TeamProtectionRegion extends AbstractRegion {
     @Override
     public void onDamage(EntityDamageEvent event) {
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getEntity().getUniqueId());
-        if (!playerModel.isProtected()) return;
+        if (!playerModel.getTempPlayerData().isProtected()) return;
 
-        if (playerModel.getGameTeam() == gameTeam) {
+        if (playerModel.getTempPlayerData().getGameTeam() == gameTeam) {
             event.setCancelled(true);
         }
     }
@@ -101,9 +101,9 @@ public final class TeamProtectionRegion extends AbstractRegion {
     @Override
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getEntity().getUniqueId());
-        if (!playerModel.isProtected()) return;
+        if (!playerModel.getTempPlayerData().isProtected()) return;
 
-        if (playerModel.getGameTeam() == gameTeam) {
+        if (playerModel.getTempPlayerData().getGameTeam() == gameTeam) {
             event.setCancelled(true);
             event.getDamager().sendMessage(ChatUtil.format("<red><bold>Leave the spawn zone! <reset><red>Spawned players will have increased damage!"));
         }

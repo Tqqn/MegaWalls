@@ -39,8 +39,8 @@ public final class LobbyBoard extends PluginScoreboard {
         this.updateLine("§fStarting in §a" + ChatUtil.convertSecondsToHMmSs(LobbyState.getTimer()) + " §fif", 6);
         String selectedClass = "§aRandom!";
 
-        if (getPlayerModel().getCurrentClass() != null) {
-            selectedClass = "§a" + getPlayerModel().getCurrentClass().getName();
+        if (getPlayerModel().getTempPlayerData().getCurrentClass() != null) {
+            selectedClass = "§a" + getPlayerModel().getTempPlayerData().getCurrentClass().getName();
         }
 
         this.updateLine(selectedClass, 2);

@@ -32,34 +32,34 @@ public final class ChatUtil {
     public static void sendPlayerMessage(PlayerModel playerModel, Component component) {
         if (playerModel.getPlayer() == null) return;
 
-        Bukkit.getLogger().info(((TextComponent) playerModel.getChatMessage(component)).content() + ((TextComponent) component).content());
+        Bukkit.getLogger().info(((TextComponent) playerModel.getTempPlayerData().getChatMessage(component)).content() + ((TextComponent) component).content());
         if (GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
             for (Player players : Bukkit.getOnlinePlayers()) {
-                players.sendMessage(playerModel.getChatMessage(component));
+                players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }
             return;
         }
 
-        if (playerModel.getGameTeam() == null) return;
+        if (playerModel.getTempPlayerData().getGameTeam() == null) return;
 
         if (GameModule.getCurrentState().getGameStates() == GameStates.END) {
 
             for (Player players : Bukkit.getOnlinePlayers()) {
-                players.sendMessage(playerModel.getChatMessage(component));
+                players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }
             return;
         }
 
-        if (playerModel.isSpectatorMode()) {
+        if (playerModel.getTempPlayerData().isSpectatorMode()) {
             for (PlayerModel playerModels : GameModule.getSpectators()) {
                 System.out.println(playerModels.getName());
                 if (playerModels.getPlayer() == null) return;
-                playerModels.getPlayer().sendMessage(playerModel.getChatMessage(component));
+                playerModels.getPlayer().sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }
         } else {
-            for (PlayerModel playerModels : playerModel.getGameTeam().getCurrentPlayers()) {
+            for (PlayerModel playerModels : playerModel.getTempPlayerData().getGameTeam().getCurrentPlayers()) {
                 if (playerModels.getPlayer() == null) return;
-                playerModels.getPlayer().sendMessage(playerModel.getChatMessage(component));
+                playerModels.getPlayer().sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }
         }
     }
@@ -119,4 +119,38 @@ public final class ChatUtil {
             return 11141120; // Dark_red
         }
     }
+
+    public static String centerMessage(String message) {
+        if (message == null || message.isEmpty()) return "";
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
+                previousCode = true;
+            } else if (previousCode) {
+                previousCode = false;
+                isBold = c == 'l' || c == 'L';
+            } else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+                messagePxSize++;
+            }
+        }
+
+        int halvedMessageSize = messagePxSize / 2;
+        int toCompensate = 154 - halvedMessageSize;
+        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+        int compensated = 0;
+        StringBuilder sb = new StringBuilder();
+        while(compensated < toCompensate){
+            sb.append(" ");
+            compensated += spaceLength;
+        }
+        return (sb + message);
+    }
+
 }

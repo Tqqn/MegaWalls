@@ -27,12 +27,12 @@ public class ShoutCommand implements CommandExecutor {
 
             final PlayerModel playerModel = PlayerModule.getPlayerModel(sender.getUniqueId());
 
-            if (playerModel.isSpectatorMode()) {
+            if (playerModel.getTempPlayerData().isSpectatorMode()) {
                 sender.sendMessage(ChatUtil.format("<red>You cannot use shouts as a spectator."));
                 return true;
             }
 
-            if (playerModel.getGameTeam() == null) {
+            if (playerModel.getTempPlayerData().getGameTeam() == null) {
                 sender.sendMessage(ChatUtil.format("<red>Cannot use shouts as you are not in a team."));
             }
 
@@ -46,9 +46,9 @@ public class ShoutCommand implements CommandExecutor {
                 TextComponent shoutMessage = Component.text().content(message.toString()).build();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " ").append(playerModel.getChatMessage(shoutMessage)));
+                    player.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " ").append(playerModel.getTempPlayerData().getChatMessage(shoutMessage)));
                 }
-                Bukkit.getLogger().info("[SHOUT]" + ((TextComponent) playerModel.getChatMessage(shoutMessage)).content() + shoutMessage.content());
+                Bukkit.getLogger().info("[SHOUT]" + ((TextComponent) playerModel.getTempPlayerData().getChatMessage(shoutMessage)).content() + shoutMessage.content());
             }
         }
 

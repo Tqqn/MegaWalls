@@ -2,6 +2,7 @@ package dev.tqqn.kireiwalls.modules.teams.framework;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerStats;
 import dev.tqqn.kireiwalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.region.framework.types.TeamProtectionRegion;
 import dev.tqqn.kireiwalls.modules.region.framework.types.WitherProtectionRegion;
@@ -29,9 +30,11 @@ public final class GameTeam {
     private final GameTeamSettings gameTeamSettings;
     private final Set<PlayerModel> currentPlayers;
     private final Set<PlayerModel> alivePlayers;
+    private int currentFinalKills;
     private final TeamProtectionRegion teamProtectionRegion;
     private final WitherProtectionRegion witherProtectionRegion;
     private final String chatPrefix;
+
 
     /**
      * Constructs a GameTeam object with the specified attributes.
@@ -60,6 +63,7 @@ public final class GameTeam {
         this.gameTeamSettings = gameTeamSettings;
         this.currentPlayers = new HashSet<>();
         this.alivePlayers = new HashSet<>();
+        this.currentFinalKills = 0;
         this.teamProtectionRegion = new TeamProtectionRegion(name, gameTeamSettings.getTeamProtectionCuboid(), this);
         this.witherProtectionRegion = new WitherProtectionRegion(name, gameTeamSettings.getWitherProtectionCuboid(), this);
         this.chatPrefix = color + "[" + name + "]";
@@ -80,7 +84,7 @@ public final class GameTeam {
     public void addPlayer(PlayerModel playerModel) {
         currentPlayers.add(playerModel);
         alivePlayers.add(playerModel);
-        playerModel.setGameTeam(this);
+        playerModel.getTempPlayerData().setGameTeam(this);
         sendNameTag(playerModel);
     }
 
@@ -99,7 +103,7 @@ public final class GameTeam {
      * @param playerModel The player whose name tag to send.
      */
     public void sendNameTag(PlayerModel playerModel) {
-        KireiWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, legacyColor + prefix, " " + playerModel.getCurrentClass().getTag(playerModel));
+        KireiWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, legacyColor + prefix, " " + playerModel.getTempPlayerData().getCurrentClass().getTag(playerModel));
     }
 
     /**
@@ -118,6 +122,14 @@ public final class GameTeam {
      */
     public void removePlayer(PlayerModel playerModel) {
         currentPlayers.remove(playerModel);
-        playerModel.setGameTeam(null);
+        playerModel.getTempPlayerData().setGameTeam(null);
+    }
+
+    public void increaseCurrentFinalKills() {
+        this.currentFinalKills++;
+    }
+
+    public void decreaseFinalKills(PlayerModel playerModel) {
+        this.currentFinalKills = currentFinalKills - playerModel.getTempPlayerData().getPlayerStats().getStat(PlayerStats.StatType.FINAL_KILLS);
     }
 }

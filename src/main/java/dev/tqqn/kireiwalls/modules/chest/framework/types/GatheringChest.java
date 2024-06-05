@@ -45,11 +45,19 @@ import java.util.concurrent.ThreadLocalRandom;
 
         if (gatheringChestSpawnEvent.isCancelled()) return;
 
+        Material broken = brokenMaterial;
+
+        switch (brokenMaterial) {
+            case GRASS_BLOCK -> broken = Material.DIRT;
+            case STONE -> broken = Material.COBBLESTONE;
+            case COAL_ORE -> broken = Material.COAL;
+        }
+
         for (ChestItem chestItem : gatheringChestSpawnEvent.getGatheringChest().getChestItems()) {
             if (!chestItem.shouldSpawn()) continue;
             int randomSlot = ThreadLocalRandom.current().nextInt(1, chestInventory.getSize()-1);
 
-            chestInventory.setItem(0, new ItemStack(brokenMaterial));
+            chestInventory.setItem(0, new ItemStack(broken));
 
             while (chestInventory.getItem(randomSlot) != null || randomSlot == chestInventory.getSize()) {
                 randomSlot = randomSlot+1;

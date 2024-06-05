@@ -50,7 +50,7 @@ public final class Zombie extends AbstractClass {
         getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("&2Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().setLocalizedName("kit").build());
         getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).build()).setDisplayName("&2Zombie Potion of Health (10 Hearts)").setLocalizedName("kit").addPDCTag("heal" + getName(), "20").build());
         getKitItems().put(3, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 15, 1)).setColor(Color.AQUA).build()).setDisplayName("&2Zombie Potion of Speed II (0:15s)").setAmount(2).setLocalizedName("kit").build());
-        getKitItems().put(4, ItemBuilder.getBuilder(Material.DIAMOND_PICKAXE).setDisplayName("&2Zombie Pickaxe").addEnchantment(Enchantment.DIG_SPEED, 3).addEnchantment(Enchantment.DURABILITY, 3).setLocalizedName("kit").build());
+        getKitItems().put(4, ItemBuilder.getBuilder(Material.DIAMOND_PICKAXE).setDisplayName("&2Zombie Pickaxe").addEnchantment(Enchantment.DIG_SPEED, 3).addEnchantment(Enchantment.DURABILITY, 3).setUnbreakable().setLocalizedName("kit").build());
         getKitItems().put(5, ItemBuilder.getBuilder(Material.ENDER_CHEST).setDisplayName("&2Zombie Enderchest").setLocalizedName("kit").build());
         getKitItems().put(7, ItemBuilder.getBuilder(Material.COOKED_BEEF).setDisplayName("&2Zombie Steak").setLocalizedName("kit").setAmount(3).build());
         getKitItems().put(8, ItemBuilder.getBuilder(Material.COMPASS).setDisplayName("&2Zombie Compass").setLocalizedName("kit").build());
@@ -68,7 +68,7 @@ public final class Zombie extends AbstractClass {
         }
 
         playerModel.getPlayer().setHealth(newExecuterHealth);
-        playerModel.resetEnergy();
+        playerModel.getTempPlayerData().resetEnergy();
         for (Player player : playerModel.getPlayer().getLocation().getNearbyPlayers(5)) {
             double teamHealth = player.getHealth() + 5;
             if (player == playerModel.getPlayer()) continue;
@@ -124,7 +124,7 @@ public final class Zombie extends AbstractClass {
     }
 
     private void handleToughnessAbility(PlayerModel playerModel) {
-        playerModel.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerGettingHit());
+        playerModel.getTempPlayerData().increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerGettingHit());
 
         if (toughnessHits.containsKey(playerModel.getUuid())) {
             int hitsTaken = toughnessHits.get(playerModel.getUuid());

@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -31,6 +32,18 @@ public final class GlobalGameListeners implements Listener {
     public void onFoodChange(FoodLevelChangeEvent event) {
         if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
         if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PRE_DM || ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onItemMove(InventoryMoveItemEvent event) {
+        if (event.getSource() == event.getDestination()) return;
+        ItemStack item = event.getItem();
+
+        ItemMeta itemMeta = item.getItemMeta();
+
+        if (!itemMeta.hasLocalizedName()) return;
+        if (!itemMeta.getLocalizedName().equals("kit")) return;
+        event.setCancelled(true);
     }
 
     @EventHandler

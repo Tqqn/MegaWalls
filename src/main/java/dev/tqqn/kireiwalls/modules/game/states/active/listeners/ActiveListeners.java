@@ -1,11 +1,14 @@
 package dev.tqqn.kireiwalls.modules.game.states.active.listeners;
 
 import dev.tqqn.kireiwalls.KireiWalls;
+import dev.tqqn.kireiwalls.modules.chest.framework.ChestItem;
+import dev.tqqn.kireiwalls.modules.chest.framework.events.GatheringChestSpawnEvent;
 import dev.tqqn.kireiwalls.modules.database.framework.events.GamePlayerJoinEvent;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerStats;
 import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
 import dev.tqqn.kireiwalls.modules.game.framework.events.GamePlayerKilledEvent;
+import dev.tqqn.kireiwalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.kireiwalls.modules.game.framework.events.WitherDamageByPlayerEvent;
 import dev.tqqn.kireiwalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.ModuleManager;
@@ -20,13 +23,17 @@ import dev.tqqn.kireiwalls.utils.MessageUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * The ActiveListeners class implements various event listeners for active gameplay.
@@ -54,20 +61,35 @@ public final class ActiveListeners implements Listener {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 final PlayerModel players = PlayerModule.getPlayerModel(player.getUniqueId());
 
-                if (players.isSpectatorMode()) {
-                    if (event.getPlayerModel().isSpectatorMode()) {
+                if (players.getTempPlayerData().isSpectatorMode()) {
+                    if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
                         event.getPlayerModel().getPlayer().showPlayer(KireiWalls.getInstance(), player);
                     } else {
                         event.getPlayerModel().getPlayer().hidePlayer(KireiWalls.getInstance(), player);
                     }
                 }
 
-                if (players.isSpectatorMode()) {
-                    players.sendSpectatorTag(true);
+                if (players.getTempPlayerData().isSpectatorMode()) {
+                    players.getTempPlayerData().sendSpectatorTag(true);
                     continue;
                 }
 
-                players.getGameTeam().sendNameTag(players);
+                players.getTempPlayerData().getGameTeam().sendNameTag(players);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onChestSpawn(GatheringChestSpawnEvent event) {
+        if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+            final PlayerModel playerModel = event.getPlayerModel();
+
+            if (playerModel.getTempPlayerData().isFirstChest()) {
+                System.out.println("Called1");
+                event.addItem(new ChestItem(new ItemStack(Material.IRON_AXE), 100, 1, 1));
+                event.addItem(new ChestItem(new ItemStack(Material.FURNACE), 100, 2, 4));
+                event.addItem(new ChestItem(new ItemStack(Material.ARROW), 100, 20, 24));
+                playerModel.getTempPlayerData().setFirstChest(false);
             }
         }
     }
@@ -83,13 +105,13 @@ public final class ActiveListeners implements Listener {
         String broadcastMessage;
 
         switch (event.getDeathReason()) {
-            case KILLED_BY_NO_PLAYER -> broadcastMessage = MessageUtil.KILLED_NO_KILLER.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName());
-            case KILLED_BY_PLAYER_BOW -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_BOW.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getGameTeam().getColor(), event.getKiller().getName());
-            case KILLED_BY_PLAYER_HAND -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_HAND.getStringMessage(event.getKilledPlayer().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getGameTeam().getColor(), event.getKiller().getName());
+            case KILLED_BY_NO_PLAYER -> broadcastMessage = MessageUtil.KILLED_NO_KILLER.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName());
+            case KILLED_BY_PLAYER_BOW -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_BOW.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getTempPlayerData().getGameTeam().getColor(), event.getKiller().getName());
+            case KILLED_BY_PLAYER_HAND -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_HAND.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getTempPlayerData().getGameTeam().getColor(), event.getKiller().getName());
             default -> broadcastMessage = "";
         }
 
-        boolean isFinal = event.getKilledPlayer().getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH;
+        boolean isFinal = event.getKilledPlayer().getTempPlayerData().getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH;
         String prefix;
         int coin;
 
@@ -103,12 +125,12 @@ public final class ActiveListeners implements Listener {
 
         if (event.getKiller() != null) {
             if (isFinal) {
-                event.getKiller().getPlayerStats().increaseStat(PlayerStats.StatType.FINAL_KILLS);
+                event.getKiller().getTempPlayerData().getPlayerStats().increaseStat(PlayerStats.StatType.FINAL_KILLS);
             } else {
-                event.getKiller().getPlayerStats().increaseStat(PlayerStats.StatType.KILLS);
+                event.getKiller().getTempPlayerData().getPlayerStats().increaseStat(PlayerStats.StatType.KILLS);
             }
             event.getKiller().getPlayer().sendMessage(ChatUtil.format(MessageUtil.COINS_EARNED.getStringMessage(String.valueOf(coin)) + prefix));
-            event.getKiller().increaseCoins(coin);
+            event.getKiller().getTempPlayerData().increaseCoins(coin);
         }
 
         if (isFinal) {
@@ -119,6 +141,8 @@ public final class ActiveListeners implements Listener {
                     playerModel.getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
                 }
             }
+            if (event.getKiller() != null) event.getKiller().getTempPlayerData().getGameTeam().increaseCurrentFinalKills();
+            event.getKilledPlayer().getTempPlayerData().getGameTeam().decreaseFinalKills(event.getKilledPlayer());
         } else {
             event.getKilledPlayer().getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
             if (event.getKiller() != null) {
@@ -166,7 +190,7 @@ public final class ActiveListeners implements Listener {
                     return;
                 }
                 PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
-                if (shooterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
+                if (shooterModel.getTempPlayerData().getGameTeam().equals(hitPlayerModel.getTempPlayerData().getGameTeam())) {
                     event.setCancelled(true);
                 }
             }
@@ -175,7 +199,7 @@ public final class ActiveListeners implements Listener {
         if (event.getDamager() instanceof Player hitter) {
             if (hitter == hitPlayer) return;
             PlayerModel hitterModel = PlayerModule.getPlayerModel(hitter.getUniqueId());
-            if (hitterModel.getGameTeam().equals(hitPlayerModel.getGameTeam())) {
+            if (hitterModel.getTempPlayerData().getGameTeam().equals(hitPlayerModel.getTempPlayerData().getGameTeam())) {
                 event.setCancelled(true);
             }
         }
@@ -190,19 +214,19 @@ public final class ActiveListeners implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
 
-        if (playerModel.getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH) {
+        if (playerModel.getTempPlayerData().getGameTeam().getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH) {
 
             if (event.getPlayer().getKiller() == null) {
-                event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
+                event.setRespawnLocation(playerModel.getTempPlayerData().getGameTeam().getGameTeamSettings().getSpawnLocation());
             } else {
                 event.setRespawnLocation(event.getPlayer().getKiller().getLocation());
             }
 
-            Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> playerModel.setSpectatorMode(true), 2L);
+            Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> playerModel.getTempPlayerData().setSpectatorMode(true), 2L);
         } else {
-            event.setRespawnLocation(playerModel.getGameTeam().getGameTeamSettings().getSpawnLocation());
-            playerModel.setProtected(true);
-            playerModel.getCurrentClass().applyKit(playerModel);
+            event.setRespawnLocation(playerModel.getTempPlayerData().getGameTeam().getGameTeamSettings().getSpawnLocation());
+            playerModel.getTempPlayerData().setProtected(true);
+            playerModel.getTempPlayerData().getCurrentClass().applyKit(playerModel);
         }
     }
 
@@ -213,12 +237,12 @@ public final class ActiveListeners implements Listener {
      */
     @EventHandler
     public void onWitherDamage(WitherDamageByPlayerEvent event) {
-        if (event.getAttacker().getGameTeam() == event.getWitherTeam()) {
+        if (event.getAttacker().getTempPlayerData().getGameTeam() == event.getWitherTeam()) {
             event.setCancelled(true);
             return;
         }
 
-        event.getAttacker().addWitherDamage(event.getWitherTeam().getGameWither(), event.getDamage());
+        event.getAttacker().getTempPlayerData().addWitherDamage(event.getWitherTeam().getGameWither(), event.getDamage());
 
     }
 
@@ -265,6 +289,25 @@ public final class ActiveListeners implements Listener {
     }
 
     @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) return;
+
+        event.setExpToDrop(0);
+        Block block = event.getBlock();
+        if (block.getType() == Material.DIAMOND_ORE) return;
+
+        event.setDropItems(false);
+        final Player player = event.getPlayer();
+        player.getInventory().addItem(block.getDrops().toArray(new ItemStack[0]));
+        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) return;
+        Chest chest = (Chest) block.getState();
+        for (ItemStack itemStack : chest.getBlockInventory().getContents()) {
+            if (itemStack == null) continue;
+            player.getInventory().addItem(itemStack);
+        }
+    }
+
+    @EventHandler
     public void onDeath(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.getHealth() - event.getFinalDamage() > 0) return;
@@ -277,5 +320,19 @@ public final class ActiveListeners implements Listener {
     public void onPotionConsume(PlayerItemConsumeEvent event) {
         if (event.getItem().getType() != Material.POTION) return;
         Bukkit.getScheduler().runTaskLater(KireiWalls.getInstance(), () -> event.getPlayer().getInventory().remove(Material.GLASS_BOTTLE), 1L);
+    }
+
+    @EventHandler
+    public void onGameWin(GameWinEvent event) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendRichMessage(MessageUtil.MESSAGE_LINE.getStringMessage());
+            player.sendRichMessage(ChatUtil.centerMessage("&fMega Walls"));
+            player.sendMessage(" ");
+            player.sendRichMessage(ChatUtil.centerMessage(event.getWinner().getLegacyColor() + "Winner &7- " + event.getWinner().getLegacyColor() + event.getWinner().getPrettyName() + " Team"));
+            if (event.getWinReason() == GameWinEvent.WinReason.DRAW) player.sendRichMessage(ChatUtil.centerMessage("&77Final Kills by alive players!"));
+            if (event.getWinReason() == GameWinEvent.WinReason.LAST_ALIVE) player.sendRichMessage(ChatUtil.centerMessage("&7Last team standing!"));
+            player.sendMessage(" ");
+            player.sendRichMessage(MessageUtil.MESSAGE_LINE.getStringMessage());
+        }
     }
 }

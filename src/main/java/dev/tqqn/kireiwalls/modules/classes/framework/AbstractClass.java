@@ -85,7 +85,7 @@ public abstract class AbstractClass implements Listener {
      * @return {@code true} if the player can use the ability, {@code false} otherwise.
      */
     public boolean canUseAbility(PlayerModel playerModel) {
-        return playerModel.getEnergy() >= 100;
+        return playerModel.getTempPlayerData().getEnergy() >= 100;
     }
 
     public List<String> getKitAbilityLore() {
@@ -122,7 +122,7 @@ public abstract class AbstractClass implements Listener {
         lore.add("&7Upgrades: &a&l100%");
         lore.add("&7Ender Chest: &a&l5 rows");
         lore.add(" ");
-        if (playerModel.getCurrentClass() != null && playerModel.getCurrentClass().getClass() == this.getClass()) {
+        if (playerModel.getTempPlayerData().getCurrentClass() != null && playerModel.getTempPlayerData().getCurrentClass().getClass() == this.getClass()) {
             lore.add("&a&lSelected!");
         } else {
             lore.add("&eClick to select!");
@@ -140,7 +140,7 @@ public abstract class AbstractClass implements Listener {
      */
     public String getTag(PlayerModel playerModel) {
         String tagColor = "§7";
-        if (playerModel.getCurrentClass().isPrestigeFour) {
+        if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeFour) {
             tagColor = "§6";
         }
         return tagColor + tag;
@@ -152,7 +152,7 @@ public abstract class AbstractClass implements Listener {
      * @param playerModel The PlayerModel object representing the player.
      */
     public void onPlayerHitBow(PlayerModel playerModel) {
-        playerModel.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerBowShot());
+        playerModel.getTempPlayerData().increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerBowShot());
     }
 
     /**
@@ -161,11 +161,11 @@ public abstract class AbstractClass implements Listener {
      * @param damager The PlayerModel object representing the player causing the damage.
      */
     public void onChargedPlayerHit(PlayerModel damager) {
-        damager.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit());
+        damager.getTempPlayerData().increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit());
     }
 
     public void onNonChargedPlayerHit(PlayerModel damager) {
-        damager.increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit() / 3);
+        damager.getTempPlayerData().increaseEnergy(getClassOptions().getClassEnergy().getEnergyPerHit() / 3);
     }
 
     public void onTakenHit(PlayerModel playerModel) {

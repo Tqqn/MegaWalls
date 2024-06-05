@@ -17,7 +17,7 @@ public enum MessageUtil {
     PLAYER_JOIN("%s%s <yellow>has joined the game (<aqua%s<yellow>/<aqua>%s<yellow>)!"),
     PLAYER_QUIT("%s%s <yellow> has left the game!"),
     ALL_WITHERS_DEAD("<red>All Withers are dead."),
-    DM_COUNTDOWN("<red>Death-Match starting in <green>%s<red>."),
+    DM_COUNTDOWN("<red><bold>All withers are dead! <aqua>%s <red>seconds till deathmatch!"),
     SCOREBOARD_TITLE("§lMEGA WALLS"),
     KILLED_BY_KILLER_HAND("%s%s <white>was killed by %s%s"),
     KILLED_BY_KILLER_BOW("%s%s <white>was shot and killed by %s%s"),
@@ -26,7 +26,8 @@ public enum MessageUtil {
     ASSIST("<red><bold>ASSIST <reset>"),
     FINAL_KILL("<aqua><bold>FINAL KILL <reset>"),
     FINAL_ASSIST("<agua><bold>FINAL KILL <red>ASSIST <reset>"),
-    COINS_EARNED("<gold>+%s coins! ");
+    COINS_EARNED("<gold>+%s coins! "),
+    MESSAGE_LINE("<green>--------------------------------------------");
 
     private final String message;
 

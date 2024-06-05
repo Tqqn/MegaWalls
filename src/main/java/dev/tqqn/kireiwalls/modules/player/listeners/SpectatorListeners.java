@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -32,24 +33,24 @@ public final class SpectatorListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(GamePlayerJoinEvent event) {
         if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
-            if (event.getPlayerModel().isSpectatorMode()) {
-                event.getPlayerModel().setSpectatorMode(true);
+            if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
+                event.getPlayerModel().getTempPlayerData().setSpectatorMode(true);
             }
         } else {
-            event.getPlayerModel().setSpectatorMode(false);
+            event.getPlayerModel().getTempPlayerData().setSpectatorMode(false);
         }
     }
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onItemPickup(PlayerAttemptPickupItemEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -61,7 +62,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onWitherAttack(WitherDamageByPlayerEvent event) {
-        if (event.getAttacker().isSpectatorMode()) {
+        if (event.getAttacker().getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -73,7 +74,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -85,7 +86,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -97,7 +98,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -109,7 +110,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onBlockDamage(BlockDamageEvent event) {
-        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getPlayer().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -121,7 +122,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (PlayerModule.getPlayerModel(event.getEntity().getUniqueId()).isSpectatorMode()) {
+        if (PlayerModule.getPlayerModel(event.getEntity().getUniqueId()).getTempPlayerData().isSpectatorMode()) {
             event.setCancelled(true);
         }
     }
@@ -135,7 +136,7 @@ public final class SpectatorListeners implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity target = event.getDamager();
         if (target instanceof Player player) {
-            if (PlayerModule.getPlayerModel(player.getUniqueId()).isSpectatorMode()) {
+            if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().isSpectatorMode()) {
                 event.setCancelled(true);
             }
         }
@@ -150,7 +151,17 @@ public final class SpectatorListeners implements Listener {
     public void onTarget(EntityTargetEvent event) {
         Entity target = event.getTarget();
         if (target instanceof Player player) {
-            if (PlayerModule.getPlayerModel(player.getUniqueId()).isSpectatorMode()) {
+            if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().isSpectatorMode()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onHungerLose(FoodLevelChangeEvent event) {
+        Entity target = event.getEntity();
+        if (target instanceof Player player) {
+            if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().isSpectatorMode()) {
                 event.setCancelled(true);
             }
         }

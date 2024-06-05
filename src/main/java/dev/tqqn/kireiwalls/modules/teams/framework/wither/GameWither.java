@@ -30,7 +30,6 @@ public final class GameWither {
     @Getter private Entity bukkitEntity;
     private ICustomWither nmsEntity;
     @Getter private final BossBar witherBar;
-    private final String bossBarName;
 
     /**
      * Constructs a GameWither object associated with the specified game team.
@@ -56,7 +55,7 @@ public final class GameWither {
 
         bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
 
-        bossBarName = ChatUtil.translateLegacy(gameTeam.getLegacyColor() + gameTeam.getPrefix() + " WITHER &7- " + gameTeam.getLegacyColor() + health + "/1000");
+        String bossBarName = ChatUtil.translateLegacy(gameTeam.getLegacyColor() + gameTeam.getPrefix() + " WITHER &7- " + gameTeam.getLegacyColor() + health + "/1000");
 
         this.witherBar = Bukkit.createBossBar(bossBarName, BarColor.valueOf(gameTeam.getName()), BarStyle.SEGMENTED_20);
         this.witherBar.setProgress(1);
@@ -67,14 +66,20 @@ public final class GameWither {
      */
     public void kill() {
         if (bukkitEntity != null) {
-            this.bukkitEntity.remove();
+            System.out.println("Called for " + gameTeam.getPrettyName() + " wither is: " + bukkitEntity);
+            if (!Bukkit.isPrimaryThread()) {
+                Bukkit.getScheduler().runTask(KireiWalls.getInstance(), () -> bukkitEntity.remove());
+            } else {
+                bukkitEntity.remove();
+            }
         }
+
         this.bukkitEntity = null;
         this.witherStatus = WitherStatus.DEATH;
         this.nmsEntity = null;
         this.witherBar.removeAll();
         for (PlayerModel playerModel : this.gameTeam.getAlivePlayers()) {
-            playerModel.setProtected(false);
+            playerModel.getTempPlayerData().setProtected(false);
         }
     }
 
@@ -120,11 +125,7 @@ public final class GameWither {
 
         if ((this.health - damage) <= 0) {
             for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
-                playerModel.awardWitherDamage(this);
-            }
-            if (!Bukkit.isPrimaryThread()) {
-                Bukkit.getScheduler().runTask(KireiWalls.getInstance(), this::kill);
-                return;
+                playerModel.getTempPlayerData().awardWitherDamage(this);
             }
             kill();
             return;
