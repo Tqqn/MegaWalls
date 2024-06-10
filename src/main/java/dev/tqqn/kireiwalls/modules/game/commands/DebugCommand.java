@@ -5,6 +5,7 @@ import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
 import dev.tqqn.kireiwalls.modules.classes.framework.menu.ClassChooseMenu;
 import dev.tqqn.kireiwalls.modules.game.GameModule;
+import dev.tqqn.kireiwalls.modules.game.states.active.ActiveState;
 import dev.tqqn.kireiwalls.modules.player.PlayerModule;
 import dev.tqqn.kireiwalls.utils.ChatUtil;
 import org.apache.commons.lang.StringUtils;
@@ -26,17 +27,19 @@ public final class DebugCommand implements CommandExecutor {
                 player.sendMessage(ChatUtil.format("<red>Wrong Argument."));
                 return true;
             } else {
-                GameModule gameModule;
+                GameModule gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                 if (strings[0].equalsIgnoreCase("end")) {
-                    gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                     gameModule.endGame();
                     return true;
                 } else if (strings[0].equalsIgnoreCase("start")) {
-                    gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                     gameModule.setGameState(GameStates.ACTIVE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("kit")) {
                     new ClassChooseMenu(PlayerModule.getPlayerModel(player.getUniqueId())).open();
+                    return true;
+                } else if (strings[0].equalsIgnoreCase("nextcycle")) {
+                    ActiveState.nextCycle();
+                    player.sendMessage(ChatUtil.format("<green>Cycled to next cycle."));
                     return true;
                 } else if (!this.isNumber(strings[0])) {
                     player.sendMessage(ChatUtil.format("<red>This is not a number."));
