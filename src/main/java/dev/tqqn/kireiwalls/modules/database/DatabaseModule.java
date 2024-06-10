@@ -39,7 +39,7 @@ public final class DatabaseModule extends AbstractModule {
     protected void onEnable() {
         if (getPlugin().isSetup()) return;
 
-        this.addComponent(PlayerLoadListeners.class, "");
+        this.addComponent(PlayerLoadListeners.class);
 
         this.playerModule = this.getPlugin().getModuleManager().getModule(PlayerModule.class);
     }

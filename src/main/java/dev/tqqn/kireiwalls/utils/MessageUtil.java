@@ -27,6 +27,7 @@ public enum MessageUtil {
     FINAL_KILL("<aqua><bold>FINAL KILL <reset>"),
     FINAL_ASSIST("<agua><bold>FINAL KILL <red>ASSIST <reset>"),
     COINS_EARNED("<gold>+%s coins! "),
+    HUNGER_NOTIFY("<red>You are losing hunger! Go to middle to remove the hunger effect!"),
     MESSAGE_LINE("<green>--------------------------------------------");
 
     private final String message;

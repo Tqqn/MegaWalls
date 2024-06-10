@@ -67,7 +67,7 @@ public final class GameModule extends AbstractModule {
     public void onEnable() {
         this.arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
         this.teamModule = this.getPlugin().getModuleManager().getModule(TeamModule.class);
-        this.addComponent(GlobalGameListeners.class, "");
+        this.addComponent(GlobalGameListeners.class);
         this.addComponent(DebugCommand.class, "debug");
         this.addComponent(WitherDebugCommand.class, "witherdebug");
         this.addComponent(BuildCommand.class, "build");

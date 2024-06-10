@@ -47,15 +47,10 @@ public class SetupModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        addComponent(SetupListener.class, "");
+        addComponent(SetupListener.class);
         addComponent(SelectCommand.class, "select");
         addComponent(SetupCommand.class, "setup");
         addComponent(BuildCommand.class, "build");
-    }
-
-    @Override
-    protected void onDisable() {
-
     }
 
     public void enableWorld(String world) {

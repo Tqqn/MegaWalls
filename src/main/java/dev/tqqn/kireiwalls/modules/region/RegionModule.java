@@ -15,10 +15,6 @@ public final class RegionModule extends AbstractModule {
 
     @Override
     public void onEnable() {
-        this.addComponent(RegionListener.class, "");
-    }
-
-    @Override
-    public void onDisable() {
+        this.addComponent(RegionListener.class);
     }
 }

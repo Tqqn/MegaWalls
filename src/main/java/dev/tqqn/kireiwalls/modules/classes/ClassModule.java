@@ -24,7 +24,7 @@ public final class ClassModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        addComponent(ClassesListener.class, "");
+        addComponent(ClassesListener.class);
         classes.add(new Herobrine());
         classes.add(new Skeleton());
         classes.add(new Zombie());

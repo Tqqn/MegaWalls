@@ -45,15 +45,17 @@ public abstract class AbstractModule {
 
     /**
      * Called when the module is being enabled.
-     * Subclasses must implement this method to perform initialization tasks.
      */
-    protected abstract void onEnable();
+    protected void onEnable() {
+        // Empty Constructor to override!
+    }
 
     /**
      * Called when the module is being disabled.
-     * Subclasses must implement this method to perform cleanup tasks.
      */
-    protected abstract void onDisable();
+    protected void onDisable() {
+        // Empty Constructor to override!
+    }
 
     public void load() {
         plugin.getLogger().info(prefix + " is loading...");
@@ -115,6 +117,11 @@ public abstract class AbstractModule {
             plugin.getLogger().info(prefix + " has unregistered listener: " + listener);
         });
     }
+
+    public void addComponent(Class<?> clazz) {
+        addComponent(clazz, "");
+    }
+
     /**
      * Adds a component (listener or command) to the module.
      *

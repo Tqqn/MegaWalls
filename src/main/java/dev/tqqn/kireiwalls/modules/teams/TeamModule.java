@@ -42,6 +42,7 @@ public final class TeamModule extends AbstractModule {
             this.YELLOW = new GameTeam("YELLOW", "Yellow", "97_yellow", "Y", "<yellow>", "§e", NamedTextColor.YELLOW, this.databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_YELLOW").get());
         } catch (InterruptedException | ExecutionException e) {
             Bukkit.getLogger().warning("Something went wrong getting the GameTeamSettings from the DB!");
+            Bukkit.shutdown();
         }
         gameTeams.putAll(Map.of("Red", this.RED, "Blue", this.BLUE, "Green", this.GREEN, "Yellow", this.YELLOW));
     }

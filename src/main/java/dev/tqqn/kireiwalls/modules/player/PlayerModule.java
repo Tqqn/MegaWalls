@@ -22,11 +22,7 @@ public final class PlayerModule extends AbstractModule {
 
     @Override
     public void onEnable() {
-        this.addComponent(SpectatorListeners.class, "");
-    }
-
-    @Override
-    public void onDisable() {
+        this.addComponent(SpectatorListeners.class);
     }
 
     /**

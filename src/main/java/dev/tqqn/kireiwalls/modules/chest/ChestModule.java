@@ -33,7 +33,7 @@ public class ChestModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        addComponent(ChestListeners.class, "");
+        addComponent(ChestListeners.class);
         this.gatheringChestItemsTemplate.addAll(List.of(
                 new ChestItem(ItemBuilder.getBuilder(Material.REDSTONE).build(), 0.5, 5, 10),
                 new ChestItem(ItemBuilder.getBuilder(Material.COBBLESTONE).build(), 1.0, 10, 20),
@@ -41,6 +41,11 @@ public class ChestModule extends AbstractModule {
                 new ChestItem(ItemBuilder.getBuilder(Material.COOKED_CHICKEN).build(), 0.4, 3, 7),
                 new ChestItem(ItemBuilder.getBuilder(Material.COOKED_COD).build(), 0.5, 3, 7)
         ));
+    }
+
+    @Override
+    protected void onDisable() {
+        gatheringChestItemsTemplate.clear();
     }
 
     public void spawnChest(Material brokenBlock, Location spawnLocation, UUID ownerUUID) {
@@ -60,10 +65,5 @@ public class ChestModule extends AbstractModule {
     public static boolean isProtected(Location location, UUID possibleOwner) {
         if (chestsMap.containsKey(location)) return false;
         return !chestsMap.get(location).isOwner(possibleOwner);
-    }
-
-    @Override
-    protected void onDisable() {
-        gatheringChestItemsTemplate.clear();
     }
 }

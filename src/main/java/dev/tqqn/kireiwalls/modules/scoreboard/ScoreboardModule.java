@@ -14,14 +14,6 @@ public final class ScoreboardModule extends AbstractModule {
         super(plugin, "Scoreboard");
     }
 
-    @Override
-    public void onEnable() {
-    }
-
-    @Override
-    public void onDisable() {
-    }
-
     /**
      * Sets a scoreboard for a player.
      *
