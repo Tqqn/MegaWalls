@@ -6,6 +6,7 @@ import dev.tqqn.kireiwalls.modules.game.GameModule;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -120,25 +121,18 @@ public final class ChatUtil {
         }
     }
 
-    public static String centerMessage(String message) {
-        if (message == null || message.isEmpty()) return "";
-        message = ChatColor.translateAlternateColorCodes('&', message);
+    public static Component centerMessage(String message) {
+        Component component = ChatUtil.format(message);
 
         int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
 
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
+        TextComponent textComponent = (TextComponent) component;
+        String componentString = PlainTextComponentSerializer.plainText().serialize(textComponent);
+
+        for (char c : componentString.toCharArray()) {
+            DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+            messagePxSize += dFI.getLength();
+            messagePxSize++;
         }
 
         int halvedMessageSize = messagePxSize / 2;
@@ -150,7 +144,7 @@ public final class ChatUtil {
             sb.append(" ");
             compensated += spaceLength;
         }
-        return (sb + message);
+        return ChatUtil.format(sb.toString()).append(component);
     }
 
 }

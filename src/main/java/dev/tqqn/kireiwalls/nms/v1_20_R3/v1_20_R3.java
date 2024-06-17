@@ -141,11 +141,8 @@ public final class v1_20_R3 implements ReflectionLayer {
     public void sendZombieParticle(PlayerModel playerModel) {
         final Player player = playerModel.getPlayer();
         if (player == null) return;
-
         ClientboundLevelParticlesPacket clientboundLevelParticlesPacket = new ClientboundLevelParticlesPacket(ParticleTypes.ANGRY_VILLAGER, false, player.getX(), player.getY()+1, player.getZ(), 0, 0, 0, 10, 1);
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            sendPacket(players, clientboundLevelParticlesPacket);
-        }
+        sendPacketToAll(new Object[]{clientboundLevelParticlesPacket});
     }
 
     @Override

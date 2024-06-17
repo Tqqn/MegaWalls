@@ -161,7 +161,7 @@ public final class ActiveState extends AbstractGameState {
 
         checkAliveTeams();
 
-        if (!isAlreadyEnd && aliveTeams.size() == 1) {
+        if (!isAlreadyEnd && aliveTeams.size() <= 1) {
             currentCycle = Cycle.END;
             this.isAlreadyEnd = true;
             Bukkit.getScheduler().runTask(KireiWalls.getInstance(), () -> {
@@ -185,12 +185,17 @@ public final class ActiveState extends AbstractGameState {
         }
     }
 
+    public static void end() {
+        setTimer(0);
+        currentCycle = Cycle.END;
+    }
+
     public static void nextCycle() {
         cycleTimer = 0;
     }
 
     private void checkAliveTeams() {
-        //aliveTeams.removeIf(GameTeam::checkAlivePlayersIfDeath);
+        aliveTeams.removeIf((team) -> team.getAlivePlayers().isEmpty());
     }
 
     @EventHandler

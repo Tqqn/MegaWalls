@@ -13,6 +13,7 @@ import dev.tqqn.kireiwalls.modules.classes.framework.AbstractClass;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
+import dev.tqqn.kireiwalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
 import dev.tqqn.kireiwalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.kireiwalls.modules.region.framework.Cuboid;
@@ -87,7 +88,6 @@ public final class GameModule extends AbstractModule {
             TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill());
 
             getIngamePlayers().forEach((playerModel) -> {
-                System.out.println("Kicking/Saving player: "  + playerModel.getName());
                 this.databaseModule.savePlayer(playerModel);
                 if (playerModel.getPlayer() != null) {
                     playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
@@ -96,7 +96,7 @@ public final class GameModule extends AbstractModule {
                 }
             });
             Bukkit.getServer().shutdown();
-        }, 200L);
+        }, 300L);
     }
 
     /**

@@ -29,7 +29,11 @@ public final class DebugCommand implements CommandExecutor {
             } else {
                 GameModule gameModule = KireiWalls.getInstance().getModuleManager().getModule(GameModule.class);
                 if (strings[0].equalsIgnoreCase("end")) {
-                    gameModule.endGame();
+                    if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+                        ActiveState.end();
+                    } else {
+                        player.sendMessage(ChatUtil.format("<red>Game is not active. Can't force end."));
+                    }
                     return true;
                 } else if (strings[0].equalsIgnoreCase("start")) {
                     gameModule.setGameState(GameStates.ACTIVE);

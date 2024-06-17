@@ -4,6 +4,7 @@ import dev.tqqn.kireiwalls.modules.classes.framework.Skins;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.kireiwalls.modules.teams.framework.GameTeam;
 import dev.tqqn.kireiwalls.nms.framework.ICustomWither;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,6 +15,14 @@ import java.util.Collection;
  * server reflection to manipulate game entities and events at a low level.
  */
 public interface ReflectionLayer {
+
+    default void sendPacketToAll(Object[] packet) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (Object packets : packet) {
+                sendPacket(player, packets);
+            }
+        }
+    }
 
     /**
      * Sends a packet to the specified player using server reflection.

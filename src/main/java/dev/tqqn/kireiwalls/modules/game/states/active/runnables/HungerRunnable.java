@@ -26,6 +26,7 @@ public final class HungerRunnable extends BukkitRunnable {
     public void run() {
         for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
             if (playerModel.getPlayer() == null) continue;
+            if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
             final Player player = playerModel.getPlayer();
             if (!activeState.getGameModule().getArenaModule().getCurrentArena().getArenaSettings().getMiddleCuboid().isIn(player.getLocation())) {
                 if (hungerCount == 10) {

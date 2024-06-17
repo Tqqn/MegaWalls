@@ -88,6 +88,10 @@ public final class GameTeam {
         sendNameTag(playerModel);
     }
 
+    public void addAlivePlayer(PlayerModel playerModel) {
+        alivePlayers.add(playerModel);
+    }
+
     /**
      * Removes an alive player from the team.
      *

@@ -58,24 +58,26 @@ public final class ActiveListeners implements Listener {
             ScoreboardModule scoreboardModule = this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
             scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                final PlayerModel players = PlayerModule.getPlayerModel(player.getUniqueId());
+            event.getPlayerModel().getTempPlayerData().setSpectatorMode(event.getPlayerModel().getTempPlayerData().isSpectatorMode());
 
-                if (players.getTempPlayerData().isSpectatorMode()) {
-                    if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
-                        event.getPlayerModel().getPlayer().showPlayer(KireiWalls.getInstance(), player);
-                    } else {
-                        event.getPlayerModel().getPlayer().hidePlayer(KireiWalls.getInstance(), player);
-                    }
-                }
-
-                if (players.getTempPlayerData().isSpectatorMode()) {
-                    players.getTempPlayerData().sendSpectatorTag(true);
-                    continue;
-                }
-
-                players.getTempPlayerData().getGameTeam().sendNameTag(players);
-            }
+//            for (Player player : Bukkit.getOnlinePlayers()) {
+//                final PlayerModel players = PlayerModule.getPlayerModel(player.getUniqueId());
+//
+//                if (players.getTempPlayerData().isSpectatorMode()) {
+//                    if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
+//                        event.getPlayerModel().getPlayer().showPlayer(KireiWalls.getInstance(), player);
+//                    } else {
+//                        event.getPlayerModel().getPlayer().hidePlayer(KireiWalls.getInstance(), player);
+//                    }
+//                }
+//
+//                if (players.getTempPlayerData().isSpectatorMode()) {
+//                    players.getTempPlayerData().sendSpectatorTag(true);
+//                    continue;
+//                }
+//
+//                players.getTempPlayerData().getGameTeam().sendNameTag(players);
+//            }
         }
     }
 
@@ -325,14 +327,14 @@ public final class ActiveListeners implements Listener {
     @EventHandler
     public void onGameWin(GameWinEvent event) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendRichMessage(MessageUtil.MESSAGE_LINE.getStringMessage());
-            player.sendRichMessage(ChatUtil.centerMessage("&fMega Walls"));
+            player.sendMessage(ChatUtil.centerMessage(MessageUtil.MESSAGE_LINE.getStringMessage()));
+            player.sendMessage(ChatUtil.centerMessage("<white>Mega Walls"));
             player.sendMessage(" ");
-            player.sendRichMessage(ChatUtil.centerMessage(event.getWinner().getLegacyColor() + "Winner &7- " + event.getWinner().getLegacyColor() + event.getWinner().getPrettyName() + " Team"));
-            if (event.getWinReason() == GameWinEvent.WinReason.DRAW) player.sendRichMessage(ChatUtil.centerMessage("&77Final Kills by alive players!"));
-            if (event.getWinReason() == GameWinEvent.WinReason.LAST_ALIVE) player.sendRichMessage(ChatUtil.centerMessage("&7Last team standing!"));
+            player.sendMessage(ChatUtil.centerMessage(event.getWinner().getColor() + "Winner <gray>- " + event.getWinner().getColor() + event.getWinner().getPrettyName() + " Team"));
+            if (event.getWinReason() == GameWinEvent.WinReason.DRAW) player.sendMessage(ChatUtil.centerMessage("<gray>Final Kills by alive players!"));
+            if (event.getWinReason() == GameWinEvent.WinReason.LAST_ALIVE) player.sendMessage(ChatUtil.centerMessage("<gray>Last team standing!"));
             player.sendMessage(" ");
-            player.sendRichMessage(MessageUtil.MESSAGE_LINE.getStringMessage());
+            player.sendMessage(ChatUtil.centerMessage(MessageUtil.MESSAGE_LINE.getStringMessage()));
         }
     }
 }

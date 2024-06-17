@@ -2,8 +2,14 @@ package dev.tqqn.kireiwalls.modules.player;
 
 import dev.tqqn.kireiwalls.KireiWalls;
 import dev.tqqn.kireiwalls.modules.AbstractModule;
+import dev.tqqn.kireiwalls.modules.classes.framework.Skins;
 import dev.tqqn.kireiwalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.kireiwalls.modules.game.GameModule;
+import dev.tqqn.kireiwalls.modules.game.framework.GameStates;
+import dev.tqqn.kireiwalls.modules.player.listeners.PlayerListeners;
 import dev.tqqn.kireiwalls.modules.player.listeners.SpectatorListeners;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +28,7 @@ public final class PlayerModule extends AbstractModule {
 
     @Override
     public void onEnable() {
+        this.addComponent(PlayerListeners.class);
         this.addComponent(SpectatorListeners.class);
     }
 
@@ -51,5 +58,19 @@ public final class PlayerModule extends AbstractModule {
      */
     public void removePlayerFromCache(UUID uuid) {
         CACHED_PLAYERS.remove(uuid);
+    }
+
+    public void handlePlayerJoin(PlayerModel playerModel) {
+        if (playerModel.getTempPlayerData().getGameTeam() != null) {
+            playerModel.getTempPlayerData().getGameTeam().sendNameTag(playerModel);
+        }
+
+        if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE || GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
+            if (playerModel.getTempPlayerData().getGameTeam() != null && !playerModel.getTempPlayerData().isSpectatorMode()) {
+                playerModel.getTempPlayerData().getGameTeam().addAlivePlayer(playerModel);
+            }
+        }
+
+        KireiWalls.getReflectionLayer().changeSkin(playerModel.getTempPlayerData().getCurrentClass() == null ? Skins.RANDOM : playerModel.getTempPlayerData().getCurrentClass().getSkins(), playerModel);
     }
 }
