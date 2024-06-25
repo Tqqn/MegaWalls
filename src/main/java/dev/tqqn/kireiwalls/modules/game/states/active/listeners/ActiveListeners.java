@@ -59,25 +59,6 @@ public final class ActiveListeners implements Listener {
             scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
 
             event.getPlayerModel().getTempPlayerData().setSpectatorMode(event.getPlayerModel().getTempPlayerData().isSpectatorMode());
-
-//            for (Player player : Bukkit.getOnlinePlayers()) {
-//                final PlayerModel players = PlayerModule.getPlayerModel(player.getUniqueId());
-//
-//                if (players.getTempPlayerData().isSpectatorMode()) {
-//                    if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
-//                        event.getPlayerModel().getPlayer().showPlayer(KireiWalls.getInstance(), player);
-//                    } else {
-//                        event.getPlayerModel().getPlayer().hidePlayer(KireiWalls.getInstance(), player);
-//                    }
-//                }
-//
-//                if (players.getTempPlayerData().isSpectatorMode()) {
-//                    players.getTempPlayerData().sendSpectatorTag(true);
-//                    continue;
-//                }
-//
-//                players.getTempPlayerData().getGameTeam().sendNameTag(players);
-//            }
         }
     }
 
