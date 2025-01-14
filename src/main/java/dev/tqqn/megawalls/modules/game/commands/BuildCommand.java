@@ -1,0 +1,31 @@
+package dev.tqqn.megawalls.modules.game.commands;
+
+import dev.tqqn.megawalls.modules.player.PlayerModule;
+import dev.tqqn.megawalls.utils.ChatUtil;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * The BuildCommand class implements the CommandExecutor interface and represents a command executor for the build command.
+ * It allows players to toggle their build mode.
+ */
+public final class BuildCommand implements CommandExecutor {
+
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if (commandSender instanceof Player player) {
+            if (strings.length == 0) {
+                if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().isBuildMode()) {
+                    PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().setBuildMode(false);
+                    player.sendMessage(ChatUtil.format("<red>You have disabled build mode."));
+                } else {
+                    PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().setBuildMode(true);
+                    player.sendMessage(ChatUtil.format("<green>You have enabled build mode."));
+                }
+            }
+        }
+        return true;
+    }
+}

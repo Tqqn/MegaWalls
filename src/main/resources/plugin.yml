@@ -1,6 +1,6 @@
-name: KireiWalls
+name: MegaWalls
 version: '${project.version}'
-main: dev.tqqn.kireiwalls.KireiWalls
+main: dev.tqqn.megawalls.MegaWalls
 api-version: '1.20'
 commands:
   setup:
