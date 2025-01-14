@@ -39,7 +39,7 @@ public final class TempPlayerData {
     private int energy;
     private int coins;
 
-    private boolean buildMode;
+    @Setter private boolean buildMode;
     private boolean spectatorMode;
 
     @Setter private boolean firstChest;
@@ -90,23 +90,6 @@ public final class TempPlayerData {
         MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), this.energy, (float) ((double) this.energy / 100));
     }
 
-    /**
-     * Sets the build mode for the player.
-     *
-     * @param buildMode {@code true} to enable build mode, {@code false} to disable it.
-     */
-    public void setBuildMode(boolean buildMode) {
-        this.buildMode = buildMode;
-
-        GameMode gameMode;
-        if (buildMode) {
-            gameMode = GameMode.CREATIVE;
-        } else {
-            gameMode = GameMode.SURVIVAL;
-        }
-
-        playerModel.getPlayer().setGameMode(gameMode);
-    }
 
     /**
      * Sends the appropriate name tag to the player based on spectator mode.

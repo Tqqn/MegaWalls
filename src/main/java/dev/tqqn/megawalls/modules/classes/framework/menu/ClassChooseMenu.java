@@ -33,10 +33,15 @@ public final class ClassChooseMenu extends Menu {
         int slot = 0;
         for (AbstractClass abstractClass : ClassModule.getClasses()) {
             registerButton(new MenuButton(abstractClass.getKitIcon(viewer)).setClicker(clicked -> {
-                PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
+                final PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
+                final Player player = playerModel.getPlayer();
+                if (player == null) return;
 
-                if (playerModel.getTempPlayerData().getCurrentClass() == abstractClass) {
-                    playerModel.getPlayer().sendMessage(ChatUtil.format("<red>You have already selected this class!"));
+                final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+                if (playerClass == null) return;
+
+                if (playerClass == abstractClass) {
+                    player.sendMessage(ChatUtil.format("<red>You have already selected this class!"));
                     close();
                     return;
                 }
@@ -59,7 +64,8 @@ public final class ClassChooseMenu extends Menu {
     public MenuButton getRandomButton() {
 
         final PlayerModel playerModel = PlayerModule.getPlayerModel(getViewer().getUniqueId());
-        List<String> lore = new ArrayList<>();
+        final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+        final List<String> lore = new ArrayList<>();
 
         lore.add("&7Picks a random class from your");
         lore.add("&7collection!");
@@ -68,15 +74,15 @@ public final class ClassChooseMenu extends Menu {
         lore.add("&7picking this option!");
         lore.add("");
 
-        if (PlayerModule.getPlayerModel(getViewer().getUniqueId()).getTempPlayerData().getCurrentClass() == null) {
+        if (playerClass == null) {
             lore.add("&a&lSelected!");
         } else {
             lore.add("&eClick to select!");
         }
 
-        MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("&aRandom!").setLore(lore).build());
+        final MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("&aRandom!").setLore(lore).build());
         randomButton.setClicker(player -> {
-            if (playerModel.getTempPlayerData().getCurrentClass() == null) {
+            if (playerClass == null) {
                 player.sendMessage(ChatUtil.format("<red>You have already selected the random class!"));
                 close();
                 return;
@@ -90,12 +96,10 @@ public final class ClassChooseMenu extends Menu {
 
     @Override
     public void reload() {
-
     }
 
     @Override
     public void onOpen() {
-
     }
 
     @Override

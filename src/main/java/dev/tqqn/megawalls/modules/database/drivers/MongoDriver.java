@@ -71,7 +71,7 @@ public final class MongoDriver implements IDatabaseDriver {
             }
             getCollection(object.getClass()).replaceOne(eq("_id", document.get("_id")), document, new ReplaceOptions().upsert(true));
         }, executors).exceptionally((exception) -> {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not save " + object.getClass(), exception);
+            databaseModule.getLogger().log(Level.SEVERE, "Could not save " + object.getClass(), exception);
             return null;
         });
     }

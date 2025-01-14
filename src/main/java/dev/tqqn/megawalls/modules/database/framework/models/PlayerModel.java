@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 /**
@@ -24,6 +25,7 @@ public final class PlayerModel extends MongoObject<UUID> {
     @Setter private String name;
 
     private final transient TempPlayerData tempPlayerData;
+    @Setter private transient WeakReference<Player> playerWeakReference;
     /**
      * Constructs a PlayerModel object with the specified UUID, name, and player statistics.
      *
@@ -54,7 +56,8 @@ public final class PlayerModel extends MongoObject<UUID> {
      * @return The Bukkit Player object, or null if the player is offline.
      */
     public Player getPlayer() {
-        return Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid) : null;
+        if (playerWeakReference.get() == null) return Bukkit.getPlayer(uuid);
+        return playerWeakReference.get();
     }
 
     public NamedTextColor getChatColor() {

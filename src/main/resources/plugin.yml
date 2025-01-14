@@ -2,25 +2,6 @@ name: MegaWalls
 version: '${project.version}'
 main: dev.tqqn.megawalls.MegaWalls
 api-version: '1.20'
-commands:
-  setup:
-    description: Setup command
-    usage: /<command>
-  select:
-    description: Select command
-    usage: /<command>
-  debug:
-    description: Debug command
-    usage: /<command>
-  witherdebug:
-    description: Wither Debug command
-    usage: /<command>
-  build:
-    description: Build command
-    usage: /<command>
-  spectate:
-    description: Spectate command
-    usage: /<command>
-  shout:
-    description: Shout command
-    usage: /<command>
+authors: [ Tqqn ]
+description: Plugin for Mega Walls.
+website: https://tqqn.dev/

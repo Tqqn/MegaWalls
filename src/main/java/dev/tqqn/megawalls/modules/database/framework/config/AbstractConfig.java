@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * AbstractConfig provides a base class for handling configurations in a plugin, facilitating loading, saving, and manipulation of configuration files.
@@ -50,7 +51,7 @@ public class AbstractConfig {
         try {
             fileConfiguration.load(customConfigFile);
         } catch (IOException | InvalidConfigurationException exception) {
-            exception.printStackTrace();
+            getDatabaseModule().getLogger().log(Level.SEVERE, exception.getMessage());
         }
     }
 

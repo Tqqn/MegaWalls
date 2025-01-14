@@ -51,6 +51,11 @@ public final class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder addPDCDoubleTag(String key, double value) {
+        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.DOUBLE, value);
+        return this;
+    }
+
     public ItemBuilder addPDCTag(String key, String tag) {
         this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.STRING, tag);
         return this;

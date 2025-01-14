@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls;
 
+import co.aikar.commands.PaperCommandManager;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.ModuleManager;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Objective;
@@ -26,16 +28,19 @@ import org.bukkit.scoreboard.Team;
 @Getter
 public final class MegaWalls extends JavaPlugin {
 
-    private boolean isSetup;
-
     @Getter private static MegaWalls instance;
+    private PaperCommandManager commandManager;
+
     private ModuleManager moduleManager;
     @Getter private static ReflectionLayer reflectionLayer;
 
-    private final String prefix = "[MegaWalls] ";
+    @Getter private static final String prefix = "[MegaWalls] ";
+    private boolean isSetup;
 
     @Override
     public void onLoad() {
+        commandManager = new PaperCommandManager(this);
+
         isSetup = getConfig().getBoolean("setup");
         moduleManager = new ModuleManager(this);
         moduleManager.load();
@@ -47,20 +52,7 @@ public final class MegaWalls extends JavaPlugin {
 
         moduleManager.init();
 
-        Bukkit.getScheduler().runTask(this, () -> {
-            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-
-            if (scoreboard.getObjective("onTab") != null) {
-                scoreboard.getObjective("onTab").unregister();
-            }
-            if (scoreboard.getObjective("underName") != null) {
-                scoreboard.getObjective("underName").unregister();
-            }
-
-            for (Team team : scoreboard.getTeams()) {
-                team.unregister();
-            }
-        });
+       registerScoreboardTeam();
 
         if (isSetup) return;
 
@@ -89,15 +81,36 @@ public final class MegaWalls extends JavaPlugin {
         }
     }
 
+    private void registerScoreboardTeam() {
+        Bukkit.getScheduler().runTask(this, () -> {
+            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+
+            final Objective onTab = scoreboard.getObjective("onTab");
+            final Objective underName = scoreboard.getObjective("underName");
+
+            if (onTab != null) {
+                onTab.unregister();
+            }
+            if (underName != null) {
+                underName.unregister();
+            }
+
+            for (Team team : scoreboard.getTeams()) {
+                team.unregister();
+            }
+        });
+    }
+
     /**
      * Initializes the scoreboard update task.
      */
     private void initScoreboardTask() {
+        final GameModule gameModule = getModuleManager().getModule(GameModule.class);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard() == null) return;
                 PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard().update();
-                if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+                if (gameModule.isState(GameStates.ACTIVE)) {
                     updateHealth(player);
                 }
             }
@@ -113,7 +126,13 @@ public final class MegaWalls extends JavaPlugin {
         Scoreboard scoreboard = player.getScoreboard();
         Objective underName = scoreboard.getObjective("underName");
 
-        int maxHealth = (int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        final AttributeInstance genericMaxHealthAtt = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+
+        int maxHealth = 0;
+
+        if (genericMaxHealthAtt != null) {
+            maxHealth = (int) genericMaxHealthAtt.getBaseValue();
+        }
 
         if (underName != null) {
             Score healthScore = underName.getScore(player);

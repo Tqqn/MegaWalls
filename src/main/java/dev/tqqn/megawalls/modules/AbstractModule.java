@@ -1,10 +1,13 @@
 package dev.tqqn.megawalls.modules;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.PaperCommandManager;
 import dev.tqqn.megawalls.MegaWalls;
 import lombok.Getter;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The AbstractModule class represents a module in the plugin.
@@ -20,12 +25,13 @@ import java.util.Set;
 public abstract class AbstractModule {
 
     @Getter private final MegaWalls plugin;
+    @Getter private PaperCommandManager commandManager;
+    @Getter private final ModuleLogger logger;
 
-    private final Set<Listener> listeners = new HashSet<>();
-    private final Map<String, CommandExecutor> commands = new HashMap<>();
+    private final Set<Listener> activeListeners = new HashSet<>();
+    private final Set<BaseCommand> commands = new HashSet<>();
 
     @Getter private final String name;
-    @Getter private final String prefix;
 
     /**
      * Constructs a new AbstractModule object with the specified plugin and name.
@@ -35,64 +41,81 @@ public abstract class AbstractModule {
      */
     public AbstractModule(MegaWalls plugin, String name) {
         this.plugin = plugin;
+        this.commandManager = plugin.getCommandManager();
+        this.logger = new ModuleLogger(plugin, name);
         this.name = name;
-        this.prefix = "Module: " + name;
-    }
-
-    protected void onLoad() {
-        // Empty Constructor to override!
     }
 
     /**
-     * Called when the module is being enabled.
+     * Loads the module.
      */
-    protected void onEnable() {
-        // Empty Constructor to override!
-    }
-
-    /**
-     * Called when the module is being disabled.
-     */
-    protected void onDisable() {
-        // Empty Constructor to override!
-    }
-
     public void load() {
-        plugin.getLogger().info(prefix + " is loading...");
+        logger.log(Level.INFO, "Is loading...");
         onLoad();
-        plugin.getLogger().info(prefix + " finished loading!");
+        logger.log(Level.INFO, "Finished loading!");
     }
 
     /**
      * Enables the module by registering listeners and commands.
      */
     public void enable() {
-        plugin.getLogger().info(prefix + " is enabling...");
+        logger.log(Level.INFO, "Is enabling...");
         onEnable();
         registerListeners();
         registerCommands();
-        plugin.getLogger().info(prefix + " finished enabling!");
+        logger.log(Level.INFO, "Finished enabling!");
     }
 
     /**
      * Disables the module by unregistering listeners and commands.
      */
     public void disable() {
-        plugin.getLogger().info(prefix + " is disabling...");
+        logger.log(Level.INFO, "Is disabling...");
         onDisable();
         unRegisterListeners();
-        plugin.getLogger().info(prefix + " finished disabling!");
+        logger.log(Level.INFO, "Finished disabling!");
+    }
+
+    /**
+     * Called when the module is being loaded.
+     */
+    protected void onLoad() {
+    }
+
+    /**
+     * Called when the module is being enabled.
+     */
+    protected void onEnable() {
+    }
+
+    /**
+     * Called when the module is being disabled.
+     */
+    protected void onDisable() {
+    }
+
+    public void register(Object object) {
+        if (object instanceof Listener listener) {
+            activeListeners.add(listener);
+            return;
+        }
+
+        if (object instanceof BaseCommand baseCommand) {
+            commands.add(baseCommand);
+            return;
+        }
+        getLogger().log(Level.SEVERE, "");
     }
 
     /**
      * Registers listeners for the module.
      */
     private void registerListeners() {
-        if (listeners.isEmpty()) return;
-        PluginManager pluginManager = plugin.getServer().getPluginManager();
-        listeners.forEach(listener -> {
+        if (activeListeners.isEmpty()) return;
+        final PluginManager pluginManager = plugin.getServer().getPluginManager();
+        activeListeners.forEach(listener -> {
             pluginManager.registerEvents(listener, plugin);
-            plugin.getLogger().info(prefix + " has registered listener: " + listener);
+            logger.log(Level.INFO, "Has registered listener: " + listener.getClass());
         });
     }
 
@@ -101,9 +124,9 @@ public abstract class AbstractModule {
      */
     private void registerCommands() {
         if (commands.isEmpty()) return;
-        commands.forEach((commandString, command) ->{
-            plugin.getCommand(commandString).setExecutor(command);
-            plugin.getLogger().info(prefix + " has registered command: " + commandString);
+        commands.forEach(baseCommand -> {
+            getCommandManager().registerCommand(baseCommand);
+            logger.log(Level.INFO, "Has registered command: " + baseCommand.getName());
         });
     }
 
@@ -111,43 +134,24 @@ public abstract class AbstractModule {
      * Unregisters listeners for the module.
      */
     private void unRegisterListeners() {
-        if (listeners.isEmpty()) return;
-        listeners.forEach(listener -> {
+        if (activeListeners.isEmpty()) return;
+        activeListeners.forEach(listener -> {
             HandlerList.unregisterAll(listener);
-            plugin.getLogger().info(prefix + " has unregistered listener: " + listener);
+            plugin.getLogger().info("Has unregistered listener: " + listener.getClass());
         });
     }
 
-    public void addComponent(Class<?> clazz) {
-        addComponent(clazz, "");
-    }
+    public static class ModuleLogger extends Logger {
 
-    /**
-     * Adds a component (listener or command) to the module.
-     *
-     * @param clazz The class representing the component.
-     * @param name  The name of the component.
-     */
-    public void addComponent(Class<?> clazz, String name) {
-        if (Listener.class.isAssignableFrom(clazz)) {
-            try {
-                Listener listener = (Listener) clazz.getConstructor().newInstance();
-                listeners.add(listener);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                getPlugin().getLogger().info(prefix + " unable to register listener: " + clazz.getName());
-                e.printStackTrace();
-            }
+        ModuleLogger(Plugin plugin, String prefix) {
+            super("Mega Walls - Module - " + prefix, null);
+            setParent(plugin.getLogger());
+            setLevel(Level.ALL);
         }
 
-        if (CommandExecutor.class.isAssignableFrom(clazz)) {
-            try {
-                CommandExecutor command = (CommandExecutor) clazz.getConstructor().newInstance();
-                commands.put(name, command);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                getPlugin().getLogger().info(prefix + " unable to register command: " + clazz.getName());
-                e.printStackTrace();
-            }
-
+        @Override
+        public void log(Level level, String message) {
+            super.log(level, message);
         }
     }
 }

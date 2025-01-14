@@ -40,7 +40,7 @@ public final class ChestItem {
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
-        ChestItem chestItem = (ChestItem) object;
+        final ChestItem chestItem = (ChestItem) object;
         return chestItem.itemStack.getType() == this.itemStack.getType();
     }
 }

@@ -6,6 +6,7 @@ import dev.tqqn.megawalls.modules.database.framework.DefaultConfig;
 import dev.tqqn.megawalls.modules.database.framework.listeners.PlayerLoadListeners;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.drivers.MongoDriver;
+import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public final class DatabaseModule extends AbstractModule {
     private MongoDriver mongoDriver;
     private DefaultConfig defaultConfig;
     private PlayerModule playerModule;
+    private GameModule gameModule;
 
     public DatabaseModule(MegaWalls plugin) {
         super(plugin, "Database");
@@ -39,18 +41,19 @@ public final class DatabaseModule extends AbstractModule {
     protected void onEnable() {
         if (getPlugin().isSetup()) return;
 
-        this.addComponent(PlayerLoadListeners.class);
-
         this.playerModule = this.getPlugin().getModuleManager().getModule(PlayerModule.class);
+        this.gameModule = this.getPlugin().getModuleManager().getModule(GameModule.class);
+
+        register(new PlayerLoadListeners(this, gameModule, playerModule));
     }
 
     @Override
     protected void onDisable() {
         Bukkit.getOnlinePlayers().forEach((player) -> {
-            Bukkit.getLogger().info("Saving player: " + player.getName() + "!");
+            getLogger().info("Saving player: " + player.getName() + "!");
             savePlayer(PlayerModule.getPlayerModel(player.getUniqueId()));
             player.kick();
-            Bukkit.getLogger().info("Finished saving player: " + player.getName() + ". Kicked player from the server.");
+            getLogger().info("Finished saving player: " + player.getName() + ". Kicked player from the server.");
         });
     }
 

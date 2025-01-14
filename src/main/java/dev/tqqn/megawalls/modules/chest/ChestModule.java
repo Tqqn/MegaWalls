@@ -6,6 +6,7 @@ import dev.tqqn.megawalls.modules.chest.framework.AbstractProtectedContainer;
 import dev.tqqn.megawalls.modules.chest.framework.ChestItem;
 import dev.tqqn.megawalls.modules.chest.framework.listeners.ChestListeners;
 import dev.tqqn.megawalls.modules.chest.framework.types.GatheringChest;
+import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -15,7 +16,7 @@ import java.util.*;
 
 public class ChestModule extends AbstractModule {
 
-    private static final Map<Location, AbstractProtectedContainer> chestsMap = new HashMap<>();
+    private final Map<Location, AbstractProtectedContainer> chestsMap = new HashMap<>();
 
     private final Set<ChestItem> gatheringChestItemsTemplate;
     @Getter final private int defaultChestSpawnRate;
@@ -33,7 +34,7 @@ public class ChestModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        addComponent(ChestListeners.class);
+        register(new ChestListeners(this, getPlugin().getModuleManager().getModule(GameModule.class)));
         this.gatheringChestItemsTemplate.addAll(List.of(
                 new ChestItem(ItemBuilder.getBuilder(Material.REDSTONE).build(), 0.5, 5, 10),
                 new ChestItem(ItemBuilder.getBuilder(Material.COBBLESTONE).build(), 1.0, 10, 20),
@@ -58,11 +59,11 @@ public class ChestModule extends AbstractModule {
         chestsMap.remove(location);
     }
 
-    public static AbstractProtectedContainer getProtectedChest(Location location) {
+    public AbstractProtectedContainer getProtectedChest(Location location) {
         return chestsMap.get(location);
     }
 
-    public static boolean isProtected(Location location, UUID possibleOwner) {
+    public boolean isProtected(Location location, UUID possibleOwner) {
         if (chestsMap.containsKey(location)) return false;
         return !chestsMap.get(location).isOwner(possibleOwner);
     }

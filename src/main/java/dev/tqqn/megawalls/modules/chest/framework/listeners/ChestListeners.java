@@ -1,6 +1,5 @@
 package dev.tqqn.megawalls.modules.chest.framework.listeners;
 
-import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.chest.framework.events.GatheringChestSpawnEvent;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.chest.ChestModule;
@@ -22,11 +21,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ChestListeners implements Listener {
 
+    private static Set<Material> allowedChestBlocks = Set.of(Material.STONE, Material.DIRT, Material.GRASS_BLOCK);
+
     private final ChestModule chestModule;
+    private final GameModule gameModule;
     private final Set<Location> placedBlocks;
 
-    public ChestListeners() {
-        chestModule = MegaWalls.getInstance().getModuleManager().getModule(ChestModule.class);
+    public ChestListeners(ChestModule chestModule, GameModule gameModule) {
+        this.chestModule = chestModule;
+        this.gameModule = gameModule;
         placedBlocks = new HashSet<>();
     }
 
@@ -42,7 +45,7 @@ public class ChestListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         final Material blockType = event.getBlock().getType();
-        if (blockType == Material.STONE || blockType == Material.DIRT || blockType == Material.GRASS_BLOCK || blockType.toString().contains("_ORE") || blockType.toString().contains("_LOG")) {
+        if (allowedChestBlocks.contains(blockType) || blockType.toString().contains("_ORE") || blockType.toString().contains("_LOG")) {
             placedBlocks.add(event.getBlock().getLocation());
         }
     }
@@ -50,7 +53,7 @@ public class ChestListeners implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
+        if (!gameModule.isState(GameStates.ACTIVE)) return;
         if (ActiveState.getCurrentCycle() == ActiveState.Cycle.END) return;
         if (isPlacedByPlayer(event.getBlock().getLocation())) {
             placedBlocks.remove(event.getBlock().getLocation());
@@ -59,7 +62,7 @@ public class ChestListeners implements Listener {
 
         final Material blockType = event.getBlock().getType();
 
-        if (blockType.toString().contains("_LOG") || blockType == Material.STONE || blockType == Material.DIRT || blockType == Material.GRASS_BLOCK || blockType.toString().contains("_ORE")) {
+        if (allowedChestBlocks.contains(blockType) || blockType.toString().contains("_ORE") || blockType.toString().contains("_LOG")) {
             if (blockType == Material.DIAMOND_ORE) return;
 
             int chestChance = chestModule.getDefaultChestSpawnRate();
@@ -80,7 +83,7 @@ public class ChestListeners implements Listener {
 
     @EventHandler
     public void onChestInteract(PlayerInteractEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
+        if (!gameModule.isState(GameStates.ACTIVE)) return;
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getClickedBlock() == null) return;
             if (ActiveState.getCurrentCycle() != ActiveState.Cycle.PREPARE) return;

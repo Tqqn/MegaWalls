@@ -1,6 +1,7 @@
 package dev.tqqn.megawalls.modules.classes.framework;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.utils.ItemBuilder;
 import lombok.Getter;
@@ -68,10 +69,13 @@ public abstract class AbstractClass implements Listener {
     public abstract String getActionBar(PlayerModel playerModel);
 
     public void applyKit(PlayerModel playerModel) {
+        final Player player = playerModel.getPlayer();
+        if (player == null) return;
+
         for (Map.Entry<Integer, ItemStack> entry : kitItems.entrySet()) {
-            playerModel.getPlayer().getInventory().setItem(entry.getKey(), entry.getValue());
+            player.getInventory().setItem(entry.getKey(), entry.getValue());
         }
-        playerModel.getPlayer().getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
+        player.getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
     }
 
     public void applySkin(PlayerModel playerModel) {
@@ -89,7 +93,7 @@ public abstract class AbstractClass implements Listener {
     }
 
     public List<String> getKitAbilityLore() {
-        List<String> lore = new ArrayList<>();
+        final List<String> lore = new ArrayList<>();
         lore.add("&7Ability: &c" + classOptions.getClassSkillDescription().getName());
         lore.add(" ");
         lore.addAll(Arrays.asList(classOptions.getClassSkillDescription().getDescription()));
@@ -104,7 +108,8 @@ public abstract class AbstractClass implements Listener {
      * @return The ItemStack representing the class icon.
      */
     public ItemStack getKitIcon(PlayerModel playerModel) {
-        List<String> lore = new ArrayList<>();
+        final List<String> lore = new ArrayList<>();
+        final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
 
         lore.add(classOptions.getClassType().getType());
         lore.add("&7Play Styles:");
@@ -122,12 +127,11 @@ public abstract class AbstractClass implements Listener {
         lore.add("&7Upgrades: &a&l100%");
         lore.add("&7Ender Chest: &a&l5 rows");
         lore.add(" ");
-        if (playerModel.getTempPlayerData().getCurrentClass() != null && playerModel.getTempPlayerData().getCurrentClass().getClass() == this.getClass()) {
+        if (currentClass != null && currentClass.getClass() == this.getClass()) {
             lore.add("&a&lSelected!");
         } else {
             lore.add("&eClick to select!");
         }
-
 
         return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("&a" + name).setLore(lore).hideAttributes().build();
     }
@@ -140,9 +144,9 @@ public abstract class AbstractClass implements Listener {
      */
     public String getTag(PlayerModel playerModel) {
         String tagColor = "§7";
-        if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeFour) {
-            tagColor = "§6";
-        }
+
+        if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeFour) tagColor = "§6";
+
         return tagColor + tag;
     }
 
@@ -201,14 +205,15 @@ public abstract class AbstractClass implements Listener {
     public void onPotionConsume(PlayerItemConsumeEvent event) {
         if (event.getItem().getType() != Material.POTION) return;
         final Player player = event.getPlayer();
-        ItemMeta itemMeta = event.getItem().getItemMeta();
-        if (!itemMeta.getPersistentDataContainer().has(new NamespacedKey(MegaWalls.getInstance(), "heal" + getName()))) return;
-        double heal = Integer.parseInt(itemMeta.getPersistentDataContainer().get(new NamespacedKey(MegaWalls.getInstance(), "heal" + getName()), PersistentDataType.STRING));
+        final ItemMeta itemMeta = event.getItem().getItemMeta();
+        if (!itemMeta.getPersistentDataContainer().has(ClassModule.POTION_HEAL_KEY, PersistentDataType.DOUBLE)) return;
+        double heal = itemMeta.getPersistentDataContainer().get(ClassModule.POTION_HEAL_KEY, PersistentDataType.DOUBLE);
         if (heal == 0) return;
 
         double newHealth = player.getHealth() + heal;
-        if (newHealth >= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
-            newHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        final double currentHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        if (newHealth >= currentHealth) {
+            newHealth = currentHealth;
         }
 
         player.setHealth(newHealth);

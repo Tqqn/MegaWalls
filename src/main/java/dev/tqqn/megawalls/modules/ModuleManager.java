@@ -30,6 +30,7 @@ public final class ModuleManager {
             this.modules.put(SetupModule.class, new SetupModule(plugin));
             return;
         }
+
         this.modules.put(DatabaseModule.class, new DatabaseModule(plugin));
         this.modules.put(ArenaModule.class, new ArenaModule(plugin));
         this.modules.put(PlayerModule.class, new PlayerModule(plugin));

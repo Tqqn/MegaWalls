@@ -26,8 +26,8 @@ public final class PlayerModule extends AbstractModule {
 
     @Override
     public void onEnable() {
-        this.addComponent(PlayerListeners.class);
-        this.addComponent(SpectatorListeners.class);
+        register(new PlayerListeners());
+        register(new SpectatorListeners());
     }
 
     /**

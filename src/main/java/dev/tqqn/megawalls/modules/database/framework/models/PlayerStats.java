@@ -16,31 +16,16 @@ public final class PlayerStats {
 
     /**
      * Constructs a PlayerStats object with the specified statistics values.
-     *
-     * @param kills        The number of kills.
-     * @param assists      The number of assists.
-     * @param deaths       The number of deaths.
-     * @param finalKills   The number of final kills.
-     * @param finalAssists The number of final assists.
-     * @param finalDeath   The number of final deaths.
-     * @param witherDamage The amount of wither damage dealt.
-     */
-    public PlayerStats(int kills, int assists, int deaths, int finalKills, int finalAssists, int finalDeath, int witherDamage) {
-        stats = new HashMap<>();
-        stats.put(StatType.KILLS, kills);
-        stats.put(StatType.ASSISTS, assists);
-        stats.put(StatType.DEATHS, deaths);
-        stats.put(StatType.FINAL_KILLS, finalKills);
-        stats.put(StatType.FINAL_ASSISTS, finalAssists);
-        stats.put(StatType.FINAL_DEATH, finalDeath);
-        stats.put(StatType.WITHER_DAMAGE, witherDamage);
-    }
-
-    /**
-     * Constructs a PlayerStats object with default statistics values initialized to zero.
      */
     public PlayerStats() {
-        this(0, 0, 0, 0, 0, 0,0);
+        stats = new HashMap<>();
+        stats.put(StatType.KILLS, 0);
+        stats.put(StatType.ASSISTS, 0);
+        stats.put(StatType.DEATHS, 0);
+        stats.put(StatType.FINAL_KILLS, 0);
+        stats.put(StatType.FINAL_ASSISTS, 0);
+        stats.put(StatType.FINAL_DEATH, 0);
+        stats.put(StatType.WITHER_DAMAGE, 0);
     }
 
     /**

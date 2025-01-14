@@ -15,6 +15,6 @@ public final class MenuModule extends AbstractModule {
 
     @Override
     public void onEnable() {
-        addComponent(MenuListener.class);
+        register(new MenuListener());
     }
 }

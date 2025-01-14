@@ -11,6 +11,7 @@ import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.lobby.board.LobbyBoard;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
+import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
 import dev.tqqn.megawalls.modules.scoreboard.ScoreboardModule;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
@@ -49,24 +50,34 @@ public final class LobbyListeners implements Listener {
     @EventHandler
     public void onJoin(GamePlayerJoinEvent event) {
         final PlayerModel playerModel = event.getPlayerModel();
+        final Player player = playerModel.getPlayer();
 
-        GameModule.getIngamePlayers().add(event.getPlayerModel());
-        if (playerModel.getTempPlayerData().isBuildMode()) {
-            playerModel.getPlayer().setGameMode(GameMode.CREATIVE);
-        } else {
-            playerModel.getPlayer().setGameMode(GameMode.SURVIVAL);
-            playerModel.getPlayer().getInventory().clear();
+        if (player == null) {
+            event.setCancelled(true);
+            return;
         }
 
-        playerModel.getPlayer().teleport(arenaModule.getCurrentArena().getArenaSettings().getLobbyLocation());
-        ScoreboardModule scoreboardModule = databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
-        scoreboardModule.setScoreboard(playerModel, new LobbyBoard(playerModel));
-        playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-        playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-        playerModel.getPlayer().setFoodLevel(20);
+        final TempPlayerData tempPlayerData = playerModel.getTempPlayerData();
 
-        if (playerModel.getTempPlayerData().getCurrentClass() != null) {
-            playerModel.getTempPlayerData().getCurrentClass().applySkin(event.getPlayerModel());
+        GameModule.getIngamePlayers().add(event.getPlayerModel());
+        if (tempPlayerData.isBuildMode()) {
+            player.setGameMode(GameMode.CREATIVE);
+        } else {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
+        }
+
+        player.teleport(arenaModule.getCurrentArena().getArenaSettings().getLobbyLocation());
+
+        ScoreboardModule scoreboardModule = MegaWalls.getInstance().getModuleManager().getModule(ScoreboardModule.class);
+        scoreboardModule.setScoreboard(playerModel, new LobbyBoard(playerModel));
+
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+        player.setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+        player.setFoodLevel(20);
+
+        if (tempPlayerData.getCurrentClass() != null) {
+            tempPlayerData.getCurrentClass().applySkin(event.getPlayerModel());
         } else {
             MegaWalls.getReflectionLayer().changeSkin(Skins.RANDOM, playerModel);
         }

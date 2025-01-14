@@ -13,6 +13,7 @@ import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
+import dev.tqqn.megawalls.modules.game.states.end.EndState;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.region.framework.Cuboid;
@@ -59,19 +60,18 @@ public final class GameModule extends AbstractModule {
         super(plugin, "Game");
         currentState = new LobbyState(this);
         this.databaseModule = databaseModule;
-
     }
 
     @Override
     public void onEnable() {
         this.arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
         this.teamModule = this.getPlugin().getModuleManager().getModule(TeamModule.class);
-        this.addComponent(GlobalGameListeners.class);
-        this.addComponent(DebugCommand.class, "debug");
-        this.addComponent(WitherDebugCommand.class, "witherdebug");
-        this.addComponent(BuildCommand.class, "build");
-        this.addComponent(SpectateCommand.class, "spectate");
-        this.addComponent(ShoutCommand.class, "shout");
+        register(new GlobalGameListeners());
+        register(new DebugCommand());
+        register(new WitherDebugCommand());
+        register(new AdminCommand());
+        register(new SpectateCommand());
+        register(new ShoutCommand());
         currentState.enable();
     }
 
@@ -80,43 +80,34 @@ public final class GameModule extends AbstractModule {
         currentState.disable();
     }
 
-    /** Ends the game. */
-    public void endGame() {
-        Bukkit.getScheduler().runTaskLater(MegaWalls.getInstance(), () -> {
-            TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill());
-
-            getIngamePlayers().forEach((playerModel) -> {
-                this.databaseModule.savePlayer(playerModel);
-                if (playerModel.getPlayer() != null) {
-                    playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-                    playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
-                    playerModel.getPlayer().kick(ChatUtil.format("<red>Game ended!"));
-                }
-            });
-            Bukkit.getServer().shutdown();
-        }, 300L);
-    }
-
     /**
      * Sets the game state.
      *
      * @param gameState The new game state.
      */
     public void setGameState(GameStates gameState) {
-        if (currentState.getGameStates() != gameState) {
-            if (currentState.getGameStates() != GameStates.ACTIVE || gameState != GameStates.WAITING) {
-                if (gameState == GameStates.ACTIVE) {
-                    currentState.disable();
-                    currentState = new ActiveState(this);
-                    currentState.enable();
+        if (currentState.getGameStates() == gameState) return;
 
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        ScoreboardModule scoreboardModule = this.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
-                        scoreboardModule.setScoreboard(PlayerModule.getPlayerModel(player.getUniqueId()), new ActiveBoard(PlayerModule.getPlayerModel(player.getUniqueId())));
-                    }
-                }
+        AbstractGameState newState = null;
+
+        switch (gameState) {
+            case ACTIVE -> {
+                if (isState(GameStates.ACTIVE)) return;
+                if (isState(GameStates.END)) return;
+                newState = new ActiveState(this);
+            }
+
+            case END -> {
+                if (isState(GameStates.END)) return;
+                newState = new EndState(this, databaseModule);
             }
         }
+
+        if (newState == null) return;
+        currentState.disable();
+
+        currentState = newState;
+        newState.enable();
     }
 
     /** Shuffles players and assigns teams. */
@@ -230,6 +221,10 @@ public final class GameModule extends AbstractModule {
         }
 
         return possibleWinner;
+    }
+
+    public boolean isState(GameStates state) {
+        return currentState.getGameStates() == state;
     }
 
     /** Checks if the game can start. */

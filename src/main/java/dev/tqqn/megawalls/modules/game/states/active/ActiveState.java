@@ -5,7 +5,10 @@ import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.megawalls.modules.game.framework.events.WitherDeathEvent;
+import dev.tqqn.megawalls.modules.game.states.active.board.ActiveBoard;
 import dev.tqqn.megawalls.modules.game.states.active.runnables.HungerRunnable;
+import dev.tqqn.megawalls.modules.player.PlayerModule;
+import dev.tqqn.megawalls.modules.scoreboard.ScoreboardModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -54,8 +57,7 @@ public final class ActiveState extends AbstractGameState {
     public void onEnable() {
         this.getGameModule().shufflePlayers();
         aliveTeams.addAll(TeamModule.getGameTeams().values());
-        //setTimer(3600);
-        setTimer(1300);
+        //setTimer(1300);
         this.addListener(ActiveListeners.class);
         this.addListener(ActiveState.class);
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
@@ -163,7 +165,7 @@ public final class ActiveState extends AbstractGameState {
             Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> {
                 GameWinEvent gameWinEvent = new GameWinEvent(getGameModule().getWinningTeamByDraw(), GameWinEvent.WinReason.LAST_ALIVE);
                 Bukkit.getPluginManager().callEvent(gameWinEvent);
-                this.getGameModule().endGame();
+                this.getGameModule().setGameState(GameStates.END);
             });
             return;
         }
@@ -175,8 +177,15 @@ public final class ActiveState extends AbstractGameState {
             Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> {
                 GameWinEvent gameWinEvent = new GameWinEvent(getGameModule().getWinningTeamByDraw(), GameWinEvent.WinReason.DRAW);
                 Bukkit.getPluginManager().callEvent(gameWinEvent);
-                this.getGameModule().endGame();
+                this.getGameModule().setGameState(GameStates.END);
             });
+        }
+    }
+
+    private void enableScoreboard() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            ScoreboardModule scoreboardModule = MegaWalls.getInstance().getModuleManager().getModule(ScoreboardModule.class);
+            scoreboardModule.setScoreboard(PlayerModule.getPlayerModel(player.getUniqueId()), new ActiveBoard(PlayerModule.getPlayerModel(player.getUniqueId())));
         }
     }
 

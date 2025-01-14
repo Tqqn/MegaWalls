@@ -8,6 +8,7 @@ import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.utils.ChatUtil;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,16 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * The PlayerLoadListeners class implements event listeners for player loading events.
  * It manages the loading of player data from the database and handles player login and join events.
  */
+
+@RequiredArgsConstructor
 public final class PlayerLoadListeners implements Listener {
 
     private final DatabaseModule databaseModule;
+    private final GameModule gameModule;
     private final PlayerModule playerModule;
     private final ConcurrentHashMap<UUID, PlayerModel> joiningPlayers = new ConcurrentHashMap<>();
-
-    public PlayerLoadListeners() {
-        this.databaseModule = MegaWalls.getInstance().getModuleManager().getModule(DatabaseModule.class);
-        this.playerModule = databaseModule.getPlugin().getModuleManager().getModule(PlayerModule.class);
-    }
 
     /**
      * Listens for the AsyncPlayerPreLoginEvent and loads player data if not already loaded.
@@ -43,11 +43,10 @@ public final class PlayerLoadListeners implements Listener {
      */
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (!isPlayerLoaded(event.getUniqueId())) {
-            PlayerModel playerModel = databaseModule.getPlayer(event.getUniqueId(), event.getName());
+        if (isPlayerLoaded(event.getUniqueId())) return;
+        PlayerModel playerModel = databaseModule.getPlayer(event.getUniqueId(), event.getName());
 
-            joiningPlayers.put(event.getUniqueId(), playerModel);
-        }
+        joiningPlayers.put(event.getUniqueId(), playerModel);
     }
 
     /**
@@ -57,25 +56,30 @@ public final class PlayerLoadListeners implements Listener {
      */
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.WAITING && !event.getPlayer().hasPermission("staff.join") && !isPlayerLoaded(event.getPlayer().getUniqueId())) {
+        final Player player = event.getPlayer();
+
+        if (!gameModule.isState(GameStates.WAITING) && !player.hasPermission("staff.join") && !isPlayerLoaded(player.getUniqueId())) {
             event.kickMessage(ChatUtil.format("<red>This game has already started."));
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            joiningPlayers.remove(event.getPlayer().getUniqueId());
+            joiningPlayers.remove(player.getUniqueId());
             return;
         }
 
         PlayerModel playerModel;
 
-        if (!isPlayerLoaded(event.getPlayer().getUniqueId())) {
-            playerModel = joiningPlayers.get(event.getPlayer().getUniqueId());
+        if (!isPlayerLoaded(player.getUniqueId())) {
+            playerModel = joiningPlayers.get(player.getUniqueId());
         } else {
-            playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
+            playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
         }
 
         if (playerModel == null) {
             event.kickMessage(ChatUtil.format("<red>Something went wrong getting your playerdata! Try it again later."));
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            return;
         }
+
+        playerModel.setPlayerWeakReference(new WeakReference<>(player));
     }
 
     /**
@@ -87,14 +91,15 @@ public final class PlayerLoadListeners implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         event.joinMessage(Component.empty());
         final Player player = event.getPlayer();
+        final UUID playerUUID = player.getUniqueId();
 
         PlayerModel playerModel;
 
-        if (!isPlayerLoaded(player.getUniqueId())) {
-            playerModel = joiningPlayers.remove(player.getUniqueId());
+        if (!isPlayerLoaded(playerUUID)) {
+            playerModel = joiningPlayers.remove(playerUUID);
             playerModule.cachePlayerModel(playerModel);
         } else {
-            playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
+            playerModel = PlayerModule.getPlayerModel(playerUUID);
         }
 
         GamePlayerJoinEvent gamePlayerJoinEvent = new GamePlayerJoinEvent(playerModel);

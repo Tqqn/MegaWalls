@@ -15,6 +15,8 @@ import java.util.logging.Level;
 @Getter
 public final class ArenaModule extends AbstractModule {
 
+    // TODO: Dynamically getting settings for chosen map. Not hardcoded dragonkeep..
+
     private Arena currentArena;
     private DatabaseModule databaseModule;
 
@@ -32,6 +34,11 @@ public final class ArenaModule extends AbstractModule {
     public void onEnable() {
         new WorldCreator("temp_DRAGONKEEP").createWorld();
         currentArena = databaseModule.getMongoDriver().read(Arena.class, "DRAGONKEEP");
+        if (currentArena == null) {
+            getLogger().log(Level.SEVERE, "Could not find settings for map DRAGONKEEP. Stopping Server.");
+            Bukkit.getServer().shutdown();
+            return;
+        }
         currentArena.getArenaSettings().initRegion();
         Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> Bukkit.unloadWorld("world", false));
     }
@@ -43,7 +50,7 @@ public final class ArenaModule extends AbstractModule {
         try {
             WorldUtils.deleteWorld("temp_" + currentArena.getMapName());
         } catch (IOException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not delete temp world.");
+            getLogger().log(Level.SEVERE, "Could not delete temp world.");
         }
     }
 

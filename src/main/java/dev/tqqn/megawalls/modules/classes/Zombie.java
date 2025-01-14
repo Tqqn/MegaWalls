@@ -29,26 +29,24 @@ import java.util.*;
  */
 public final class Zombie extends AbstractClass {
 
+    private static final Set<Material> GATHERING_ACTIVE_BLOCKS = Set.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.CHERRY_LOG, Material.JUNGLE_LOG, Material.DARK_OAK_LOG, Material.SPRUCE_LOG, Material.OAK_LOG, Material.STONE, Material.COAL_ORE, Material.IRON_ORE, Material.DIAMOND_ORE);
+
     private final Map<UUID, Integer> toughnessHits;
-    private final Set<Material> blocksThatCanBeBroken;
     @Getter private final List<UUID> isStrenght;
     @Getter private final Map<UUID, ZombieStrenghtRunnable> strenghtRunnableMap;
 
     public Zombie() {
         super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, Skins.ZOMBIE);
         this.toughnessHits = new HashMap<>();
-        this.blocksThatCanBeBroken = new HashSet<>();
         this.isStrenght = new ArrayList<>();
         this.strenghtRunnableMap = new Hashtable<>();
-
-        Collections.addAll(blocksThatCanBeBroken, Material.ACACIA_LOG, Material.BIRCH_LOG, Material.CHERRY_LOG, Material.JUNGLE_LOG, Material.DARK_OAK_LOG, Material.SPRUCE_LOG, Material.OAK_LOG, Material.STONE, Material.COAL_ORE, Material.IRON_ORE, Material.DIAMOND_ORE);
     }
 
     @Override
     public void initKitItems() {
         getKitItems().put(0, ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("&2Zombie Sword").setLore(getKitAbilityLore()).setGlow().setUnbreakable().setLocalizedName("kit").build());
         getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("&2Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().setLocalizedName("kit").build());
-        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).build()).setDisplayName("&2Zombie Potion of Health (10 Hearts)").setLocalizedName("kit").addPDCTag("heal" + getName(), "20").build());
+        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).build()).setDisplayName("&2Zombie Potion of Health (10 Hearts)").setLocalizedName("kit").addPDCDoubleTag("heal", 20).build());
         getKitItems().put(3, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 15, 1)).setColor(Color.AQUA).build()).setDisplayName("&2Zombie Potion of Speed II (0:15s)").setAmount(2).setLocalizedName("kit").build());
         getKitItems().put(4, ItemBuilder.getBuilder(Material.DIAMOND_PICKAXE).setDisplayName("&2Zombie Pickaxe").addEnchantment(Enchantment.DIG_SPEED, 3).addEnchantment(Enchantment.DURABILITY, 3).setUnbreakable().setLocalizedName("kit").build());
         getKitItems().put(5, ItemBuilder.getBuilder(Material.ENDER_CHEST).setDisplayName("&2Zombie Enderchest").setLocalizedName("kit").build());
@@ -62,20 +60,27 @@ public final class Zombie extends AbstractClass {
 
     @Override
     public void executeAbility(PlayerModel playerModel) {
-        double newExecuterHealth = playerModel.getPlayer().getHealth() + 8;
-        if (newExecuterHealth >= playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
-            newExecuterHealth = playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        final Player player = playerModel.getPlayer();
+        if (player == null) return;
+
+        double newExecuterHealth = player.getHealth() + 8;
+        final double executorNewHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        if (newExecuterHealth >= executorNewHealth) {
+            newExecuterHealth = executorNewHealth;
         }
 
-        playerModel.getPlayer().setHealth(newExecuterHealth);
+        player.setHealth(newExecuterHealth);
         playerModel.getTempPlayerData().resetEnergy();
-        for (Player player : playerModel.getPlayer().getLocation().getNearbyPlayers(5)) {
-            double teamHealth = player.getHealth() + 5;
-            if (player == playerModel.getPlayer()) continue;
-            if (teamHealth >= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
-                teamHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        for (Player players : playerModel.getPlayer().getLocation().getNearbyPlayers(5)) {
+            double teamHealth = players.getHealth() + 5;
+            if (players == player) continue;
+
+            double playerNewHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+
+            if (teamHealth >= playerNewHealth) {
+                teamHealth = playerNewHealth;
             }
-            player.setHealth(teamHealth);
+            players.setHealth(teamHealth);
         }
     }
 
@@ -97,26 +102,28 @@ public final class Zombie extends AbstractClass {
 
     @Override
     public String getActionBar(PlayerModel playerModel) {
+        final Player player = playerModel.getPlayer();
+        final UUID uuid = playerModel.getUuid();
 
-        if (playerModel.getPlayer() == null) return "";
+        if (player == null) return "";
 
         String toughnessPlaceHolder;
         String berserkPlaceHolder;
         String gatheringPlaceHolder = "§a✓";
 
-        if (toughnessHits.containsKey(playerModel.getUuid())) {
-            toughnessPlaceHolder = "§7" + (toughnessHits.get(playerModel.getUuid()) == 3 ? "§a✓" : toughnessHits.get(playerModel.getUuid()) + "§a/3");
+        if (toughnessHits.containsKey(uuid)) {
+            toughnessPlaceHolder = "§7" + (toughnessHits.get(uuid) == 3 ? "§a✓" : toughnessHits.get(uuid) + "§a/3");
         } else {
             toughnessPlaceHolder = "§70§a/3";
         }
 
-        if (strenghtRunnableMap.containsKey(playerModel.getUuid())) {
-            berserkPlaceHolder = "§c§l75% " + strenghtRunnableMap.get(playerModel.getUuid()).getCounter() + "s";
+        if (strenghtRunnableMap.containsKey(uuid)) {
+            berserkPlaceHolder = "§c§l75% " + strenghtRunnableMap.get(uuid).getCounter() + "s";
         } else {
-            if (CooldownUtil.checkCooldown(playerModel.getPlayer(), "zombiestrenght") || CooldownUtil.getRemainder(playerModel.getPlayer(), "zombiestrenght") == 0) {
+            if (CooldownUtil.checkCooldown(player, "zombiestrenght") || CooldownUtil.getRemainder(player, "zombiestrenght") == 0) {
                 berserkPlaceHolder = "§a✓";
             } else {
-                berserkPlaceHolder = "§c§l" + CooldownUtil.getRemainder(playerModel.getPlayer(), "zombiestrenght") + "s";
+                berserkPlaceHolder = "§c§l" + CooldownUtil.getRemainder(player, "zombiestrenght") + "s";
             }
         }
 
@@ -129,7 +136,10 @@ public final class Zombie extends AbstractClass {
         if (toughnessHits.containsKey(playerModel.getUuid())) {
             int hitsTaken = toughnessHits.get(playerModel.getUuid());
             if (hitsTaken + 1 == 4) {
-                playerModel.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 0));
+                final Player player = playerModel.getPlayer();
+                if (player == null) return;
+
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 0));
                 toughnessHits.remove(playerModel.getUuid());
                 return;
             }
@@ -140,7 +150,10 @@ public final class Zombie extends AbstractClass {
     }
 
     private void handleBerserkAbility(PlayerModel playerModel) {
-        if (CooldownUtil.checkCooldown(playerModel.getPlayer(), "zombiestrenght")) {
+        final Player player = playerModel.getPlayer();
+        if (player == null) return;
+
+        if (CooldownUtil.checkCooldown(player, "zombiestrenght")) {
             ZombieStrenghtRunnable zombieStrenghtRunnable = new ZombieStrenghtRunnable(playerModel, this);
             zombieStrenghtRunnable.runTaskTimerAsynchronously(MegaWalls.getInstance(), 0, 20L);
             strenghtRunnableMap.put(playerModel.getUuid(), zombieStrenghtRunnable);
@@ -149,7 +162,7 @@ public final class Zombie extends AbstractClass {
 
     private void handleGatheringAbility(BlockBreakEvent event) {
         if (event.isCancelled()) return;
-        if (blocksThatCanBeBroken.contains(event.getBlock().getType())) {
+        if (GATHERING_ACTIVE_BLOCKS.contains(event.getBlock().getType())) {
             event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 100, 1));
         }
     }

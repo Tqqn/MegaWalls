@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.modules.game.framework;
 
+import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -88,7 +89,7 @@ public abstract class AbstractGameState extends BukkitRunnable implements Listen
                 Listener listener = (Listener) clazz.getConstructor().newInstance();
                 listeners.add(listener);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                gameModule.getPlugin().getLogger().info(gameModule.getPlugin().getPrefix() + " unable to register listener: " + clazz.getName());
+                gameModule.getPlugin().getLogger().info(MegaWalls.getPrefix() + " unable to register listener: " + clazz.getName());
             }
         }
     }

@@ -4,7 +4,9 @@ import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.AbstractModule;
 import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
 import dev.tqqn.megawalls.modules.classes.framework.listener.ClassesListener;
+import dev.tqqn.megawalls.modules.game.GameModule;
 import lombok.Getter;
+import org.bukkit.NamespacedKey;
 
 import java.util.*;
 
@@ -15,6 +17,8 @@ import java.util.*;
 @Getter
 public final class ClassModule extends AbstractModule {
 
+    public static NamespacedKey POTION_HEAL_KEY = new NamespacedKey(MegaWalls.getInstance(), "heal");
+
     @Getter
     private static final List<AbstractClass> classes = new ArrayList<>();
 
@@ -24,7 +28,7 @@ public final class ClassModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        addComponent(ClassesListener.class);
+        register(new ClassesListener(getPlugin().getModuleManager().getModule(GameModule.class)));
         classes.add(new Herobrine());
         classes.add(new Skeleton());
         classes.add(new Zombie());
