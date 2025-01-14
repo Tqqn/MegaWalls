@@ -78,7 +78,6 @@ public final class TempPlayerData {
         } else {
             this.energy += energy;
         }
-        System.out.println("Increased energy: " + this.energy);
         MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), this.energy, (float) ((double) this.energy / 100));
     }
 
@@ -165,10 +164,8 @@ public final class TempPlayerData {
 
                 if (spectatorMode) { // if spectator: show all spectators to new spectator, show all spectators to new spectator.
                     GameModule.getSpectators().add(playerModel);
-                    System.out.println("Called1");
 
                     if (playerModel.getTempPlayerData().isSpectatorMode()) {
-                        System.out.println("Called2");
                         player.showPlayer(MegaWalls.getInstance(), playerModel.getPlayer());
                         playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
                         return;
@@ -177,13 +174,11 @@ public final class TempPlayerData {
                     playerModel.getPlayer().hidePlayer(MegaWalls.getInstance(), player);
                     GameModule.getSpectators().add(playerModel);
                 } else { // if no spectator: show non spectators the user, hide all spectators from removed spectator
-                    System.out.println("Called3");
                     GameModule.getSpectators().remove(playerModel);
 
                     playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
                     GameModule.getSpectators().remove(playerModel);
                     if (isSpectatorMode()) {
-                        System.out.println("Called4");
                         player.hidePlayer(MegaWalls.getInstance(), playerModel.getPlayer());
                     }
                 }

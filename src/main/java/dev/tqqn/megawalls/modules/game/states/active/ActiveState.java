@@ -99,7 +99,6 @@ public final class ActiveState extends AbstractGameState {
                 currentCycle = ActiveState.Cycle.PRE_DM;
                 getGameModule().wallsFall();
                 witherDamageTimer = 5;
-                System.out.println("Walls fall");
             }
         }
 
@@ -178,7 +177,6 @@ public final class ActiveState extends AbstractGameState {
                 Bukkit.getPluginManager().callEvent(gameWinEvent);
                 this.getGameModule().endGame();
             });
-            System.out.println("Game has reached time limit, ending game...");
         }
     }
 

@@ -29,12 +29,9 @@ public class WorldUtils {
 
         if (worldPlayerData.exists()) FileUtils.delete(worldPlayerData);
 
-        System.out.println(worldFile.getPath());
         if (!worldFile.exists()) return;
 
         FileUtils.deleteDirectory(worldFile);
-
-        System.out.println(worldFile.delete());
     }
 
     private static void copy(File src, File dst) throws IOException {

@@ -39,7 +39,6 @@ public final class ArenaModule extends AbstractModule {
     @Override
     public void onDisable() {
         Bukkit.unloadWorld("temp_" + currentArena.getMapName(), false);
-        System.out.println(currentArena.getMapName());
 
         try {
             WorldUtils.deleteWorld("temp_" + currentArena.getMapName());
@@ -48,6 +47,7 @@ public final class ArenaModule extends AbstractModule {
         }
     }
 
+    //TODO: Revisit this later.
     public void switchMap(String newMapName) {
         Arena oldArena = currentArena;
         try {

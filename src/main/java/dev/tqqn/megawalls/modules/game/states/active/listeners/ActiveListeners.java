@@ -68,7 +68,6 @@ public final class ActiveListeners implements Listener {
             final PlayerModel playerModel = event.getPlayerModel();
 
             if (playerModel.getTempPlayerData().isFirstChest()) {
-                System.out.println("Called1");
                 event.addItem(new ChestItem(new ItemStack(Material.IRON_AXE), 100, 1, 1));
                 event.addItem(new ChestItem(new ItemStack(Material.FURNACE), 100, 2, 4));
                 event.addItem(new ChestItem(new ItemStack(Material.ARROW), 100, 20, 24));

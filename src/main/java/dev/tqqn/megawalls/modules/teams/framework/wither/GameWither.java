@@ -66,7 +66,6 @@ public final class GameWither {
      */
     public void kill() {
         if (bukkitEntity != null) {
-            System.out.println("Called for " + gameTeam.getPrettyName() + " wither is: " + bukkitEntity);
             if (!Bukkit.isPrimaryThread()) {
                 Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> bukkitEntity.remove());
             } else {

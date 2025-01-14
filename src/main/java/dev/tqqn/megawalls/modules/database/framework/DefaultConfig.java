@@ -87,7 +87,6 @@ public final class DefaultConfig {
     public Cuboid[] getWallCuboids() {
         List<Cuboid> cuboids = new ArrayList<>();
         int size = plugin.getConfig().getConfigurationSection("game.walls").getKeys(false).size();
-        System.out.println(size);
 
         for (int i = 1; i < size+1; i++ ) {
             cuboids.add(getCuboid("game.walls.wall-" + i));
