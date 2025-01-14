@@ -55,7 +55,6 @@ public class SetupModule extends AbstractModule {
 
     public void enableWorld(String world) {
         new WorldCreator(world).createWorld();
-        //CompletableFuture.runAsync(() -> WorldUtils.copyWorld(world)).whenComplete((result, exception) -> Bukkit.getScheduler().runTask(KireiWalls.getInstance(), () -> new WorldCreator(world).createWorld()));
     }
 
     public void teleportWorld(String world, Player player) {
