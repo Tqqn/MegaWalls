@@ -40,8 +40,10 @@ public abstract class AbstractGameState extends BukkitRunnable implements Listen
         this.listeners = new HashSet<>();
     }
 
-    public abstract void onEnable();
-    public abstract void onDisable();
+    public void onEnable() {
+    }
+    public void onDisable() {
+    }
 
     /** Enables the game state. */
     public void enable() {
@@ -70,7 +72,7 @@ public abstract class AbstractGameState extends BukkitRunnable implements Listen
     }
 
     /** Unregisters the listeners for the state. */
-    private void unRegisterListeners() {
+    protected void unRegisterListeners() {
         if (listeners.isEmpty()) return;
         listeners.forEach(listener -> {
             HandlerList.unregisterAll(listener);

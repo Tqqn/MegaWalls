@@ -7,6 +7,7 @@ import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.utils.ChatUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,10 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+@RequiredArgsConstructor
 public final class GlobalGameListeners implements Listener {
+
+    private final GameModule gameModule;
 
     @EventHandler
     public void onAsyncChat(AsyncChatEvent event) {
@@ -30,8 +34,10 @@ public final class GlobalGameListeners implements Listener {
 
     @EventHandler
     public void onFoodChange(FoodLevelChangeEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PRE_DM || ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) event.setCancelled(true);
+        if (!gameModule.isState(GameStates.ACTIVE)) return;
+        final ActiveState activeState = (ActiveState) gameModule.getCurrentState();
+        final ActiveState.Cycle currentCycle = activeState.getCurrentCycle();
+        if (currentCycle == ActiveState.Cycle.PRE_DM || currentCycle == ActiveState.Cycle.PREPARE || currentCycle == ActiveState.Cycle.END) event.setCancelled(true);
     }
 
     @EventHandler

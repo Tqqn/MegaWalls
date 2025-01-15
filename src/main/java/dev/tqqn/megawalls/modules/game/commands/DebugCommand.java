@@ -30,7 +30,7 @@ public final class DebugCommand implements CommandExecutor {
                 GameModule gameModule = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
                 if (strings[0].equalsIgnoreCase("end")) {
                     if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
-                        ActiveState.end();
+
                     } else {
                         player.sendMessage(ChatUtil.format("<red>Game is not active. Can't force end."));
                     }
@@ -42,7 +42,6 @@ public final class DebugCommand implements CommandExecutor {
                     new ClassChooseMenu(PlayerModule.getPlayerModel(player.getUniqueId())).open();
                     return true;
                 } else if (strings[0].equalsIgnoreCase("nextcycle")) {
-                    ActiveState.nextCycle();
                     player.sendMessage(ChatUtil.format("<green>Cycled to next cycle."));
                     return true;
                 } else if (!this.isNumber(strings[0])) {

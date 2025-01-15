@@ -5,6 +5,7 @@ import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
+import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.utils.ChatUtil;
 import org.bukkit.Bukkit;
@@ -29,12 +30,9 @@ public final class EndState extends AbstractGameState {
 
     @Override
     public void onEnable() {
+        if (!(getGameModule().getCurrentState() instanceof ActiveState activeState)) return;
+        activeState.setCycle(ActiveState.Cycle.END);
         this.runTaskTimer(MegaWalls.getInstance(), 0, 20L);
-    }
-
-    @Override
-    public void onDisable() {
-
     }
 
     @Override

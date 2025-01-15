@@ -48,7 +48,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class GameModule extends AbstractModule {
 
-    @Getter private static AbstractGameState currentState;
+    @Getter private AbstractGameState currentState;
     @Getter private static final Set<PlayerModel> ingamePlayers = new HashSet<>();
     private final DatabaseModule databaseModule;
     @Getter private ArenaModule arenaModule;
@@ -66,7 +66,7 @@ public final class GameModule extends AbstractModule {
     public void onEnable() {
         this.arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
         this.teamModule = this.getPlugin().getModuleManager().getModule(TeamModule.class);
-        register(new GlobalGameListeners());
+        register(new GlobalGameListeners(this));
         register(new DebugCommand());
         register(new WitherDebugCommand());
         register(new AdminCommand());
@@ -168,13 +168,23 @@ public final class GameModule extends AbstractModule {
             if (!playerModel.getTempPlayerData().isSpectatorMode()) {
                 double health = 40.0;
                 if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeOne()) health = 44.0;
-                playerModel.getPlayer().teleport(playerModel.getTempPlayerData().getGameTeam().getGameTeamSettings().getSpawnLocation());
+                teleportPlayerToSpawn(playerModel);
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
-                playerModel.getPlayer().setHealth(playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                playerModel.getPlayer().setHealth(health);
                 playerModel.getPlayer().getInventory().clear();
                 playerModel.getTempPlayerData().getCurrentClass().applyKit(playerModel);
                 playerModel.getTempPlayerData().getCurrentClass().applySkin(playerModel);
             }
+        }
+    }
+
+    public void teleportPlayerToSpawn(PlayerModel playerModel) {
+        playerModel.getPlayer().teleport(playerModel.getTempPlayerData().getGameTeam().getGameTeamSettings().getSpawnLocation());
+    }
+
+    public void teleportPlayersToSpawn() {
+        for (PlayerModel playerModel : getIngamePlayers()) {
+            teleportPlayerToSpawn(playerModel);
         }
     }
 
@@ -243,5 +253,9 @@ public final class GameModule extends AbstractModule {
         final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
 
         player.getInventory().setItem(1, ItemBuilder.getBuilder(MegaWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").setLocalizedName("skin_selector").build());
+    }
+
+    public void spawnWithers() {
+        TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
     }
 }

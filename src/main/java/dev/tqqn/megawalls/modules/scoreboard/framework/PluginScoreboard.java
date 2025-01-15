@@ -2,6 +2,7 @@ package dev.tqqn.megawalls.modules.scoreboard.framework;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,9 @@ import java.util.List;
  * It provides methods to update, add lines, set, and remove the scoreboard for a player.
  */
 public abstract class PluginScoreboard {
+
+    @Getter
+    private static GameModule gameModule = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
 
     @Getter
     private final String name;

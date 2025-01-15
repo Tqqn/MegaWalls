@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public final class ActiveBoard extends PluginScoreboard {
 
+    private static final ActiveState activeState = (ActiveState) getGameModule().getCurrentState();
+
     private final Map<String, GameTeam> teams = TeamModule.getGameTeams();
 
     /**
@@ -31,7 +33,7 @@ public final class ActiveBoard extends PluginScoreboard {
         this.setDisplayName(playerModel.getTempPlayerData().getGameTeam().getLegacyColor() + MessageUtil.SCOREBOARD_TITLE.getStringMessage());
         this.addLines("§7" + date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         this.addLines(" ");
-        if (ActiveState.getCurrentCycle() == null) {
+        if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
             this.addLines("§fWalls fall in: §a0:00");
         } else {
             this.addLines("§fGame End: §a0:00");
@@ -53,8 +55,8 @@ public final class ActiveBoard extends PluginScoreboard {
 
     @Override
     public void update() {
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getCycleTimer()), 12);
+        if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
+            this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs(activeState.getCycleTimer()), 12);
         } else {
             this.updateLine("§fGame End: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getTimer()), 12);
         }

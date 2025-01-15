@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
  * The LobbyListeners class contains event handlers for actions that occur in the lobby.
  */
 public final class LobbyListeners implements Listener {
+
     private final DatabaseModule databaseModule;
     private final GameModule gameModule;
     private final ArenaModule arenaModule;

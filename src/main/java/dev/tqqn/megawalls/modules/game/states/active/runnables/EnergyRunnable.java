@@ -20,12 +20,12 @@ public final class EnergyRunnable extends BukkitRunnable {
     public void run() {
         for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
             if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
-            if (playerModel.getTempPlayerData().getCurrentClass().canUseAbility(playerModel)) {
-                if (flicker) {
-                    MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getTempPlayerData().getEnergy(), 0);
-                } else {
-                    MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getTempPlayerData().getEnergy(), 1);
-                }
+            if (!playerModel.getTempPlayerData().getCurrentClass().canUseAbility(playerModel)) continue;
+
+            if (flicker) {
+                MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getTempPlayerData().getEnergy(), 0);
+            } else {
+                MegaWalls.getReflectionLayer().sendEnergy(playerModel.getPlayer(), playerModel.getTempPlayerData().getEnergy(), 1);
             }
         }
         flicker = !flicker;

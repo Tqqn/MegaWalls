@@ -6,6 +6,7 @@ import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.megawalls.modules.game.framework.events.WitherDeathEvent;
 import dev.tqqn.megawalls.modules.game.states.active.board.ActiveBoard;
+import dev.tqqn.megawalls.modules.game.states.active.objects.ActiveStateData;
 import dev.tqqn.megawalls.modules.game.states.active.runnables.HungerRunnable;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.modules.scoreboard.ScoreboardModule;
@@ -31,16 +32,15 @@ import java.util.List;
  */
 public final class ActiveState extends AbstractGameState {
 
-    @Getter private static Cycle currentCycle;
-    @Getter private static int cycleTimer;
-    private int hungerTimer;
+    @Getter private final ActiveStateData activeStateData = new ActiveStateData();
 
-    private int witherDamageTimer;
-    private boolean areWithersDead;
-    private boolean initHealth;
-    private boolean isAlreadyEnd;
+    @Getter private Cycle currentCycle = Cycle.PREPARE;
+    @Getter private int cycleTimer = 120;
+    private int hungerTimer = 300;
 
-    @Getter private HungerStage currentHungerStage;
+    private int witherDamageTimer = 0;
+
+    @Getter private HungerStage currentHungerStage = HungerStage.LEVEL_0;
 
     private final List<GameTeam> aliveTeams;
 
@@ -57,16 +57,13 @@ public final class ActiveState extends AbstractGameState {
     public void onEnable() {
         this.getGameModule().shufflePlayers();
         aliveTeams.addAll(TeamModule.getGameTeams().values());
-        //setTimer(1300);
+
+        setTimer(3600);
+
         this.addListener(ActiveListeners.class);
         this.addListener(ActiveState.class);
-        TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
-        currentCycle = ActiveState.Cycle.PREPARE;
-        cycleTimer = 120;
-        hungerTimer = 300;
-        this.areWithersDead = false;
-        this.initHealth = false;
-        this.isAlreadyEnd = false;
+
+        getGameModule().spawnWithers();
 
         this.energyRunnable = new EnergyRunnable();
         this.actionBarRunnable = new ActionBarRunnable();
@@ -74,16 +71,11 @@ public final class ActiveState extends AbstractGameState {
         this.energyRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 5L);
         this.actionBarRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 10L);
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
-        this.currentHungerStage = HungerStage.LEVEL_1;
-        this.hungerRunnable = new HungerRunnable(this);
-    }
 
-    @Override
-    public void onDisable() {
-        this.energyRunnable.cancel();
-        this.actionBarRunnable.cancel();
-        this.hungerRunnable.cancel();
-        this.cancel();
+        this.currentHungerStage = HungerStage.LEVEL_0;
+        this.hungerRunnable = new HungerRunnable(this);
+
+        enableScoreboard();
     }
 
     /**
@@ -96,11 +88,9 @@ public final class ActiveState extends AbstractGameState {
         // Handle cycle transitions and countdowns
         if (currentCycle == ActiveState.Cycle.PREPARE) {
             --cycleTimer;
-            if (cycleTimer <= 0) {
+            if (cycleTimer > 0) {
                 cycleTimer = 0;
-                currentCycle = ActiveState.Cycle.PRE_DM;
-                getGameModule().wallsFall();
-                witherDamageTimer = 5;
+                setCycle(Cycle.PRE_DM);
             }
         }
 
@@ -114,13 +104,13 @@ public final class ActiveState extends AbstractGameState {
             }
 
             if (cycleTimer <= 0) {
-                currentCycle = ActiveState.Cycle.DM;
+                setCycle(Cycle.DM);
             }
         }
 
         if (currentCycle == Cycle.PRE_DM) {
             witherDamageTimer--;
-            if (witherDamageTimer == 0) {
+            if (witherDamageTimer <= 0) {
                 witherDamageTimer = 5;
                 for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
                     if (gameTeam.getGameWither().getWitherStatus() == GameWither.WitherStatus.DEATH) continue;
@@ -130,55 +120,29 @@ public final class ActiveState extends AbstractGameState {
             }
         }
 
-        // Initialize health on Tab during Deathmatch cycle
-        if (currentCycle == Cycle.DM && !initHealth) {
-            getGameModule().initHealthOnTab();
-            initHealth = true;
-            this.hungerRunnable.runTaskTimerAsynchronously(MegaWalls.getInstance(), 0, 20L);
-        }
+        if (currentCycle == Cycle.DM) hungerTimer--;
 
         // Start Deathmatch countdown when all withers are dead
-        if (currentCycle != Cycle.DM && currentCycle != Cycle.END && this.getGameModule().areAllWithersDead() && !this.areWithersDead) {
-            currentCycle = Cycle.COUNTDOWN_TO_DM;
-            this.areWithersDead = true;
-            cycleTimer = 10;
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage(MessageUtil.ALL_WITHERS_DEAD.getMessage());
-            }
-        }
-
-        if (currentCycle == Cycle.DM) {
-            hungerTimer--;
+        if (currentCycle != Cycle.DM && currentCycle != Cycle.END && this.getGameModule().areAllWithersDead() && !activeStateData.isAllWitherDeath()) {
+            setCycle(Cycle.COUNTDOWN_TO_DM);
         }
 
         if (hungerTimer == 0) {
-            if (currentHungerStage.getNextHungerStage() == null) return;
-            this.currentHungerStage = currentHungerStage.getNextHungerStage();
+            if (currentHungerStage.getNextHungerStage() != null) {
+                currentHungerStage = currentHungerStage.getNextHungerStage();
+            }
         }
 
         checkAliveTeams();
 
-        if (!isAlreadyEnd && aliveTeams.size() <= 1) {
-            currentCycle = Cycle.END;
-            this.isAlreadyEnd = true;
-            Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> {
-                GameWinEvent gameWinEvent = new GameWinEvent(getGameModule().getWinningTeamByDraw(), GameWinEvent.WinReason.LAST_ALIVE);
-                Bukkit.getPluginManager().callEvent(gameWinEvent);
-                this.getGameModule().setGameState(GameStates.END);
-            });
+        if (!getActiveStateData().isHasEnded() && aliveTeams.size() <= 1) {
+            setCycle(Cycle.END);
             return;
         }
 
         // End the game if timer runs out
-        if (!isAlreadyEnd && timer <= 0) {
-            currentCycle = Cycle.END;
-            this.isAlreadyEnd = true;
-            Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> {
-                GameWinEvent gameWinEvent = new GameWinEvent(getGameModule().getWinningTeamByDraw(), GameWinEvent.WinReason.DRAW);
-                Bukkit.getPluginManager().callEvent(gameWinEvent);
-                this.getGameModule().setGameState(GameStates.END);
-            });
+        if (!getActiveStateData().isHasEnded() && timer <= 0) {
+            setCycle(Cycle.END);
         }
     }
 
@@ -189,17 +153,87 @@ public final class ActiveState extends AbstractGameState {
         }
     }
 
-    public static void end() {
-        setTimer(0);
-        currentCycle = Cycle.END;
-    }
+    public boolean setCycle(Cycle newCycle) {
+        switch (newCycle) {
+            case PREPARE -> {
+                if (currentCycle != Cycle.PRE_DM && currentCycle != Cycle.DM) return false;
+                getGameModule().teleportPlayersToSpawn();
+                getGameModule().undoWallsFall();
+            }
 
-    public static void nextCycle() {
-        cycleTimer = 0;
+            case PRE_DM -> {
+                getGameModule().wallsFall();
+                witherDamageTimer = 5;
+            }
+
+            case COUNTDOWN_TO_DM -> {
+                activeStateData.setAllWitherDeath(true);
+                cycleTimer = 10;
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.sendMessage(MessageUtil.ALL_WITHERS_DEAD.getMessage());
+                }
+            }
+
+            case DM -> {
+                if (!activeStateData.isInitHealth()) {
+                    getGameModule().initHealthOnTab();
+                    activeStateData.setInitHealth(true);
+                }
+                activateHunger();
+            }
+
+            case END -> {
+                activeStateData.setHasEnded(true);
+
+                disableHunger();
+                disableEnergyRunnable();
+                disableActionBarRunnable();
+
+                callEndGameEvent(getWinReason());
+                getGameModule().setGameState(GameStates.END);
+                cancel();
+            }
+        }
+
+        this.currentCycle = newCycle;
+        return true;
     }
 
     private void checkAliveTeams() {
         aliveTeams.removeIf((team) -> team.getAlivePlayers().isEmpty());
+    }
+
+    private void activateHunger() {
+        currentHungerStage = HungerStage.LEVEL_1;
+        hungerRunnable.runTaskTimerAsynchronously(MegaWalls.getInstance(), 0, 20L);
+    }
+
+    private void disableHunger() {
+        hungerRunnable.cancel();
+    }
+
+    private void disableEnergyRunnable() {
+        energyRunnable.cancel();
+    }
+
+    private void disableActionBarRunnable() {
+        actionBarRunnable.cancel();
+    }
+
+    private void callEndGameEvent(GameWinEvent.WinReason winReason) {
+        Bukkit.getScheduler().runTask(MegaWalls.getInstance(), () -> {
+            GameWinEvent gameWinEvent = new GameWinEvent(getGameModule().getWinningTeamByDraw(), winReason);
+            Bukkit.getPluginManager().callEvent(gameWinEvent);
+        });
+    }
+
+    private GameWinEvent.WinReason getWinReason() {
+        if (getActiveStateData().isHasEnded()) return null;
+        if (timer <= 0) return GameWinEvent.WinReason.DRAW;
+        if (aliveTeams.size() <= 1) return GameWinEvent.WinReason.LAST_ALIVE;
+
+        return null;
     }
 
     @EventHandler
@@ -220,6 +254,7 @@ public final class ActiveState extends AbstractGameState {
 
     @Getter
     public enum HungerStage {
+        LEVEL_0(0),
         LEVEL_1(5),
         LEVEL_2(8),
         LEVEL_3(10);
