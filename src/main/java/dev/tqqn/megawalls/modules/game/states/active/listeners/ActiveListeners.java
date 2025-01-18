@@ -11,6 +11,7 @@ import dev.tqqn.megawalls.modules.game.framework.events.GamePlayerKilledEvent;
 import dev.tqqn.megawalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.megawalls.modules.game.framework.events.WitherDamageByPlayerEvent;
 import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
+import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -130,10 +131,20 @@ public final class ActiveListeners implements Listener {
     private String getDeathMessage(GamePlayerKilledEvent event) {
         String broadcastMessage;
 
+        final TeamModule.TeamStaticData killedTeamData = event.getKilledPlayer().getTempPlayerData().getGameTeam().getTeamData();
+
         switch (event.getDeathReason()) {
-            case KILLED_BY_NO_PLAYER -> broadcastMessage = MessageUtil.KILLED_NO_KILLER.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName());
-            case KILLED_BY_PLAYER_BOW -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_BOW.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getTempPlayerData().getGameTeam().getColor(), event.getKiller().getName());
-            case KILLED_BY_PLAYER_HAND -> broadcastMessage = MessageUtil.KILLED_BY_KILLER_HAND.getStringMessage(event.getKilledPlayer().getTempPlayerData().getGameTeam().getColor(), event.getKilledPlayer().getName(), event.getKiller().getTempPlayerData().getGameTeam().getColor(), event.getKiller().getName());
+            case KILLED_BY_NO_PLAYER -> broadcastMessage = MessageUtil.KILLED_NO_KILLER.getStringMessage(killedTeamData.getColor(), event.getKilledPlayer().getName());
+            case KILLED_BY_PLAYER_BOW -> {
+                if (event.getKiller() == null) return "";
+                final TeamModule.TeamStaticData killerTeamData = event.getKiller().getTempPlayerData().getGameTeam().getTeamData();
+                broadcastMessage = MessageUtil.KILLED_BY_KILLER_BOW.getStringMessage(killedTeamData.getColor(), event.getKilledPlayer().getName(), killerTeamData.getColor(), event.getKiller().getName());
+            }
+            case KILLED_BY_PLAYER_HAND -> {
+                if (event.getKiller() == null) return "";
+                final TeamModule.TeamStaticData killerTeamData = event.getKiller().getTempPlayerData().getGameTeam().getTeamData();
+                broadcastMessage = MessageUtil.KILLED_BY_KILLER_HAND.getStringMessage(killedTeamData.getColor(), event.getKilledPlayer().getName(), killerTeamData.getColor(), event.getKiller().getName());
+            }
             default -> broadcastMessage = "";
         }
         return broadcastMessage;
@@ -305,11 +316,12 @@ public final class ActiveListeners implements Listener {
 
     @EventHandler
     public void onGameWin(GameWinEvent event) {
+        final TeamModule.TeamStaticData teamData = event.getWinner().getTeamData();
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(ChatUtil.centerMessage(MessageUtil.MESSAGE_LINE.getStringMessage()));
             player.sendMessage(ChatUtil.centerMessage("<white>Mega Walls"));
             player.sendMessage(" ");
-            player.sendMessage(ChatUtil.centerMessage(event.getWinner().getColor() + "Winner <gray>- " + event.getWinner().getColor() + event.getWinner().getPrettyName() + " Team"));
+            player.sendMessage(ChatUtil.centerMessage(teamData.getColor() + "Winner <gray>- " + teamData.getColor() + teamData.getPrettyName() + " Team"));
             if (event.getWinReason() == GameWinEvent.WinReason.DRAW) player.sendMessage(ChatUtil.centerMessage("<gray>Final Kills by alive players!"));
             if (event.getWinReason() == GameWinEvent.WinReason.LAST_ALIVE) player.sendMessage(ChatUtil.centerMessage("<gray>Last team standing!"));
             player.sendMessage(" ");

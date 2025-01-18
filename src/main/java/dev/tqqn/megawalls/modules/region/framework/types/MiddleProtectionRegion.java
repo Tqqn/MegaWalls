@@ -32,10 +32,9 @@ public final class MiddleProtectionRegion extends AbstractRegion {
      * @param event The PlayerMoveEvent.
      */
     public void onEnter(PlayerMoveEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            event.setCancelled(true);
-        }
+        if (!getGAME_MODULE().isState(GameStates.ACTIVE)) return;
+        if (!getGAME_MODULE().isState(GameStates.WAITING)) return;
+        event.setCancelled(true);
     }
 
     /**
@@ -46,10 +45,10 @@ public final class MiddleProtectionRegion extends AbstractRegion {
      */
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            event.setCancelled(true);
-        }
+        if (!getGAME_MODULE().isState(GameStates.ACTIVE)) return;
+        if (!(getGAME_MODULE().getCurrentState() instanceof ActiveState activeState)) return;
+        if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) return;
+        event.setCancelled(true);
     }
 
     /**
@@ -60,9 +59,9 @@ public final class MiddleProtectionRegion extends AbstractRegion {
      */
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (GameModule.getCurrentState().getGameStates() != GameStates.ACTIVE) return;
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            event.setCancelled(true);
-        }
+        if (!getGAME_MODULE().isState(GameStates.ACTIVE)) return;
+        if (!(getGAME_MODULE().getCurrentState() instanceof ActiveState activeState)) return;
+        if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) return;
+        event.setCancelled(true);
     }
 }

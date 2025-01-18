@@ -41,7 +41,6 @@ public abstract class AbstractModule {
      */
     public AbstractModule(MegaWalls plugin, String name) {
         this.plugin = plugin;
-        this.commandManager = plugin.getCommandManager();
         this.logger = new ModuleLogger(plugin, name);
         this.name = name;
     }
@@ -60,6 +59,7 @@ public abstract class AbstractModule {
      */
     public void enable() {
         logger.log(Level.INFO, "Is enabling...");
+        this.commandManager = plugin.getCommandManager();
         onEnable();
         registerListeners();
         registerCommands();
@@ -125,7 +125,7 @@ public abstract class AbstractModule {
     private void registerCommands() {
         if (commands.isEmpty()) return;
         commands.forEach(baseCommand -> {
-            getCommandManager().registerCommand(baseCommand);
+            commandManager.registerCommand(baseCommand);
             logger.log(Level.INFO, "Has registered command: " + baseCommand.getName());
         });
     }

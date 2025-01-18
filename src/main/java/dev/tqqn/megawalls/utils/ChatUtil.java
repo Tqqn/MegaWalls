@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.utils;
 
+import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -14,6 +15,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public final class ChatUtil {
+
+    private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
 
     private ChatUtil() {
         // Private constructor to prevent instantiation.
@@ -34,7 +37,7 @@ public final class ChatUtil {
         if (playerModel.getPlayer() == null) return;
 
         Bukkit.getLogger().info(((TextComponent) playerModel.getTempPlayerData().getChatMessage(component)).content() + ((TextComponent) component).content());
-        if (GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
+        if (GAME_MODULE.isState(GameStates.WAITING)) {
             for (Player players : Bukkit.getOnlinePlayers()) {
                 players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }
@@ -43,7 +46,7 @@ public final class ChatUtil {
 
         if (playerModel.getTempPlayerData().getGameTeam() == null) return;
 
-        if (GameModule.getCurrentState().getGameStates() == GameStates.END) {
+        if (GAME_MODULE.isState(GameStates.END)) {
 
             for (Player players : Bukkit.getOnlinePlayers()) {
                 players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));

@@ -37,6 +37,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
@@ -67,17 +68,87 @@ public final class GameModule extends AbstractModule {
         this.arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
         this.teamModule = this.getPlugin().getModuleManager().getModule(TeamModule.class);
         register(new GlobalGameListeners(this));
-        register(new DebugCommand());
-        register(new WitherDebugCommand());
-        register(new AdminCommand());
-        register(new SpectateCommand());
-        register(new ShoutCommand());
+        register(new AdminCommand(teamModule));
+        register(new GameCommands(this));
         currentState.enable();
+        registerScoreboardTeam();
+        initScoreboardTask();
     }
 
     @Override
     public void onDisable() {
         currentState.disable();
+    }
+
+    private void registerScoreboardTeam() {
+        Bukkit.getScheduler().runTask(getPlugin(), () -> {
+            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+
+            final Objective onTab = scoreboard.getObjective("onTab");
+            final Objective underName = scoreboard.getObjective("underName");
+
+            if (onTab != null) {
+                onTab.unregister();
+            }
+            if (underName != null) {
+                underName.unregister();
+            }
+
+            for (Team team : scoreboard.getTeams()) {
+                team.unregister();
+            }
+        });
+    }
+
+    private void initScoreboardTask() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard() == null) continue;
+                PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard().update();
+                if (isState(GameStates.ACTIVE)) {
+                    updateHealth(player);
+                }
+            }
+        }, 0, 10L);
+    }
+
+    /**
+     * Updates player health on the scoreboard.
+     *
+     * @param player The player whose health to update.
+     */
+    private void updateHealth(Player player) {
+        Scoreboard scoreboard = player.getScoreboard();
+        Objective underName = scoreboard.getObjective("underName");
+
+        final AttributeInstance genericMaxHealthAtt = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+
+        int maxHealth = 0;
+
+        if (genericMaxHealthAtt != null) {
+            maxHealth = (int) genericMaxHealthAtt.getBaseValue();
+        }
+
+        if (underName != null) {
+            Score healthScore = underName.getScore(player);
+
+            healthScore.numberFormat(NumberFormat.styled(Style.style().color(TextColor.color(ChatUtil.getHealthColor(maxHealth, (int) player.getHealth()))).build()));
+
+            underName.getScore(player).setScore((int) player.getHealth());
+        }
+
+        if (!(currentState instanceof ActiveState activeState)) return;
+        if (activeState.getCurrentCycle() != ActiveState.Cycle.DM) return;
+
+        Objective onTab = scoreboard.getObjective("onTab");
+
+        if (onTab != null) {
+            Score healthScore = onTab.getScore(player);
+
+            healthScore.numberFormat(NumberFormat.styled(Style.style().color(TextColor.color(ChatUtil.getHealthColor(maxHealth, (int) player.getHealth()))).build()));
+
+            onTab.getScore(player).setScore((int) player.getHealth());
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.scoreboard.framework.PluginScoreboard;
+import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.utils.ChatUtil;
@@ -15,7 +16,6 @@ import dev.tqqn.megawalls.utils.MessageUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import java.util.Map;
 
 @Getter
 public final class TempPlayerData {
+
+    private static final GameModule gameModule = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
 
     private final PlayerModel playerModel;
 
@@ -69,7 +71,9 @@ public final class TempPlayerData {
         increaseCoins(damage);
         if (playerModel.getPlayer() == null) return;
 
-        playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You have received <gold>" + damage + " coins<green> for damaging the " + gameWither.getGameTeam().getColor() + "[" + gameWither.getGameTeam().getName() + "] Wither<green>!"));
+        final TeamModule.TeamStaticData team = gameWither.getGameTeam().getTeamData();
+
+        playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You have received <gold>" + damage + " coins<green> for damaging the " + team.getColor() + "[" + team.getPrettyName() + "] Wither<green>!"));
     }
 
     public void increaseEnergy(int energy) {
@@ -128,42 +132,41 @@ public final class TempPlayerData {
 
         final Player player = playerModel.getPlayer();
 
-        if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+        if (!gameModule.isState(GameStates.ACTIVE)) return;
 
-            if (currentClass != null) MegaWalls.getReflectionLayer().sendActionBar(playerModel);
+        if (currentClass != null) MegaWalls.getReflectionLayer().sendActionBar(playerModel);
 
-            if (gameTeam != null) {
-                gameTeam.removeAlive(playerModel);
-            }
+        if (gameTeam != null) {
+            gameTeam.removeAlive(playerModel);
+        }
 
-            player.setAllowFlight(spectatorMode);
-            player.setCollidable(!spectatorMode);
+        player.setAllowFlight(spectatorMode);
+        player.setCollidable(!spectatorMode);
 
-            sendSpectatorTag(spectatorMode);
+        sendSpectatorTag(spectatorMode);
 
-            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
-                if (playerModel == this.playerModel) continue;
-                if (playerModel.getPlayer() == null) continue;
+        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+            if (playerModel == this.playerModel) continue;
+            if (playerModel.getPlayer() == null) continue;
 
-                if (spectatorMode) { // if spectator: show all spectators to new spectator, show all spectators to new spectator.
-                    GameModule.getSpectators().add(playerModel);
+            if (spectatorMode) { // if spectator: show all spectators to new spectator, show all spectators to new spectator.
+                GameModule.getSpectators().add(playerModel);
 
-                    if (playerModel.getTempPlayerData().isSpectatorMode()) {
-                        player.showPlayer(MegaWalls.getInstance(), playerModel.getPlayer());
-                        playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
-                        return;
-                    }
-
-                    playerModel.getPlayer().hidePlayer(MegaWalls.getInstance(), player);
-                    GameModule.getSpectators().add(playerModel);
-                } else { // if no spectator: show non spectators the user, hide all spectators from removed spectator
-                    GameModule.getSpectators().remove(playerModel);
-
+                if (playerModel.getTempPlayerData().isSpectatorMode()) {
+                    player.showPlayer(MegaWalls.getInstance(), playerModel.getPlayer());
                     playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
-                    GameModule.getSpectators().remove(playerModel);
-                    if (isSpectatorMode()) {
-                        player.hidePlayer(MegaWalls.getInstance(), playerModel.getPlayer());
-                    }
+                    continue;
+                }
+
+                playerModel.getPlayer().hidePlayer(MegaWalls.getInstance(), player);
+                GameModule.getSpectators().add(playerModel);
+            } else { // if no spectator: show non spectators the user, hide all spectators from removed spectator
+                GameModule.getSpectators().remove(playerModel);
+
+                playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
+                GameModule.getSpectators().remove(playerModel);
+                if (isSpectatorMode()) {
+                    player.hidePlayer(MegaWalls.getInstance(), playerModel.getPlayer());
                 }
             }
         }
@@ -177,12 +180,11 @@ public final class TempPlayerData {
     }
 
     public Component getChatMessage(Component text) {
-
-        if (GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
+        if (gameModule.isState(GameStates.WAITING)) {
             return ChatUtil.format(MessageUtil.CHAT_LOBBY_FORMAT.getStringMessage(playerModel.getRank(), playerModel.getName())).append(text.color(playerModel.getChatColor()));
         } else {
             String spectator = isSpectatorMode() ? MessageUtil.SPECTATOR_PREFIX.getStringMessage() + " " : "";
-            return ChatUtil.format(spectator + MessageUtil.CHAT_TEAM_FORMAT.getStringMessage(getGameTeam().getColor(), getGameTeam().getChatPrefix(), playerModel.getRank(), playerModel.getName())).append(text.color(playerModel.getChatColor()));
+            return ChatUtil.format(spectator + MessageUtil.CHAT_TEAM_FORMAT.getStringMessage(getGameTeam().getTeamData().getColor(), getGameTeam().getChatPrefix(), playerModel.getRank(), playerModel.getName())).append(text.color(playerModel.getChatColor()));
         }
     }
 }

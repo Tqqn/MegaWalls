@@ -2,6 +2,7 @@ package dev.tqqn.megawalls.modules.teams.framework.wither;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.nms.framework.ICustomWither;
@@ -24,6 +25,7 @@ import org.bukkit.scoreboard.Team;
 public final class GameWither {
 
     @Getter private final GameTeam gameTeam;
+    @Getter private final TeamModule.TeamStaticData teamStaticData;
 
     @Getter private int health;
     @Getter @Setter private WitherStatus witherStatus;
@@ -38,6 +40,7 @@ public final class GameWither {
      */
     public GameWither(GameTeam gameTeam) {
         this.gameTeam = gameTeam;
+        this.teamStaticData = gameTeam.getTeamData();
         this.health = 1000;
         this.witherStatus = WitherStatus.PROTECTED;
         this.nmsEntity = MegaWalls.getReflectionLayer().createCustomWither(gameTeam);
@@ -47,17 +50,17 @@ public final class GameWither {
         bukkitEntity.setPersistent(false);
 
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.registerNewTeam(gameTeam.getName());
-        team.color(gameTeam.getNamedTextColor());
+        Team team = board.registerNewTeam(teamStaticData.name());
+        team.color(teamStaticData.getNamedTextColor());
         team.addEntry(bukkitEntity.getUniqueId().toString());
 
-        bukkitEntity.setMetadata("Team", new FixedMetadataValue(MegaWalls.getInstance(), gameTeam.getName()));
+        bukkitEntity.setMetadata("Team", new FixedMetadataValue(MegaWalls.getInstance(), teamStaticData.name()));
 
-        bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
+        bukkitEntity.customName(ChatUtil.format(teamStaticData.getColor() + teamStaticData.getPrefix() + " WITHER <gray>- " + teamStaticData.getColor() + health + "/1000"));
 
-        String bossBarName = ChatUtil.translateLegacy(gameTeam.getLegacyColor() + gameTeam.getPrefix() + " WITHER &7- " + gameTeam.getLegacyColor() + health + "/1000");
+        String bossBarName = ChatUtil.translateLegacy(teamStaticData.getLegacyColor() + teamStaticData.getPrefix() + " WITHER &7- " + teamStaticData.getLegacyColor() + health + "/1000");
 
-        this.witherBar = Bukkit.createBossBar(bossBarName, BarColor.valueOf(gameTeam.getName()), BarStyle.SEGMENTED_20);
+        this.witherBar = Bukkit.createBossBar(bossBarName, BarColor.valueOf(teamStaticData.name()), BarStyle.SEGMENTED_20);
         this.witherBar.setProgress(1);
     }
 
@@ -82,6 +85,10 @@ public final class GameWither {
         }
     }
 
+    public void setGod(boolean value) {
+        nmsEntity.setGod(value);
+    }
+
     /**
      * Gets the scoreboard status of the wither.
      *
@@ -90,18 +97,18 @@ public final class GameWither {
     public String getScoreboardStatus() {
         if (witherStatus == WitherStatus.DEATH) {
             if (gameTeam.getAlivePlayers().isEmpty()) {
-                return "§7" + gameTeam.getPrettyName() + " eliminated!";
+                return "§7" + teamStaticData.getPrefix() + " eliminated!";
             }
-            return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Players: " + gameTeam.getAlivePlayers().size();
+            return teamStaticData.getLegacyColor() + teamStaticData.getPrefix() + " Players: " + gameTeam.getAlivePlayers().size();
         }
-        return gameTeam.getLegacyColor() + gameTeam.getPrefix() + " Wither ❤: " + health;
+        return teamStaticData.getLegacyColor() + teamStaticData.getPrefix() + " Wither ❤: " + health;
     }
 
     /**
      * Updates the health of the wither name.
      */
     public void updateHealth() {
-        bukkitEntity.customName(ChatUtil.format(gameTeam.getColor() + gameTeam.getPrefix() + " WITHER <gray>- " + gameTeam.getColor() + health + "/1000"));
+        bukkitEntity.customName(ChatUtil.format(teamStaticData.getColor() + teamStaticData.getPrefix() + " WITHER <gray>- " + teamStaticData.getColor() + health + "/1000"));
     }
 
     /**

@@ -5,11 +5,18 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
+import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
+import dev.tqqn.megawalls.modules.player.PlayerModule;
+import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.utils.MessageUtil;
 import dev.tqqn.megawalls.utils.Notify;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("game")
@@ -18,6 +25,29 @@ import org.bukkit.entity.Player;
 public final class GameCommands extends BaseCommand {
 
     private final GameModule gameModule;
+
+    @CommandAlias("shout")
+    @Description("Shouts to every player in the game. Only usable when game is active.")
+    public void shout(Player player, String message) {
+        if (!gameModule.isState(GameStates.ACTIVE)) {
+            Notify.ERROR.chat(player, "This command is only enabled during the active game.");
+            return;
+        }
+
+        final PlayerModel playerModel = PlayerModule.getPlayerModel(player.getUniqueId());
+        if (playerModel == null) return;
+
+        if (playerModel.getTempPlayerData().getGameTeam() == null) {
+            Notify.ERROR.chat(player, "You cannot use shouts because you are not in a team.");
+            return;
+        }
+
+        final TextComponent formattedMessage = Component.empty().content(message);
+
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            players.sendMessage(ChatUtil.format(MessageUtil.SHOUT_PREFIX.getStringMessage() + " ").append(playerModel.getTempPlayerData().getChatMessage(formattedMessage)));
+        }
+    }
 
     @Subcommand("start")
     @Description("Start the game.")

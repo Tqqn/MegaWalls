@@ -1,6 +1,7 @@
 package dev.tqqn.megawalls.modules.region.framework.types;
 
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
+import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.region.framework.AbstractRegion;
@@ -28,8 +29,8 @@ public final class TeamProtectionRegion extends AbstractRegion {
      * @param cuboid   The cuboid defining the boundaries of the region.
      * @param gameTeam The game team associated with this region.
      */
-    public TeamProtectionRegion(String name, Cuboid cuboid, GameTeam gameTeam) {
-        super(name, cuboid, RegionType.PROTECTION);
+    public TeamProtectionRegion(TeamModule.TeamStaticData name, Cuboid cuboid, GameTeam gameTeam) {
+        super(name.name(), cuboid, RegionType.PROTECTION);
         this.gameTeam = gameTeam;
     }
 

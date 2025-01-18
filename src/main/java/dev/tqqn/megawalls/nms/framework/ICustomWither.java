@@ -14,6 +14,8 @@ public interface ICustomWither {
      */
     void setPowered(boolean powered);
 
+    void setGod(boolean god);
+
     /**
      * Gets the entity associated with this custom wither.
      *

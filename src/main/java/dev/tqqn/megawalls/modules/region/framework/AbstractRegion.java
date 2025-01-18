@@ -1,5 +1,7 @@
 package dev.tqqn.megawalls.modules.region.framework;
 
+import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.region.framework.types.RegionType;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -21,6 +23,7 @@ import java.util.Set;
 @Getter
 public abstract class AbstractRegion {
 
+    @Getter private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
     private static final Set<AbstractRegion> CACHE = new HashSet<>();
 
     private final Cuboid cuboid;

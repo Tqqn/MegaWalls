@@ -3,11 +3,11 @@ package dev.tqqn.megawalls.modules.teams.framework;
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
+import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.region.framework.types.TeamProtectionRegion;
 import dev.tqqn.megawalls.modules.region.framework.types.WitherProtectionRegion;
 import lombok.Getter;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,13 +19,7 @@ import java.util.Set;
 @Getter
 public final class GameTeam {
 
-    private final String name;
-    private final String prettyName;
-    private final String tagName;
-    private final String prefix;
-    private final String color;
-    private final String legacyColor;
-    private final NamedTextColor namedTextColor;
+    private final TeamModule.TeamStaticData teamData;
     private GameWither gameWither;
     private final GameTeamSettings gameTeamSettings;
     private final Set<PlayerModel> currentPlayers;
@@ -35,38 +29,19 @@ public final class GameTeam {
     private final WitherProtectionRegion witherProtectionRegion;
     private final String chatPrefix;
 
-
     /**
      * Constructs a GameTeam object with the specified attributes.
-     *
-     * @param name The name of the team.
-     * @param prettyName The pretty name of the team.
-     * @param tagName The tag name of the team.
-     * @param prefix The prefix of the team.
-     * @param color The color of the team.
-     * @param legacyColor The legacy color of the team.
-     * @param adventureColor The named text color of the team.
-     * //@param spawnRegion The spawn region of the team.
-     * /@param witherRegion The wither region of the team.
-     * /@param spawnLocation The spawn location of the team.
-     * /@param witherLocation The wither location of the team.
      */
 
-    public GameTeam(String name, String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor adventureColor, GameTeamSettings gameTeamSettings) {
-        this.name = name;
-        this.prettyName = prettyName;
-        this.tagName = tagName;
-        this.prefix = "[" + prefix + "]";
-        this.color = color;
-        this.legacyColor = legacyColor;
-        this.namedTextColor = adventureColor;
+    public GameTeam(TeamModule.TeamStaticData teamData, GameTeamSettings gameTeamSettings) {
+        this.teamData = teamData;
         this.gameTeamSettings = gameTeamSettings;
         this.currentPlayers = new HashSet<>();
         this.alivePlayers = new HashSet<>();
         this.currentFinalKills = 0;
-        this.teamProtectionRegion = new TeamProtectionRegion(name, gameTeamSettings.getTeamProtectionCuboid(), this);
-        this.witherProtectionRegion = new WitherProtectionRegion(name, gameTeamSettings.getWitherProtectionCuboid(), this);
-        this.chatPrefix = color + "[" + name + "]";
+        this.teamProtectionRegion = new TeamProtectionRegion(teamData, gameTeamSettings.getTeamProtectionCuboid(), this);
+        this.witherProtectionRegion = new WitherProtectionRegion(teamData, gameTeamSettings.getWitherProtectionCuboid(), this);
+        this.chatPrefix = teamData.getColor() + "[" + teamData.name() + "]";
     }
 
     /**
@@ -107,7 +82,7 @@ public final class GameTeam {
      * @param playerModel The player whose name tag to send.
      */
     public void sendNameTag(PlayerModel playerModel) {
-        MegaWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, legacyColor + prefix, " " + playerModel.getTempPlayerData().getCurrentClass().getTag(playerModel));
+        MegaWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), teamData.getTagName(), teamData.getPrettyName(), teamData.getLegacyColor() + teamData.getPrefix(), " " + playerModel.getTempPlayerData().getCurrentClass().getTag(playerModel));
     }
 
     /**
@@ -116,7 +91,7 @@ public final class GameTeam {
      * @param playerModel The player whose spectator tag to send.
      */
     public void sendSpectatorTag(PlayerModel playerModel) {
-        MegaWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), tagName, name, "§7✖ " + legacyColor + prefix, "");
+        MegaWalls.getReflectionLayer().sendNameTag(playerModel.getPlayer(), teamData.getTagName(), teamData.getPrettyName(), "§7✖ " + teamData.getLegacyColor() + teamData.getPrefix(), "");
     }
 
     /**

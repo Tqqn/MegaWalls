@@ -157,6 +157,7 @@ public final class ActiveState extends AbstractGameState {
         switch (newCycle) {
             case PREPARE -> {
                 if (currentCycle != Cycle.PRE_DM && currentCycle != Cycle.DM) return false;
+                enableWitherGod();
                 getGameModule().teleportPlayersToSpawn();
                 getGameModule().undoWallsFall();
             }
@@ -202,6 +203,18 @@ public final class ActiveState extends AbstractGameState {
 
     private void checkAliveTeams() {
         aliveTeams.removeIf((team) -> team.getAlivePlayers().isEmpty());
+    }
+
+    private void enableWitherGod() {
+        for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
+            gameTeam.getGameWither().setGod(true);
+        }
+    }
+
+    private void disableWitherGod() {
+        for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
+            gameTeam.getGameWither().setGod(false);
+        }
     }
 
     private void activateHunger() {

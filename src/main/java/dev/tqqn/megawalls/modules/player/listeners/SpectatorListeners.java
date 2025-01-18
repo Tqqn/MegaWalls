@@ -5,6 +5,7 @@ import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.framework.events.WitherDamageByPlayerEvent;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +24,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 /**
  * The SpectatorListeners class defines event handlers for spectator-related events.
  */
+@RequiredArgsConstructor
 public final class SpectatorListeners implements Listener {
+
+    private final GameModule gameModule;
 
     /**
      * Handles the player join event.
@@ -32,7 +36,7 @@ public final class SpectatorListeners implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(GamePlayerJoinEvent event) {
-        if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
+        if (gameModule.getCurrentState().getGameStates() == GameStates.ACTIVE) {
             if (event.getPlayerModel().getTempPlayerData().isSpectatorMode()) {
                 event.getPlayerModel().getTempPlayerData().setSpectatorMode(true);
             }

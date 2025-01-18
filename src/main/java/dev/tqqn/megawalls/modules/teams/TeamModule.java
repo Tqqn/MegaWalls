@@ -11,7 +11,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -20,11 +20,11 @@ import java.util.concurrent.ExecutionException;
  */
 public final class TeamModule extends AbstractModule {
 
-    private static Map<String, GameTeam> gameTeams;
-    @Getter private GameTeam RED;
-    @Getter private GameTeam BLUE;
-    @Getter private GameTeam GREEN;
-    @Getter private GameTeam YELLOW;
+    private static EnumMap<TeamStaticData, GameTeam> gameTeams;
+    private GameTeam RED;
+    private GameTeam BLUE;
+    private GameTeam GREEN;
+    private GameTeam YELLOW;
 
     public TeamModule(MegaWalls plugin) {
         super(plugin, "Team");
@@ -34,17 +34,20 @@ public final class TeamModule extends AbstractModule {
     public void onEnable() {
         final DatabaseModule databaseModule = this.getPlugin().getModuleManager().getModule(DatabaseModule.class);
         ArenaModule arenaModule = this.getPlugin().getModuleManager().getModule(ArenaModule.class);
-        gameTeams = new HashMap<>();
+        gameTeams = new EnumMap<>(TeamStaticData.class);
         try {
-            this.RED = new GameTeam("RED", "Red", "100_red", "R", "<red>", "§c", NamedTextColor.RED, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_RED").get());
-            this.BLUE = new GameTeam("BLUE", "Blue", "98_blue", "B", "<blue>", "§9", NamedTextColor.BLUE, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_BLUE").get());
-            this.GREEN = new GameTeam("GREEN", "Green", "99_green", "G", "<green>", "§a", NamedTextColor.GREEN, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_GREEN").get());
-            this.YELLOW = new GameTeam("YELLOW", "Yellow", "97_yellow", "Y", "<yellow>", "§e", NamedTextColor.YELLOW, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_YELLOW").get());
+            this.RED = new GameTeam(TeamStaticData.RED, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_RED").get());
+            this.BLUE = new GameTeam(TeamStaticData.BLUE, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_BLUE").get());
+            this.GREEN = new GameTeam(TeamStaticData.GREEN, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_GREEN").get());
+            this.YELLOW = new GameTeam(TeamStaticData.YELLOW, databaseModule.getMongoDriver().readAsync(GameTeamSettings.class, arenaModule.getCurrentArena().getMapName() + "_YELLOW").get());
         } catch (InterruptedException | ExecutionException e) {
             getLogger().warning("Something went wrong getting the GameTeamSettings from the DB!");
             Bukkit.shutdown();
         }
-        gameTeams.putAll(Map.of("Red", this.RED, "Blue", this.BLUE, "Green", this.GREEN, "Yellow", this.YELLOW));
+        gameTeams.put(RED.getTeamData(), RED);
+        gameTeams.put(BLUE.getTeamData(), BLUE);
+        gameTeams.put(GREEN.getTeamData(), GREEN);
+        gameTeams.put(YELLOW.getTeamData(), YELLOW);
     }
 
     @Override
@@ -76,7 +79,35 @@ public final class TeamModule extends AbstractModule {
         return gameTeam;
     }
 
-    public static Map<String, GameTeam> getGameTeams() {
+    public static Map<TeamStaticData, GameTeam> getGameTeams() {
         return ImmutableMap.copyOf(gameTeams);
+    }
+
+    public GameTeam getTeam(TeamStaticData gameTeam) {
+        return gameTeams.get(gameTeam);
+    }
+
+    @Getter
+    public enum TeamStaticData {
+        RED("Red", "100_red", "R", "<red>", "§c", NamedTextColor.RED),
+        BLUE("Blue", "98_blue", "B", "<blue>", "§9", NamedTextColor.BLUE),
+        GREEN("Green", "97_green", "G", "<green>", "§a", NamedTextColor.GREEN),
+        YELLOW("Yellow", "96_yellow", "Y", "<yellow>", "§e", NamedTextColor.YELLOW);
+
+        private final String prettyName;
+        private final String tagName;
+        private final String prefix;
+        private final String color;
+        private final String legacyColor;
+        private final NamedTextColor namedTextColor;
+
+        TeamStaticData(String prettyName, String tagName, String prefix, String color, String legacyColor, NamedTextColor namedTextColor) {
+            this.prettyName = prettyName;
+            this.tagName = tagName;
+            this.prefix = prefix;
+            this.color = color;
+            this.legacyColor = legacyColor;
+            this.namedTextColor = namedTextColor;
+        }
     }
 }

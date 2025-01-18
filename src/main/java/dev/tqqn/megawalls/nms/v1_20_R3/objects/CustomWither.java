@@ -5,6 +5,7 @@ import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.nms.framework.ICustomWither;
+import lombok.Getter;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -22,6 +23,7 @@ import org.bukkit.entity.Entity;
 public final class CustomWither extends WitherBoss implements ICustomWither {
 
     private final GameTeam gameTeam;
+    @Getter private boolean god = true;
 
     public CustomWither(GameTeam gameTeam) {
         super(EntityType.WITHER, ((CraftWorld) gameTeam.getGameTeamSettings().getWitherLocation().getWorld()).getHandle());
@@ -37,6 +39,11 @@ public final class CustomWither extends WitherBoss implements ICustomWither {
     public void setPowered(boolean powered) {
         if (powered) this.setHealth(getHealth() / 2);
         if (!powered) this.setHealth(getMaxHealth());
+    }
+
+    @Override
+    public void setGod(boolean god) {
+        this.god = god;
     }
 
     @Override
@@ -59,7 +66,7 @@ public final class CustomWither extends WitherBoss implements ICustomWither {
      */
     @Override
     public boolean hurt(DamageSource damagesource, float damage) {
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PREPARE || ActiveState.getCurrentCycle() == ActiveState.Cycle.END) return false;
+        if (isGod()) return false;
         if (damagesource.getEntity() == null) return false;
 
         Entity attacker = damagesource.getEntity().getBukkitEntity();

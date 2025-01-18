@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ChestListeners implements Listener {
 
-    private static Set<Material> allowedChestBlocks = Set.of(Material.STONE, Material.DIRT, Material.GRASS_BLOCK);
+    private static final Set<Material> allowedChestBlocks = Set.of(Material.STONE, Material.DIRT, Material.GRASS_BLOCK);
 
     private final ChestModule chestModule;
     private final GameModule gameModule;
@@ -54,7 +54,8 @@ public class ChestListeners implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (!gameModule.isState(GameStates.ACTIVE)) return;
-        if (ActiveState.getCurrentCycle() == ActiveState.Cycle.END) return;
+        if (!(gameModule.getCurrentState() instanceof ActiveState activeState)) return;
+        if (activeState.getCurrentCycle() == ActiveState.Cycle.END) return;
         if (isPlacedByPlayer(event.getBlock().getLocation())) {
             placedBlocks.remove(event.getBlock().getLocation());
             return;
@@ -67,12 +68,12 @@ public class ChestListeners implements Listener {
 
             int chestChance = chestModule.getDefaultChestSpawnRate();
 
-            if (ActiveState.getCurrentCycle() == ActiveState.Cycle.PRE_DM || ActiveState.getCurrentCycle() == ActiveState.Cycle.COUNTDOWN_TO_DM || ActiveState.getCurrentCycle() == ActiveState.Cycle.DM) chestChance = chestChance / 3;
+            if (activeState.getCurrentCycle() == ActiveState.Cycle.PRE_DM || activeState.getCurrentCycle() == ActiveState.Cycle.COUNTDOWN_TO_DM || activeState.getCurrentCycle() == ActiveState.Cycle.DM) chestChance = chestChance / 3;
 
-            if (ThreadLocalRandom.current().nextInt(0, 100) < chestChance) {
-                event.setCancelled(true);
-                chestModule.spawnChest(blockType, event.getBlock().getLocation(), event.getPlayer().getUniqueId());
-            }
+            if (ThreadLocalRandom.current().nextInt(0, 100) > chestChance) return;
+
+            event.setCancelled(true);
+            chestModule.spawnChest(blockType, event.getBlock().getLocation(), event.getPlayer().getUniqueId());
         }
 
         if (blockType == Material.TRAPPED_CHEST || blockType == Material.CHEST) {
@@ -86,7 +87,8 @@ public class ChestListeners implements Listener {
         if (!gameModule.isState(GameStates.ACTIVE)) return;
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getClickedBlock() == null) return;
-            if (ActiveState.getCurrentCycle() != ActiveState.Cycle.PREPARE) return;
+            if (!(gameModule.getCurrentState() instanceof ActiveState activeState)) return;
+            if (activeState.getCurrentCycle() != ActiveState.Cycle.PREPARE) return;
 
             final Block block = event.getClickedBlock();
 

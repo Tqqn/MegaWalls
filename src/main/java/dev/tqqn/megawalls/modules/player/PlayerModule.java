@@ -20,14 +20,17 @@ public final class PlayerModule extends AbstractModule {
 
     private static final Map<UUID, PlayerModel> CACHED_PLAYERS = new HashMap<>();
 
-    public PlayerModule(MegaWalls plugin) {
+    private final GameModule gameModule;
+
+    public PlayerModule(MegaWalls plugin, GameModule gameModule) {
         super(plugin, "Player");
+        this.gameModule = gameModule;
     }
 
     @Override
     public void onEnable() {
         register(new PlayerListeners());
-        register(new SpectatorListeners());
+        register(new SpectatorListeners(gameModule));
     }
 
     /**
@@ -63,10 +66,9 @@ public final class PlayerModule extends AbstractModule {
             playerModel.getTempPlayerData().getGameTeam().sendNameTag(playerModel);
         }
 
-        if (GameModule.getCurrentState().getGameStates() == GameStates.ACTIVE || GameModule.getCurrentState().getGameStates() == GameStates.WAITING) {
-            if (playerModel.getTempPlayerData().getGameTeam() != null && !playerModel.getTempPlayerData().isSpectatorMode()) {
-                playerModel.getTempPlayerData().getGameTeam().addAlivePlayer(playerModel);
-            }
+        if (!gameModule.isState(GameStates.ACTIVE) && !gameModule.isState(GameStates.WAITING)) return;
+        if (playerModel.getTempPlayerData().getGameTeam() != null && !playerModel.getTempPlayerData().isSpectatorMode()) {
+            playerModel.getTempPlayerData().getGameTeam().addAlivePlayer(playerModel);
         }
 
         MegaWalls.getReflectionLayer().changeSkin(playerModel.getTempPlayerData().getCurrentClass() == null ? Skins.RANDOM : playerModel.getTempPlayerData().getCurrentClass().getSkins(), playerModel);

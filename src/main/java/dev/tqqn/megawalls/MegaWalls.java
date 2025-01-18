@@ -39,8 +39,7 @@ public final class MegaWalls extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        commandManager = new PaperCommandManager(this);
-
+        instance = this;
         isSetup = getConfig().getBoolean("setup");
         moduleManager = new ModuleManager(this);
         moduleManager.load();
@@ -48,16 +47,13 @@ public final class MegaWalls extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
+        commandManager = new PaperCommandManager(this);
 
         moduleManager.init();
-
-       registerScoreboardTeam();
 
         if (isSetup) return;
 
         findReflectionLayer();
-        initScoreboardTask();
     }
 
     @Override
@@ -80,79 +76,4 @@ public final class MegaWalls extends JavaPlugin {
             Bukkit.getServer().shutdown();
         }
     }
-
-    private void registerScoreboardTeam() {
-        Bukkit.getScheduler().runTask(this, () -> {
-            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-
-            final Objective onTab = scoreboard.getObjective("onTab");
-            final Objective underName = scoreboard.getObjective("underName");
-
-            if (onTab != null) {
-                onTab.unregister();
-            }
-            if (underName != null) {
-                underName.unregister();
-            }
-
-            for (Team team : scoreboard.getTeams()) {
-                team.unregister();
-            }
-        });
-    }
-
-    /**
-     * Initializes the scoreboard update task.
-     */
-    private void initScoreboardTask() {
-        final GameModule gameModule = getModuleManager().getModule(GameModule.class);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard() == null) return;
-                PlayerModule.getPlayerModel(player.getUniqueId()).getTempPlayerData().getCurrentScoreboard().update();
-                if (gameModule.isState(GameStates.ACTIVE)) {
-                    updateHealth(player);
-                }
-            }
-        }, 0, 10L);
-    }
-
-    /**
-     * Updates player health on the scoreboard.
-     *
-     * @param player The player whose health to update.
-     */
-    private void updateHealth(Player player) {
-        Scoreboard scoreboard = player.getScoreboard();
-        Objective underName = scoreboard.getObjective("underName");
-
-        final AttributeInstance genericMaxHealthAtt = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-
-        int maxHealth = 0;
-
-        if (genericMaxHealthAtt != null) {
-            maxHealth = (int) genericMaxHealthAtt.getBaseValue();
-        }
-
-        if (underName != null) {
-            Score healthScore = underName.getScore(player);
-
-            healthScore.numberFormat(NumberFormat.styled(Style.style().color(TextColor.color(ChatUtil.getHealthColor(maxHealth, (int) player.getHealth()))).build()));
-
-            underName.getScore(player).setScore((int) player.getHealth());
-        }
-
-        if (!(ActiveState.getCurrentCycle() == ActiveState.Cycle.DM)) return;
-
-        Objective onTab = scoreboard.getObjective("onTab");
-
-        if (onTab != null) {
-            Score healthScore = onTab.getScore(player);
-
-            healthScore.numberFormat(NumberFormat.styled(Style.style().color(TextColor.color(ChatUtil.getHealthColor(maxHealth, (int) player.getHealth()))).build()));
-
-            onTab.getScore(player).setScore((int) player.getHealth());
-        }
-    }
-
 }
