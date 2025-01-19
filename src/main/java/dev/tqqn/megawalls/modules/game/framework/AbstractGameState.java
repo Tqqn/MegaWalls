@@ -1,6 +1,5 @@
 package dev.tqqn.megawalls.modules.game.framework;
 
-import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,19 +78,9 @@ public abstract class AbstractGameState extends BukkitRunnable implements Listen
         });
     }
 
-    /**
-     * Adds a listener to the state.
-     *
-     * @param clazz The class of the listener to add.
-     */
-    public void addListener(Class<?> clazz) {
-        if (Listener.class.isAssignableFrom(clazz)) {
-            try {
-                Listener listener = (Listener) clazz.getConstructor().newInstance();
-                listeners.add(listener);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                gameModule.getPlugin().getLogger().info(MegaWalls.getPrefix() + " unable to register listener: " + clazz.getName());
-            }
+    public void register(Object object) {
+        if (object instanceof Listener listener) {
+            listeners.add(listener);
         }
     }
 
