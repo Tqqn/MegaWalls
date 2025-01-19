@@ -60,17 +60,18 @@ public final class ActiveState extends AbstractGameState {
 
         setTimer(3600);
 
-        this.addListener(ActiveListeners.class);
-        this.addListener(ActiveState.class);
+        this.register(new ActiveListeners(getGameModule()));
+        this.register(this);
 
         getGameModule().spawnWithers();
+
+        this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
 
         this.energyRunnable = new EnergyRunnable();
         this.actionBarRunnable = new ActionBarRunnable();
 
         this.energyRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 5L);
         this.actionBarRunnable.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0, 10L);
-        this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
 
         this.currentHungerStage = HungerStage.LEVEL_0;
         this.hungerRunnable = new HungerRunnable(this);
@@ -88,7 +89,7 @@ public final class ActiveState extends AbstractGameState {
         // Handle cycle transitions and countdowns
         if (currentCycle == ActiveState.Cycle.PREPARE) {
             --cycleTimer;
-            if (cycleTimer > 0) {
+            if (cycleTimer <= 0) {
                 cycleTimer = 0;
                 setCycle(Cycle.PRE_DM);
             }
@@ -156,13 +157,14 @@ public final class ActiveState extends AbstractGameState {
     public boolean setCycle(Cycle newCycle) {
         switch (newCycle) {
             case PREPARE -> {
-                if (currentCycle != Cycle.PRE_DM && currentCycle != Cycle.DM) return false;
                 enableWitherGod();
+                if (currentCycle != Cycle.PRE_DM && currentCycle != Cycle.DM) return false;
                 getGameModule().teleportPlayersToSpawn();
                 getGameModule().undoWallsFall();
             }
 
             case PRE_DM -> {
+                disableWitherGod();
                 getGameModule().wallsFall();
                 witherDamageTimer = 5;
             }
@@ -192,7 +194,6 @@ public final class ActiveState extends AbstractGameState {
                 disableActionBarRunnable();
 
                 callEndGameEvent(getWinReason());
-                getGameModule().setGameState(GameStates.END);
                 cancel();
             }
         }
