@@ -104,7 +104,6 @@ public abstract class AbstractModule {
             commands.add(baseCommand);
             return;
         }
-        getLogger().log(Level.SEVERE, "");
     }
 
     /**
