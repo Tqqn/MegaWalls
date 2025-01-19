@@ -34,16 +34,15 @@ public final class ClassChooseMenu extends Menu {
         for (AbstractClass abstractClass : ClassModule.getClasses()) {
             registerButton(new MenuButton(abstractClass.getKitIcon(viewer)).setClicker(clicked -> {
                 final PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
-                final Player player = playerModel.getPlayer();
-                if (player == null) return;
 
                 final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
-                if (playerClass == null) return;
 
-                if (playerClass == abstractClass) {
-                    player.sendMessage(ChatUtil.format("<red>You have already selected this class!"));
-                    close();
-                    return;
+                if (playerClass != null) {
+                    if (playerClass == abstractClass) {
+                        clicked.sendMessage(ChatUtil.format("<red>You have already selected this class!"));
+                        close();
+                        return;
+                    }
                 }
 
                 playerModel.getTempPlayerData().setCurrentClass(abstractClass);
