@@ -56,14 +56,13 @@ public final class LobbyState extends AbstractGameState {
                     player.sendMessage(ChatUtil.format("<red>Not enough players. Setting timer to <green>3 <red>minutes."));
                 }
             }
-
         }
     }
 
     @Override
     public void onEnable() {
-        setTimer(100);
-        this.addListener(LobbyListeners.class);
+        setTimer(300);
+        register(new LobbyListeners());
         this.runTaskTimer(this.getGameModule().getPlugin(), 0L, 20L);
     }
 
