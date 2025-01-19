@@ -16,16 +16,16 @@ public final class MenuListener implements Listener {
     public void onClick(InventoryClickEvent event) {
         InventoryHolder inventoryHolder = event.getView().getTopInventory().getHolder();
 
-        if (inventoryHolder instanceof Menu) {
-            ((Menu) inventoryHolder).handleClick(event);
+        if (inventoryHolder instanceof Menu menu) {
+            menu.handleClick(event);
         }
     }
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         InventoryHolder inventoryHolder = event.getInventory().getHolder();
-        if (inventoryHolder instanceof Menu) {
-            ((Menu) inventoryHolder).handleClose();
+        if (inventoryHolder instanceof Menu menu) {
+            menu.handleClose();
         }
     }
 }
