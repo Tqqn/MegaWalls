@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
  */
 public enum SoundUtil {
 
-    COUNTDOWN_SOUND(Sound.BLOCK_DISPENSER_FAIL, 0.5f, 1.5f);
+    COUNTDOWN_SOUND(Sound.BLOCK_DISPENSER_FAIL, 0.5f, 1.5f),
+    ENDERCHEST_OPEN(Sound.BLOCK_ENDER_CHEST_OPEN, 0.3f, 1.5f),
+    ENDERMAN_TELEPORT(Sound.ENTITY_ENDERMAN_TELEPORT, 0.3f, 1.5f);
 
     private final Sound sound;
     private final float volume;
@@ -30,6 +32,10 @@ public enum SoundUtil {
      */
     private void playSound(Player player, Location location) {
         player.playSound(location, this.sound, this.volume, this.pitch);
+    }
+
+    public void playSoundForPlayer(Player player) {
+        player.playSound(player, this.sound, this.volume, this.pitch);
     }
 
     /**

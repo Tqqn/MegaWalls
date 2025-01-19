@@ -13,7 +13,6 @@ import dev.tqqn.megawalls.modules.game.framework.events.WitherDamageByPlayerEven
 import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
-import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.game.states.active.board.ActiveBoard;
@@ -24,6 +23,7 @@ import dev.tqqn.megawalls.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -37,7 +37,6 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The ActiveListeners class implements various event listeners for active gameplay.
@@ -117,7 +116,7 @@ public final class ActiveListeners implements Listener {
         }
 
         if (isFinal) {
-            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+            for (PlayerModel playerModel : gameModule.getInGamePlayers()) {
                 playerModel.getPlayer().sendMessage(ChatUtil.format(broadcastMessage));
             }
 
@@ -256,19 +255,21 @@ public final class ActiveListeners implements Listener {
 
         GamePlayerKilledEvent gamePlayerKilledEvent = null;
 
+        final Location deathLocation = event.getEntity().getLocation().clone();
+
         if (event.getDamager() instanceof Projectile projectile) {
             if (projectile.getShooter() instanceof Player damager) {
-                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_BOW);
+                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_BOW, deathLocation);
             } else {
-                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER, deathLocation);
             }
         }
 
         if (event.getDamager() instanceof Player damager) {
-            gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_HAND);
+            gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, PlayerModule.getPlayerModel(damager.getUniqueId()), GamePlayerKilledEvent.DeathReason.KILLED_BY_PLAYER_HAND, deathLocation);
         } else {
             if (!(event.getDamager() instanceof Projectile)) {
-                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+                gamePlayerKilledEvent = new GamePlayerKilledEvent(damagedPlayerModel, null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER, deathLocation);
             }
         }
 
@@ -303,7 +304,9 @@ public final class ActiveListeners implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.getHealth() - event.getFinalDamage() > 0) return;
         if (event.getCause() == EntityDamageEvent.DamageCause.CONTACT || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return;
-        GamePlayerKilledEvent gamePlayerKilledEvent = new GamePlayerKilledEvent(PlayerModule.getPlayerModel(event.getEntity().getUniqueId()), null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER);
+
+        final Location deathLocation = player.getLocation().clone();
+        final GamePlayerKilledEvent gamePlayerKilledEvent = new GamePlayerKilledEvent(PlayerModule.getPlayerModel(event.getEntity().getUniqueId()), null, GamePlayerKilledEvent.DeathReason.KILLED_BY_NO_PLAYER, deathLocation);
         Bukkit.getPluginManager().callEvent(gamePlayerKilledEvent);
     }
 

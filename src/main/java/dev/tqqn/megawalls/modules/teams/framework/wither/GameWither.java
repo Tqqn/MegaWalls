@@ -24,6 +24,8 @@ import org.bukkit.scoreboard.Team;
  */
 public final class GameWither {
 
+    private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
+
     @Getter private final GameTeam gameTeam;
     @Getter private final TeamModule.TeamStaticData teamStaticData;
 
@@ -130,7 +132,7 @@ public final class GameWither {
         }
 
         if ((this.health - damage) <= 0) {
-            for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+            for (PlayerModel playerModel : GAME_MODULE.getInGamePlayers()) {
                 playerModel.getTempPlayerData().awardWitherDamage(this);
             }
             kill();

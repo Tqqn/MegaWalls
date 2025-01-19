@@ -5,6 +5,7 @@ import dev.tqqn.megawalls.modules.arena.ArenaModule;
 import dev.tqqn.megawalls.modules.chest.ChestModule;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.DatabaseModule;
+import dev.tqqn.megawalls.modules.enderchest.EnderChestModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.menu.MenuModule;
@@ -41,6 +42,7 @@ public final class ModuleManager {
         this.modules.put(ScoreboardModule.class, new ScoreboardModule(plugin));
         this.modules.put(MenuModule.class, new MenuModule(plugin));
         this.modules.put(ChestModule.class, new ChestModule(plugin));
+        this.modules.put(EnderChestModule.class, new EnderChestModule(plugin));
     }
 
     public void load() {

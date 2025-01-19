@@ -56,7 +56,7 @@ public final class EndState extends AbstractGameState {
     private void endGameLogic() {
         TeamModule.getGameTeams().values().forEach((gameTeam) -> gameTeam.getGameWither().kill());
 
-        getGameModule().getIngamePlayers().forEach((playerModel) -> {
+        getGameModule().getInGamePlayers().forEach((playerModel) -> {
             this.databaseModule.savePlayer(playerModel);
 
             final Player target = playerModel.getPlayer();

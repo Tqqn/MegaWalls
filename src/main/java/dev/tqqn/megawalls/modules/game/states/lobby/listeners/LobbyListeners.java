@@ -60,7 +60,7 @@ public final class LobbyListeners implements Listener {
 
         final TempPlayerData tempPlayerData = playerModel.getTempPlayerData();
 
-        GameModule.getIngamePlayers().add(event.getPlayerModel());
+        gameModule.addInGamePlayer(playerModel);
         if (tempPlayerData.isBuildMode()) {
             player.setGameMode(GameMode.CREATIVE);
         } else {
@@ -116,6 +116,8 @@ public final class LobbyListeners implements Listener {
      */
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
+        this.gameModule.removeInGamePlayer(playerModel);
         this.databaseModule.getPlayerModule().removePlayerFromCache(event.getPlayer().getUniqueId());
     }
 

@@ -55,7 +55,7 @@ public final class ChatUtil {
         }
 
         if (playerModel.getTempPlayerData().isSpectatorMode()) {
-            for (PlayerModel playerModels : GameModule.getSpectators()) {
+            for (PlayerModel playerModels : GAME_MODULE.getSpectators()) {
                 if (playerModels.getPlayer() == null) return;
                 playerModels.getPlayer().sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
             }

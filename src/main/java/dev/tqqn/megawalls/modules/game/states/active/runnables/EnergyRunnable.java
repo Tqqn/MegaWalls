@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public final class EnergyRunnable extends BukkitRunnable {
 
+    private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
+
     private boolean flicker;
 
     public EnergyRunnable() {
@@ -18,7 +20,7 @@ public final class EnergyRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+        for (PlayerModel playerModel : GAME_MODULE.getInGamePlayers()) {
             if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
             if (!playerModel.getTempPlayerData().getCurrentClass().canUseAbility(playerModel)) continue;
 

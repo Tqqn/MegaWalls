@@ -102,7 +102,6 @@ public abstract class AbstractModule {
 
         if (object instanceof BaseCommand baseCommand) {
             commands.add(baseCommand);
-            return;
         }
     }
 

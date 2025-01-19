@@ -145,12 +145,12 @@ public final class TempPlayerData {
 
         sendSpectatorTag(spectatorMode);
 
-        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+        for (PlayerModel playerModel : gameModule.getInGamePlayers()) {
             if (playerModel == this.playerModel) continue;
             if (playerModel.getPlayer() == null) continue;
 
             if (spectatorMode) { // if spectator: show all spectators to new spectator, show all spectators to new spectator.
-                GameModule.getSpectators().add(playerModel);
+                gameModule.addSpectator(playerModel);
 
                 if (playerModel.getTempPlayerData().isSpectatorMode()) {
                     player.showPlayer(MegaWalls.getInstance(), playerModel.getPlayer());
@@ -159,12 +159,10 @@ public final class TempPlayerData {
                 }
 
                 playerModel.getPlayer().hidePlayer(MegaWalls.getInstance(), player);
-                GameModule.getSpectators().add(playerModel);
             } else { // if no spectator: show non spectators the user, hide all spectators from removed spectator
-                GameModule.getSpectators().remove(playerModel);
+                gameModule.removeSpectator(playerModel);
 
                 playerModel.getPlayer().showPlayer(MegaWalls.getInstance(), player);
-                GameModule.getSpectators().remove(playerModel);
                 if (isSpectatorMode()) {
                     player.hidePlayer(MegaWalls.getInstance(), playerModel.getPlayer());
                 }

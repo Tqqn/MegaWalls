@@ -35,7 +35,7 @@ public final class LobbyBoard extends PluginScoreboard {
 
     @Override
     public void update() {
-        this.updateLine("§fPlayers: §a" + GameModule.getIngamePlayers().size() +  "/100", 8);
+        this.updateLine("§fPlayers: §a" + getGameModule().getInGamePlayers().size() +  "/100", 8);
         this.updateLine("§fStarting in §a" + ChatUtil.convertSecondsToHMmSs(LobbyState.getTimer()) + " §fif", 6);
         String selectedClass = "§aRandom!";
 

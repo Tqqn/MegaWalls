@@ -29,6 +29,8 @@ import java.util.*;
 @Getter
 public abstract class AbstractClass implements Listener {
 
+    @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).setLocalizedName("kit").addPDCTag("enderchest", "dummy").build();
+
     private final String name;
     private final String tag;
     private final ClassOptions classOptions;

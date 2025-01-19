@@ -224,14 +224,17 @@ public final class ActiveState extends AbstractGameState {
     }
 
     private void disableHunger() {
+        if (hungerRunnable.isCancelled()) return;
         hungerRunnable.cancel();
     }
 
     private void disableEnergyRunnable() {
+        if (energyRunnable.isCancelled()) return;
         energyRunnable.cancel();
     }
 
     private void disableActionBarRunnable() {
+        if (actionBarRunnable.isCancelled()) return;
         actionBarRunnable.cancel();
     }
 

@@ -2,6 +2,7 @@ package dev.tqqn.megawalls.modules.game.framework.events;
 
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ public final class GamePlayerKilledEvent extends Event {
     private final PlayerModel killedPlayer;
     @Nullable private final PlayerModel killer;
     private final DeathReason deathReason;
+    private final Location deathLocation;
 
     /**
      * Constructs a GamePlayerKilledEvent object with the specified parameters.
@@ -27,10 +29,11 @@ public final class GamePlayerKilledEvent extends Event {
      * @param killer The player model of the killer, if any.
      * @param deathReason The reason for the player's death.
      */
-    public GamePlayerKilledEvent(PlayerModel killedPlayer, @Nullable PlayerModel killer, DeathReason deathReason) {
+    public GamePlayerKilledEvent(PlayerModel killedPlayer, @Nullable PlayerModel killer, DeathReason deathReason, Location deathLocation) {
         this.killedPlayer = killedPlayer;
         this.killer = killer;
         this.deathReason = deathReason;
+        this.deathLocation = deathLocation;
     }
 
     @Override

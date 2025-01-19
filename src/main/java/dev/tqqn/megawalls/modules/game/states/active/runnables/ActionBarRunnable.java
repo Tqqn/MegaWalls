@@ -7,9 +7,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarRunnable extends BukkitRunnable {
 
+    private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
+
     @Override
     public void run() {
-        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+        for (PlayerModel playerModel : GAME_MODULE.getInGamePlayers()) {
             if (playerModel.getTempPlayerData().getCurrentClass() == null) continue;
             if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
 

@@ -24,7 +24,7 @@ public final class HungerRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (PlayerModel playerModel : GameModule.getIngamePlayers()) {
+        for (PlayerModel playerModel : activeState.getGameModule().getInGamePlayers()) {
             if (playerModel.getPlayer() == null) continue;
             if (playerModel.getTempPlayerData().isSpectatorMode()) continue;
             final Player player = playerModel.getPlayer();
