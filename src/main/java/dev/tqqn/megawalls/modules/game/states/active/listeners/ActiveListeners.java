@@ -46,7 +46,6 @@ import org.jetbrains.annotations.NotNull;
 public final class ActiveListeners implements Listener {
 
     private final GameModule gameModule;
-    private final DatabaseModule databaseModule;
 
     /**
      * Handles the event when a player joins during active gameplay.
@@ -56,7 +55,7 @@ public final class ActiveListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(GamePlayerJoinEvent event) {
         if (!gameModule.isState(GameStates.ACTIVE)) return;
-        ScoreboardModule scoreboardModule = this.databaseModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
+        ScoreboardModule scoreboardModule = gameModule.getPlugin().getModuleManager().getModule(ScoreboardModule.class);
         scoreboardModule.setScoreboard(event.getPlayerModel(), new ActiveBoard(event.getPlayerModel()));
 
         event.getPlayerModel().getTempPlayerData().setSpectatorMode(event.getPlayerModel().getTempPlayerData().isSpectatorMode());
