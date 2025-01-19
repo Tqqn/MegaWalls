@@ -89,10 +89,10 @@ public final class TeamModule extends AbstractModule {
 
     @Getter
     public enum TeamStaticData {
-        RED("Red", "100_red", "R", "<red>", "§c", NamedTextColor.RED),
-        BLUE("Blue", "98_blue", "B", "<blue>", "§9", NamedTextColor.BLUE),
-        GREEN("Green", "97_green", "G", "<green>", "§a", NamedTextColor.GREEN),
-        YELLOW("Yellow", "96_yellow", "Y", "<yellow>", "§e", NamedTextColor.YELLOW);
+        RED("Red", "100_red", "[R]", "<red>", "§c", NamedTextColor.RED),
+        BLUE("Blue", "98_blue", "[B]", "<blue>", "§9", NamedTextColor.BLUE),
+        GREEN("Green", "97_green", "[G]", "<green>", "§a", NamedTextColor.GREEN),
+        YELLOW("Yellow", "96_yellow", "[Y]", "<yellow>", "§e", NamedTextColor.YELLOW);
 
         private final String prettyName;
         private final String tagName;
