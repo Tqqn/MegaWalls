@@ -50,8 +50,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class GameModule extends AbstractModule {
 
     @Getter private AbstractGameState currentState;
-    @Getter private final Set<PlayerModel> inGamePlayers = new HashSet<>();
-    @Getter private final Set<PlayerModel> spectators = new HashSet<>();
+    private final Set<PlayerModel> inGamePlayers = new HashSet<>();
+    private final Set<PlayerModel> spectators = new HashSet<>();
 
     private final DatabaseModule databaseModule;
     @Getter private ArenaModule arenaModule;
