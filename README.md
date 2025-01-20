@@ -12,15 +12,15 @@ MegaWalls is a game where four teams spawn on a map, each with their own base se
 - Coming more soon.
 
 ## Admin Commands
-/admin build - Toggles build mode between creative and survival
+/admin build - Toggles build mode between creative and survival  
 More commands coming soon
 ## Game Commands
-/game start - Starts the game
-/game end - Ends the game
+/game start - Starts the game  
+/game end - Ends the game  
 /game setcycle - Sets a new cycle for the game
 
 ## Player Commands
-/shout message - Shouts to other teams.
+/shout message - Shouts to other teams.  
 /enderchest - Opens the enderchest.
 
 More commands coming soon
