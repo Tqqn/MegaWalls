@@ -75,8 +75,17 @@ public final class ActiveState extends AbstractGameState {
 
         this.currentHungerStage = HungerStage.LEVEL_0;
         this.hungerRunnable = new HungerRunnable(this);
+        activateHunger();
 
         enableScoreboard();
+    }
+
+    @Override
+    public void onDisable() {
+        disableHunger();
+        disableEnergyRunnable();
+        disableActionBarRunnable();
+        cancel();
     }
 
     /**
@@ -183,15 +192,10 @@ public final class ActiveState extends AbstractGameState {
                     getGameModule().initHealthOnTab();
                     activeStateData.setInitHealth(true);
                 }
-                activateHunger();
             }
 
             case END -> {
                 activeStateData.setHasEnded(true);
-
-                disableHunger();
-                disableEnergyRunnable();
-                disableActionBarRunnable();
 
                 callEndGameEvent(getWinReason());
                 cancel();
@@ -224,17 +228,17 @@ public final class ActiveState extends AbstractGameState {
     }
 
     private void disableHunger() {
-        if (hungerRunnable.isCancelled()) return;
+        if (hungerRunnable.getTaskId() == 0) return;
         hungerRunnable.cancel();
     }
 
     private void disableEnergyRunnable() {
-        if (energyRunnable.isCancelled()) return;
+        if (energyRunnable.getTaskId() == 0) return;
         energyRunnable.cancel();
     }
 
     private void disableActionBarRunnable() {
-        if (actionBarRunnable.isCancelled()) return;
+        if (actionBarRunnable.getTaskId() == 0) return;
         actionBarRunnable.cancel();
     }
 
