@@ -1,7 +1,6 @@
 package dev.tqqn.megawalls.modules.game.listeners;
 
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
-import dev.tqqn.megawalls.modules.enderchest.EnderChestModule;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
@@ -15,8 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -40,22 +37,6 @@ public final class GlobalGameListeners implements Listener {
         final ActiveState activeState = (ActiveState) gameModule.getCurrentState();
         final ActiveState.Cycle currentCycle = activeState.getCurrentCycle();
         if (currentCycle == ActiveState.Cycle.PRE_DM || currentCycle == ActiveState.Cycle.PREPARE || currentCycle == ActiveState.Cycle.END) event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onItemMoveOtherInv(InventoryClickEvent event) {
-        if (event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) return;
-
-        final ItemStack itemStack = event.getCurrentItem();
-        if (itemStack == null) return;
-
-        final ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) return;
-
-        if (!itemMeta.hasLocalizedName()) return;
-        if (!itemMeta.getLocalizedName().equals("kit")) return;
-
-        event.setCancelled(true);
     }
 
     @EventHandler
