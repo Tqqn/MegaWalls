@@ -2,6 +2,7 @@ package dev.tqqn.megawalls.modules.game.states.active.board;
 
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
+import dev.tqqn.megawalls.modules.game.states.end.EndState;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.scoreboard.framework.PluginScoreboard;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
@@ -55,10 +56,14 @@ public final class ActiveBoard extends PluginScoreboard {
 
     @Override
     public void update() {
-        if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
-            this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs(activeState.getCycleTimer()), 12);
+        if (!(getGameModule().getCurrentState() instanceof EndState)) {
+            if (activeState.getCurrentCycle() == ActiveState.Cycle.PREPARE) {
+                this.updateLine("§fWalls falling in: §a" + ChatUtil.convertSecondsToHMmSs(activeState.getCycleTimer()), 12);
+            } else {
+                this.updateLine("§fGame End: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getTimer()), 12);
+            }
         } else {
-            this.updateLine("§fGame End: §a" + ChatUtil.convertSecondsToHMmSs(ActiveState.getTimer()), 12);
+            this.updateLine("§cGame has ended!", 12);
         }
 
         this.updateLine("§e0 §8/ §90 §8/ §c0 §8/ §a0", 11);
