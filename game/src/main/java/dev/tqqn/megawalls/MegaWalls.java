@@ -1,26 +1,11 @@
 package dev.tqqn.megawalls;
 
 import co.aikar.commands.PaperCommandManager;
-import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.ModuleManager;
-import dev.tqqn.megawalls.modules.game.GameModule;
-import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
-import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.nms.ReflectionLayer;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import lombok.Getter;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 /**
  * Represents the main class of the MegaWalls plugin.

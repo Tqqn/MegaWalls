@@ -1,0 +1,4 @@
+name: lobby
+version: '1.0'
+main: dev.tqqn.megawalls.lobby.Lobby
+api-version: '1.20'
