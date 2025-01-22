@@ -7,6 +7,7 @@ import dev.tqqn.megawalls.modules.game.framework.events.GameWinEvent;
 import dev.tqqn.megawalls.modules.game.framework.events.WitherDeathEvent;
 import dev.tqqn.megawalls.modules.game.states.active.board.ActiveBoard;
 import dev.tqqn.megawalls.modules.game.states.active.objects.ActiveStateData;
+import dev.tqqn.megawalls.modules.game.states.active.runnables.AbilityReadyRunnable;
 import dev.tqqn.megawalls.modules.game.states.active.runnables.HungerRunnable;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.modules.scoreboard.ScoreboardModule;
@@ -44,6 +45,7 @@ public final class ActiveState extends AbstractGameState {
 
     private final List<GameTeam> aliveTeams;
 
+    private AbilityReadyRunnable abilityReadyRunnable;
     private EnergyRunnable energyRunnable;
     private ActionBarRunnable actionBarRunnable;
     private HungerRunnable hungerRunnable;
@@ -67,6 +69,7 @@ public final class ActiveState extends AbstractGameState {
 
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
 
+        this.abilityReadyRunnable = new AbilityReadyRunnable(getGameModule());
         this.energyRunnable = new EnergyRunnable();
         this.actionBarRunnable = new ActionBarRunnable();
 
@@ -76,6 +79,7 @@ public final class ActiveState extends AbstractGameState {
         this.currentHungerStage = HungerStage.LEVEL_0;
         this.hungerRunnable = new HungerRunnable(this);
         activateHunger();
+        activateAbilityReady();
 
         enableScoreboard();
     }
@@ -83,6 +87,7 @@ public final class ActiveState extends AbstractGameState {
     @Override
     public void onDisable() {
         disableHunger();
+        disableAbilityReady();
         disableEnergyRunnable();
         disableActionBarRunnable();
         cancel();
@@ -220,6 +225,15 @@ public final class ActiveState extends AbstractGameState {
         for (GameTeam gameTeam : TeamModule.getGameTeams().values()) {
             gameTeam.getGameWither().setGod(false);
         }
+    }
+
+    private void activateAbilityReady() {
+        abilityReadyRunnable.runTaskTimerAsynchronously(getGameModule().getPlugin(), 0L, 20L);
+    }
+
+    private void disableAbilityReady() {
+        if (abilityReadyRunnable.getTaskId() == 0) return;
+        abilityReadyRunnable.cancel();
     }
 
     private void activateHunger() {

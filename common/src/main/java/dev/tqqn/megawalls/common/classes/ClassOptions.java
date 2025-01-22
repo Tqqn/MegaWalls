@@ -1,4 +1,4 @@
-package dev.tqqn.megawalls.modules.classes.framework;
+package dev.tqqn.megawalls.common.classes;
 
 import lombok.Getter;
 

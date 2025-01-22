@@ -1,10 +1,10 @@
 package dev.tqqn.megawalls.modules.classes;
 
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
-import dev.tqqn.megawalls.modules.classes.framework.ClassDescriptions;
-import dev.tqqn.megawalls.modules.classes.framework.ClassOptions;
+import dev.tqqn.megawalls.common.classes.ClassDescriptions;
+import dev.tqqn.megawalls.common.classes.ClassOptions;
 
 import java.util.Arrays;
 
@@ -15,7 +15,7 @@ import java.util.Arrays;
 public final class Skeleton extends AbstractClass {
 
     public Skeleton() {
-        super("Skeleton", "SKE", new ClassOptions(ClassDescriptions.ClassEnergy.SKELETON, ClassDescriptions.ClassType.SKELETON, ClassDescriptions.ClassDifficulty.SKELETON, Arrays.asList(ClassDescriptions.ClassStyle.RANGED, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.SKELETON, ClassDescriptions.ClassSkillDescription.SKELETON), 4, Skins.SKELETON);
+        super("Skeleton", "SKE", new ClassOptions(ClassDescriptions.ClassEnergy.SKELETON, ClassDescriptions.ClassType.SKELETON, ClassDescriptions.ClassDifficulty.SKELETON, Arrays.asList(ClassDescriptions.ClassStyle.RANGED, ClassDescriptions.ClassStyle.CONTROL), ClassDescriptions.ClassDiamond.SKELETON, ClassDescriptions.ClassSkillDescription.SKELETON), 4, ClassSkins.SKELETON);
     }
 
     @Override

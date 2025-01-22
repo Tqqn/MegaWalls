@@ -1,6 +1,6 @@
 package dev.tqqn.megawalls.nms;
 
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.nms.framework.ICustomWither;
@@ -91,7 +91,7 @@ public interface ReflectionLayer {
 
     void sendZombieParticle(PlayerModel playerModel);
 
-    void changeSkin(Skins skins, PlayerModel playerModel);
+    void changeSkin(ClassSkins skins, PlayerModel playerModel);
     void injectPlayer(Player player);
     void unInjectPlayer(Player player);
     Object getConnection(Player player);

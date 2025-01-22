@@ -1,13 +1,15 @@
 package dev.tqqn.megawalls.modules.classes.framework;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.ClassDescriptions;
+import dev.tqqn.megawalls.common.classes.ClassOptions;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -34,7 +36,7 @@ public abstract class AbstractClass implements Listener {
     private final String name;
     private final String tag;
     private final ClassOptions classOptions;
-    private final Skins skins;
+    private final ClassSkins skins;
     private final int inventorySlot;
     private final Map<Integer, ItemStack> kitItems;
     private final Collection<ItemStack> kitArmor;
@@ -52,7 +54,7 @@ public abstract class AbstractClass implements Listener {
      * @param classOptions The options associated with the class.
      * @param inventorySlot The inventory slot for the class icon.
      */
-    public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot, Skins skins) {
+    public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot, ClassSkins skins) {
         this.name = name;
         this.tag = "[" + tag + "]";
         this.classOptions = classOptions;

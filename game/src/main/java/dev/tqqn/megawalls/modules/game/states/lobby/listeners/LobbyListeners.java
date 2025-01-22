@@ -1,7 +1,7 @@
 package dev.tqqn.megawalls.modules.game.states.lobby.listeners;
 
 import dev.tqqn.megawalls.MegaWalls;
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.classes.framework.menu.ClassChooseMenu;
 import dev.tqqn.megawalls.modules.database.framework.events.GamePlayerJoinEvent;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
@@ -80,7 +80,7 @@ public final class LobbyListeners implements Listener {
         if (tempPlayerData.getCurrentClass() != null) {
             tempPlayerData.getCurrentClass().applySkin(event.getPlayerModel());
         } else {
-            MegaWalls.getReflectionLayer().changeSkin(Skins.RANDOM, playerModel);
+            MegaWalls.getReflectionLayer().changeSkin(ClassSkins.RANDOM, playerModel);
         }
 
         MegaWalls.getInstance().getServer().getScheduler().runTaskLater(MegaWalls.getInstance(), () -> gameModule.giveLobbyItems(playerModel), 1L);

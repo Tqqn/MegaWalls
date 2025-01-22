@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.modules.player;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.AbstractModule;
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
@@ -71,6 +71,6 @@ public final class PlayerModule extends AbstractModule {
             playerModel.getTempPlayerData().getGameTeam().addAlivePlayer(playerModel);
         }
 
-        MegaWalls.getReflectionLayer().changeSkin(playerModel.getTempPlayerData().getCurrentClass() == null ? Skins.RANDOM : playerModel.getTempPlayerData().getCurrentClass().getSkins(), playerModel);
+        MegaWalls.getReflectionLayer().changeSkin(playerModel.getTempPlayerData().getCurrentClass() == null ? ClassSkins.RANDOM : playerModel.getTempPlayerData().getCurrentClass().getSkins(), playerModel);
     }
 }

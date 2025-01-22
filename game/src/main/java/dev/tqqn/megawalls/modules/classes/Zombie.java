@@ -1,11 +1,11 @@
 package dev.tqqn.megawalls.modules.classes;
 
 import dev.tqqn.megawalls.MegaWalls;
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
-import dev.tqqn.megawalls.modules.classes.framework.ClassDescriptions;
-import dev.tqqn.megawalls.modules.classes.framework.ClassOptions;
+import dev.tqqn.megawalls.common.classes.ClassDescriptions;
+import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.modules.classes.runnables.ZombieStrenghtRunnable;
 import dev.tqqn.megawalls.utils.ItemBuilder;
 import dev.tqqn.megawalls.utils.PotionBuilder;
@@ -36,7 +36,7 @@ public final class Zombie extends AbstractClass {
     @Getter private final Map<UUID, ZombieStrenghtRunnable> strenghtRunnableMap;
 
     public Zombie() {
-        super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, Skins.ZOMBIE);
+        super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, ClassSkins.ZOMBIE);
         this.toughnessHits = new HashMap<>();
         this.isStrenght = new ArrayList<>();
         this.strenghtRunnableMap = new Hashtable<>();

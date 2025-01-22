@@ -3,7 +3,7 @@ package dev.tqqn.megawalls.nms.v1_20_R3;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.nms.ReflectionLayer;
@@ -146,7 +146,7 @@ public final class v1_20_R3 implements ReflectionLayer {
     }
 
     @Override
-    public void changeSkin(Skins skins, PlayerModel playerModel) {
+    public void changeSkin(ClassSkins skins, PlayerModel playerModel) {
         if (playerModel.getPlayer() == null) return;
         final Player player = playerModel.getPlayer();
         final int currentSlot = player.getInventory().getHeldItemSlot();

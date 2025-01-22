@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.modules.player.data;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
-import dev.tqqn.megawalls.modules.classes.framework.Skins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -174,7 +174,7 @@ public final class TempPlayerData {
         if (abstractClass == getCurrentClass()) return;
         this.currentClass = abstractClass;
         if (abstractClass != null) abstractClass.applySkin(playerModel);
-        if (abstractClass == null) MegaWalls.getReflectionLayer().changeSkin(Skins.RANDOM, playerModel);
+        if (abstractClass == null) MegaWalls.getReflectionLayer().changeSkin(ClassSkins.RANDOM, playerModel);
     }
 
     public Component getChatMessage(Component text) {
