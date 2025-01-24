@@ -3,6 +3,7 @@ package dev.tqqn.megawalls.modules.game.states.active.listeners;
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.chest.framework.ChestItem;
 import dev.tqqn.megawalls.modules.chest.framework.events.GatheringChestSpawnEvent;
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.events.GamePlayerJoinEvent;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
@@ -158,10 +159,7 @@ public final class ActiveListeners implements Listener {
         event.deathMessage(Component.empty());
         if (event.getDrops().isEmpty()) return;
 
-        event.getDrops().removeIf(itemStack -> {
-            if (!itemStack.getItemMeta().hasLocalizedName()) return false;
-            return itemStack.getItemMeta().getLocalizedName().equals("kit");
-        });
+        event.getDrops().removeIf(itemStack -> itemStack.getItemMeta().getPersistentDataContainer().has(ClassModule.KIT_ITEM_KEY));
     }
 
     /**

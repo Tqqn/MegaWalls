@@ -4,5 +4,6 @@ public enum GameStates {
 
     WAITING,
     ACTIVE,
-    END
+    END,
+    FORCE_END
 }

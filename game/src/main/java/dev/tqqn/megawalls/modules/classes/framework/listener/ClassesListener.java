@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.modules.classes.framework.listener;
 
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
@@ -18,6 +19,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * The ClassesListener class implements event listeners for class-related actions in the game.
@@ -62,23 +64,20 @@ public final class ClassesListener implements Listener {
             defendingClass.onTakenHit(defendingModel);
 
         } else if (event.getDamager() instanceof Projectile projectile) {
-            if (projectile.getShooter() instanceof Player shooter) {
-                if (shooter == player) return;
+            if (!(projectile.getShooter() instanceof Player shooter)) return;
+            if (shooter == player) return;
 
-                final PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
-                if (shooterModel == null) return;
+            final PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
+            if (shooterModel == null) return;
 
-                final AbstractClass shooterClass = shooterModel.getTempPlayerData().getCurrentClass();
+            final AbstractClass shooterClass = shooterModel.getTempPlayerData().getCurrentClass();
 
-                if (shooterClass == null) return;
-                shooterClass.onPlayerHitBow(shooterModel);
+            if (shooterClass == null) return;
+            shooterClass.onPlayerHitBow(shooterModel);
 
-                defendingClass.onTakenBowHit(defendingModel);
-            }
+            defendingClass.onTakenBowHit(defendingModel);
         }
     }
-
-    //TODO: Better check on item ability use. Best to implement this in class module.
 
     /**
      * Handles the event when a player interacts with the environment.
@@ -95,9 +94,20 @@ public final class ClassesListener implements Listener {
         final AbstractClass playerClass = tempPlayerData.getCurrentClass();
         if (playerClass == null) return;
 
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (event.getItem() == null) return;
-        if (event.getItem().getType() != Material.BOW && event.getItem().getType() != Material.IRON_SWORD) return;
+        final ItemStack itemStack = event.getItem();
+        if (itemStack == null) return;
+
+        if (itemStack.getType() == Material.AIR || itemStack.getItemMeta() == null) return;
+
+        if (!itemStack.getItemMeta().getPersistentDataContainer().has(ClassModule.CLASS_ABILITY_ITEM_KEY)) return;
+
+        boolean bow = itemStack.getType() == Material.BOW;
+
+        if (bow) {
+            if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK) return;
+        } else {
+            if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        }
 
         if (tempPlayerData.getEnergy() >= playerClass.getClassOptions().getClassEnergy().getNeededEnergyForAbility()) {
             playerClass.executeAbility(playerModel);

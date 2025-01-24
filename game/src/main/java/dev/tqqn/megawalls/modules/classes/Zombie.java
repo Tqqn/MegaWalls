@@ -17,6 +17,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -44,18 +45,18 @@ public final class Zombie extends AbstractClass {
 
     @Override
     public void initKitItems() {
-        getKitItems().put(0, ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("&2Zombie Sword").setLore(getKitAbilityLore()).setGlow().setUnbreakable().setLocalizedName("kit").build());
-        getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("&2Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().setLocalizedName("kit").build());
-        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).build()).setDisplayName("&2Zombie Potion of Health (10 Hearts)").setLocalizedName("kit").addPDCDoubleTag("heal", 20).build());
-        getKitItems().put(3, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 15, 1)).setColor(Color.AQUA).build()).setDisplayName("&2Zombie Potion of Speed II (0:15s)").setAmount(2).setLocalizedName("kit").build());
-        getKitItems().put(4, ItemBuilder.getBuilder(Material.DIAMOND_PICKAXE).setDisplayName("&2Zombie Pickaxe").addEnchantment(Enchantment.DIG_SPEED, 3).addEnchantment(Enchantment.DURABILITY, 3).setUnbreakable().setLocalizedName("kit").build());
-        getKitItems().put(5, ItemBuilder.getBuilder(getENDER_CHEST()).setDisplayName("&2Zombie Enderchest").build());
-        getKitItems().put(7, ItemBuilder.getBuilder(Material.COOKED_BEEF).setDisplayName("&2Zombie Steak").setLocalizedName("kit").setAmount(3).build());
-        getKitItems().put(8, ItemBuilder.getBuilder(Material.COMPASS).setDisplayName("&2Zombie Compass").setLocalizedName("kit").build());
+        getKitItems().put(0, ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<dark_green>Zombie Sword").setLore(getKitAbilityLore()).setGlow().setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
+        getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("<dark_green>Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
+        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).setItemFlag(ItemFlag.HIDE_ITEM_SPECIFICS).build()).setDisplayName("<dark_green>Zombie Potion of Health (10 Hearts)").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addPDCDoubleTag("heal", 20).build());
+        getKitItems().put(3, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 15, 1)).setColor(Color.AQUA).build()).setDisplayName("<dark_green>Zombie Potion of Speed II (0:15s)").setAmount(2).addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).build());
+        getKitItems().put(4, ItemBuilder.getBuilder(Material.DIAMOND_PICKAXE).setDisplayName("<dark_green>Zombie Pickaxe").addEnchantment(Enchantment.DIG_SPEED, 3).addEnchantment(Enchantment.DURABILITY, 3).setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).build());
+        getKitItems().put(5, ItemBuilder.getBuilder(getENDER_CHEST()).setDisplayName("<dark_green>Zombie Enderchest").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).build());
+        getKitItems().put(7, ItemBuilder.getBuilder(Material.COOKED_BEEF).setDisplayName("<dark_green>Zombie Steak").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).setAmount(3).build());
+        getKitItems().put(8, ItemBuilder.getBuilder(Material.COMPASS).setDisplayName("<dark_green>Zombie Compass").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).build());
         getKitArmor().add(new ItemStack(Material.AIR));
         getKitArmor().add(new ItemStack(Material.AIR));
-        getKitArmor().add(ItemBuilder.getBuilder(Material.DIAMOND_CHESTPLATE).setDisplayName("&2Zombie Chestplate").addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3).addEnchantment(Enchantment.DURABILITY, 10).setLocalizedName("kit").setUnbreakable().build());
-        getKitArmor().add(ItemBuilder.getBuilder(Material.IRON_HELMET).setDisplayName("&2Zombie Helmet").addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).addEnchantment(Enchantment.DURABILITY, 10).setLocalizedName("kit").setUnbreakable().build());
+        getKitArmor().add(ItemBuilder.getBuilder(Material.DIAMOND_CHESTPLATE).setDisplayName("<dark_green>Zombie Chestplate").addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 3).addEnchantment(Enchantment.DURABILITY, 10).addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).setUnbreakable().build());
+        getKitArmor().add(ItemBuilder.getBuilder(Material.IRON_HELMET).setDisplayName("<dark_green>Zombie Helmet").addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).addEnchantment(Enchantment.DURABILITY, 10).addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).setUnbreakable().build());
     }
 
     @Override

@@ -110,7 +110,7 @@ public abstract class Menu implements InventoryHolder {
      * @param slot The slot for the close button.
      */
     public void registerCloseButton(int slot) {
-        MenuButton closeButton = new MenuButton(ItemBuilder.getBuilder(Material.BARRIER).setDisplayName("&cClose").hideAttributes().build());
+        MenuButton closeButton = new MenuButton(ItemBuilder.getBuilder(Material.BARRIER).setDisplayName("<red>Close").hideAttributes().build());
         closeButton.setClicker(player -> close());
         registerButton(closeButton, slot);
     }

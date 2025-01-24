@@ -71,7 +71,20 @@ public final class GameCommands extends BaseCommand {
             return;
         }
 
-        gameModule.setGameState(GameStates.END);
+        if (!(gameModule.getCurrentState() instanceof ActiveState activeState)) {
+            Notify.ERROR.chat(player, "Use /game forceend to end a NOT active game.");
+            return;
+        }
+
+        activeState.setCycle(ActiveState.Cycle.END);
+        Notify.SUCCESS.chat(player, "You started the end of the game.");
+    }
+
+    @Subcommand("forceend")
+    @Description("Force end the game.")
+    @CommandPermission("mw.game.force.end")
+    public void forceEnd(Player player) {
+        gameModule.setGameState(GameStates.FORCE_END);
         Notify.SUCCESS.chat(player, "You force ended the game.");
     }
 

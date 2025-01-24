@@ -31,7 +31,7 @@ import java.util.*;
 @Getter
 public abstract class AbstractClass implements Listener {
 
-    @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).setLocalizedName("kit").addPDCTag("enderchest", "dummy").build();
+    @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).addPDCTag("kit", "dummy").addPDCTag("enderchest", "dummy").build();
 
     private final String name;
     private final String tag;
@@ -98,7 +98,7 @@ public abstract class AbstractClass implements Listener {
 
     public List<String> getKitAbilityLore() {
         final List<String> lore = new ArrayList<>();
-        lore.add("&7Ability: &c" + classOptions.getClassSkillDescription().getName());
+        lore.add("<gray>Ability: <red>" + classOptions.getClassSkillDescription().getName());
         lore.add(" ");
         lore.addAll(Arrays.asList(classOptions.getClassSkillDescription().getDescription()));
 
@@ -116,28 +116,28 @@ public abstract class AbstractClass implements Listener {
         final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
 
         lore.add(classOptions.getClassType().getType());
-        lore.add("&7Play Styles:");
+        lore.add("<gray>Play Styles:");
         for (ClassDescriptions.ClassStyle classStyle : classOptions.getClassStyles()) {
-            lore.add("&7- " + classStyle.getStyle());
+            lore.add("<gray>- " + classStyle.getStyle());
         }
-        lore.add("&7Difficulty: " + classOptions.getClassDifficulty().getDifficulty());
-        lore.add("&7Diamond: " + classOptions.getClassDiamond().getDiamond());
+        lore.add("<gray>Difficulty: " + classOptions.getClassDifficulty().getDifficulty());
+        lore.add("<gray>Diamond: " + classOptions.getClassDiamond().getDiamond());
         lore.add(" ");
-        lore.add("&eSkill &7- " + classOptions.getClassSkillDescription().getName());
+        lore.add("<yellow>Skill <gray>- " + classOptions.getClassSkillDescription().getName());
         lore.addAll(Arrays.asList(classOptions.getClassSkillDescription().getDescription()));
         lore.add(" ");
-        lore.add("&7Cooldown: &a&l1s");
+        lore.add("<gray>Cooldown: <green><bold>1s");
         lore.add(" ");
-        lore.add("&7Upgrades: &a&l100%");
-        lore.add("&7Ender Chest: &a&l5 rows");
+        lore.add("<gray>Upgrades: <green><bold>100%");
+        lore.add("<gray>Ender Chest: <green><bold>5 rows");
         lore.add(" ");
         if (currentClass != null && currentClass.getClass() == this.getClass()) {
-            lore.add("&a&lSelected!");
+            lore.add("<green><bold>Selected!");
         } else {
-            lore.add("&eClick to select!");
+            lore.add("<yellow>Click to select!");
         }
 
-        return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("&a" + name).setLore(lore).hideAttributes().build();
+        return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("<green>" + name).setLore(lore).hideAttributes().build();
     }
 
     /**

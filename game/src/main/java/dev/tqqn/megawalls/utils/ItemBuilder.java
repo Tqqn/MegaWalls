@@ -1,6 +1,7 @@
 package dev.tqqn.megawalls.utils;
 
 import dev.tqqn.megawalls.MegaWalls;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -37,7 +38,7 @@ public final class ItemBuilder {
      * @return The ItemBuilder instance.
      */
     public ItemBuilder setDisplayName(String name) {
-        this.itemMeta.setDisplayName(ChatUtil.translateLegacy(name));
+        this.itemMeta.displayName(ChatUtil.format(name));
         return this;
     }
 
@@ -51,6 +52,11 @@ public final class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder addEmptyPDCTag(NamespacedKey namespacedKey) {
+        this.itemMeta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, "dummy");
+        return this;
+    }
+
     public ItemBuilder addPDCDoubleTag(String key, double value) {
         this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.DOUBLE, value);
         return this;
@@ -58,11 +64,6 @@ public final class ItemBuilder {
 
     public ItemBuilder addPDCTag(String key, String tag) {
         this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.STRING, tag);
-        return this;
-    }
-
-    public ItemBuilder setLocalizedName(String name) {
-        this.itemMeta.setLocalizedName(name);
         return this;
     }
 
@@ -78,11 +79,11 @@ public final class ItemBuilder {
      * @return The ItemBuilder instance.
      */
     public ItemBuilder setLore(List<String> lines) {
-        List<String> tempList = new ArrayList<>();
+        List<Component> tempList = new ArrayList<>();
         for (String line : lines) {
-            tempList.add(ChatUtil.translateLegacy(line));
+            tempList.add(ChatUtil.format(line));
         }
-        itemMeta.setLore(tempList);
+        itemMeta.lore(tempList);
         return this;
     }
 

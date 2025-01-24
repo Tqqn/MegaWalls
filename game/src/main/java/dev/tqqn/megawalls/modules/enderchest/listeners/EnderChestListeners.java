@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.modules.enderchest.listeners;
 
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.enderchest.EnderChestModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -43,9 +44,7 @@ public final class EnderChestListeners implements Listener {
         final ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) return;
 
-        if (!itemMeta.hasLocalizedName()) return;
-        if (!itemMeta.getLocalizedName().equals("kit")) return;
-
+        if (!itemMeta.getPersistentDataContainer().has(ClassModule.KIT_ITEM_KEY)) return;
         event.setCancelled(true);
     }
 
@@ -55,7 +54,7 @@ public final class EnderChestListeners implements Listener {
         if (event.getItem() == null) return;
         final ItemStack itemStack = event.getItem();
 
-        if (!itemStack.getItemMeta().getPersistentDataContainer().has(EnderChestModule.getENDER_CHEST_KEY())) return;
+        if (!itemStack.getItemMeta().getPersistentDataContainer().has(EnderChestModule.ENDER_CHEST_KEY)) return;
 
         final Player player = event.getPlayer();
         enderChestModule.openEnderChest(player);

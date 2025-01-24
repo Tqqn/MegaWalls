@@ -12,15 +12,25 @@ import dev.tqqn.megawalls.modules.setup.framework.model.SetupPlayer;
 import dev.tqqn.megawalls.utils.ChatUtil;
 import dev.tqqn.megawalls.utils.ItemBuilder;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
 public class SetupModule extends AbstractModule {
+
+    public static final NamespacedKey SETUP_SELECTION_AXE_KEY = new NamespacedKey(MegaWalls.getInstance(), "selection_axe");
+    public static final NamespacedKey SETUP_GAME_SETUP_KEY = new NamespacedKey(MegaWalls.getInstance(), "game_setup");
+    public static final NamespacedKey SETUP_TEAM_SETUP_KEY = new NamespacedKey(MegaWalls.getInstance(), "team_setup");
+    public static final NamespacedKey SETUP_SAVE_KEY = new NamespacedKey(MegaWalls.getInstance(), "save");
+    public static final NamespacedKey SETUP_GAME_MIDDLE_CUBOID_KEY = new NamespacedKey(MegaWalls.getInstance(), "game_middle_cuboid");
+    public static final NamespacedKey SETUP_LOBBY_SPAWN_LOC_KEY = new NamespacedKey(MegaWalls.getInstance(), "lobby_spawn_loc");
+    public static final NamespacedKey SETUP_GAME_WALL_CUBOID_KEY = new NamespacedKey(MegaWalls.getInstance(), "game_wall_cuboid");
+    public static final NamespacedKey SETUP_TEAM_PROTECTION_CUBOID_KEY = new NamespacedKey(MegaWalls.getInstance(), "team_protection_cuboid");
+    public static final NamespacedKey SETUP_WITHER_CUBOID_KEY = new NamespacedKey(MegaWalls.getInstance(), "wither_cuboid");
+    public static final NamespacedKey SETUP_WITHER_SPAWN_LOC_KEY = new NamespacedKey(MegaWalls.getInstance(), "wither_spawn_loc");
+    public static final NamespacedKey SETUP_TEAM_SPAWN_LOC_KEY = new NamespacedKey(MegaWalls.getInstance(), "team_spawn_loc");
 
     private final Map<UUID, ItemStack[]> lastInventories;
     private static final Map<UUID, SetupPlayer> CACHED_SETUP_PLAYERS = new HashMap<>();
@@ -57,9 +67,10 @@ public class SetupModule extends AbstractModule {
         new WorldCreator(world).createWorld();
     }
 
-    public void teleportWorld(String world, Player player) {
-        if (Bukkit.getWorld(world) == null) return;
-        player.teleport(Bukkit.getWorld(world).getSpawnLocation());
+    public void teleportWorld(String worldName, Player player) {
+        final World world = Bukkit.getWorld(worldName);
+        if (world == null) return;
+        player.teleport(world.getSpawnLocation());
     }
 
     public void addSetupPlayer(Player player) {
@@ -67,47 +78,49 @@ public class SetupModule extends AbstractModule {
     }
 
     public void setBuild(SetupPlayer setupPlayer) {
-        if (setupPlayer.getPlayer() == null) return;
+        final Player player = setupPlayer.getPlayer();
+        if (player == null) return;
+        final UUID uuid = player.getUniqueId();
 
         if (!setupPlayer.isBuild()) {
             setupPlayer.setBuild(true);
-            setupPlayer.getPlayer().getInventory().clear();
-            if (lastInventories.containsKey(setupPlayer.getUuid())) {
-                setupPlayer.getPlayer().getInventory().setContents(lastInventories.get(setupPlayer.getUuid()));
-                lastInventories.remove(setupPlayer.getUuid());
+            player.getInventory().clear();
+            if (lastInventories.containsKey(uuid)) {
+                player.getInventory().setContents(lastInventories.get(uuid));
+                lastInventories.remove(uuid);
             }
-            setupPlayer.getPlayer().sendMessage(ChatUtil.format("<green>Enabled build-mode."));
+            player.sendMessage(ChatUtil.format("<green>Enabled build-mode."));
         } else {
             setupPlayer.setBuild(false);
-            lastInventories.put(setupPlayer.getUuid(), setupPlayer.getPlayer().getInventory().getArmorContents());
-            setupPlayer.getPlayer().getInventory().clear();
-            giveSetupItems(setupPlayer.getPlayer());
-            setupPlayer.getPlayer().sendMessage(ChatUtil.format("<red>Disabled build-mode."));
+            lastInventories.put(uuid, player.getInventory().getArmorContents());
+            player.getInventory().clear();
+            giveSetupItems(player);
+            player.sendMessage(ChatUtil.format("<red>Disabled build-mode."));
         }
     }
 
     public void giveSetupItems(Player player) {
-        player.getInventory().setItem(0, ItemBuilder.getBuilder(Material.NETHERITE_AXE).setDisplayName("&cSelection Axe").setLocalizedName("selection_axe").build());
-        player.getInventory().setItem(1, ItemBuilder.getBuilder(Material.RECOVERY_COMPASS).setDisplayName("Game-Setup").setLocalizedName("game_setup").build());
-        player.getInventory().setItem(2, ItemBuilder.getBuilder(Material.TOTEM_OF_UNDYING).setDisplayName("&cTeam-Setup").setLocalizedName("team_setup").build());
-        player.getInventory().setItem(8, ItemBuilder.getBuilder(Material.GREEN_DYE).setDisplayName("&aSave!").setLocalizedName("save").build());
+        player.getInventory().setItem(0, ItemBuilder.getBuilder(Material.NETHERITE_AXE).setDisplayName("&cSelection Axe").addEmptyPDCTag(SETUP_SELECTION_AXE_KEY).build());
+        player.getInventory().setItem(1, ItemBuilder.getBuilder(Material.RECOVERY_COMPASS).setDisplayName("Game-Setup").addEmptyPDCTag(SETUP_GAME_SETUP_KEY).build());
+        player.getInventory().setItem(2, ItemBuilder.getBuilder(Material.TOTEM_OF_UNDYING).setDisplayName("&cTeam-Setup").addEmptyPDCTag(SETUP_TEAM_SETUP_KEY).build());
+        player.getInventory().setItem(8, ItemBuilder.getBuilder(Material.GREEN_DYE).setDisplayName("&aSave!").addEmptyPDCTag(SETUP_SAVE_KEY).build());
     }
 
     public void giveGameSetupItems(Player player) {
         player.getInventory().clear();
         giveSetupItems(player);
-        player.getInventory().setItem(3, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSelect Middle Cuboid").setLocalizedName("game_middle_cuboid").build());
-        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.NETHER_STAR).setDisplayName("&cSet Lobby Location").setLocalizedName("lobby_spawn_loc").build());
-        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&cSelect Wall Cuboid").setLocalizedName("game_wall_cuboid").build());
+        player.getInventory().setItem(3, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSelect Middle Cuboid").addEmptyPDCTag(SETUP_GAME_MIDDLE_CUBOID_KEY).build());
+        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.NETHER_STAR).setDisplayName("&cSet Lobby Location").addEmptyPDCTag(SETUP_LOBBY_SPAWN_LOC_KEY).build());
+        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&cSelect Wall Cuboid").addEmptyPDCTag(SETUP_GAME_WALL_CUBOID_KEY).build());
     }
 
     public void giveTeamSetupItems(Player player, Teams team) {
         player.getInventory().clear();
         giveSetupItems(player);
-        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSave Team Protection Cuboid").setLocalizedName("team_protection_cuboid").addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS).setDisplayName("&cSave Wither Cuboid").setLocalizedName("wither_cuboid").addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(6, ItemBuilder.getBuilder(Material.WITHER_SKELETON_SKULL).setDisplayName("&cSet Wither Spawn Location").setLocalizedName("wither_spawn_loc").addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(7, ItemBuilder.getBuilder(team.getBedMaterial()).setDisplayName("&cSet Team Spawn Location").setLocalizedName("team_spawn_loc").addPDCTag("team", team.name()).build());
+        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSave Team Protection Cuboid").addEmptyPDCTag(SETUP_TEAM_PROTECTION_CUBOID_KEY).addPDCTag("team", team.name()).build());
+        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS).setDisplayName("&cSave Wither Cuboid").addEmptyPDCTag(SETUP_WITHER_CUBOID_KEY).addPDCTag("team", team.name()).build());
+        player.getInventory().setItem(6, ItemBuilder.getBuilder(Material.WITHER_SKELETON_SKULL).setDisplayName("&cSet Wither Spawn Location").addEmptyPDCTag(SETUP_WITHER_SPAWN_LOC_KEY).addPDCTag("team", team.name()).build());
+        player.getInventory().setItem(7, ItemBuilder.getBuilder(team.getBedMaterial()).setDisplayName("&cSet Team Spawn Location").addEmptyPDCTag(SETUP_TEAM_SPAWN_LOC_KEY).addPDCTag("team", team.name()).build());
     }
 
     public static SetupPlayer getSetupPlayer(UUID uuid) {

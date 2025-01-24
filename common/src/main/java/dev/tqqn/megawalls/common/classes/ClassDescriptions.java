@@ -41,9 +41,9 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassType {
-        HEROBRINE(Material.DIAMOND_SWORD, "&8Regular Class", "&e"),
-        SKELETON(Material.BOW, "&8Regular Class", "&b"),
-        ZOMBIE(Material.ROTTEN_FLESH, "&8Regular Class", "&2");
+        HEROBRINE(Material.DIAMOND_SWORD, "<dark_gray>Regular Class", "<yellow>"),
+        SKELETON(Material.BOW, "<dark_gray>Regular Class", "<aqua>"),
+        ZOMBIE(Material.ROTTEN_FLESH, "<dark_gray>Regular Class", "<dark_green>");
 
         private final Material icon;
         private final String type;
@@ -61,10 +61,10 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassDifficulty {
-        HEROBRINE("&a●&7●●●"),
-        SKELETON("&c●●●&7●"),
-        ZOMBIE("&a●&7●●●"),
-        CREEPER("&4●●●●");
+        HEROBRINE("<green>●<gray>●●●"),
+        SKELETON("<red>●●●<gray>●"),
+        ZOMBIE("<green>●<gray>●●●"),
+        CREEPER("<dark_red>●●●●");
 
         private final String difficulty;
         ClassDifficulty(String difficulty) {
@@ -77,11 +77,11 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassStyle {
-        DAMAGE("&cDamage&7: Dealing a lot of damage."),
-        CONTROL("&6Control&7: Fighting groups of enemies."),
-        RANGED("&3Ranged&7: Dealing damage from distance."),
-        TANK("&9Tank&7: Taking less damage."),
-        SUPPORT("&dSupport&7: Healing teammates.");
+        DAMAGE("<red>Damage<gray>: Dealing a lot of damage."),
+        CONTROL("<gold>Control<gray>: Fighting groups of enemies."),
+        RANGED("<dark_aqua>Ranged<gray>: Dealing damage from distance."),
+        TANK("<blue>Tank<gray>: Taking less damage."),
+        SUPPORT("<light_purple>Support<gray>: Healing teammates.");
 
         private final String style;
         ClassStyle(String style) {
@@ -95,9 +95,9 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassDiamond {
-        HEROBRINE("&bSword"),
-        SKELETON("&bHelmet"),
-        ZOMBIE("&bChestplate");
+        HEROBRINE("<aqua>Sword"),
+        SKELETON("<aqua>Helmet"),
+        ZOMBIE("<aqua>Chestplate");
 
         private final String diamond;
 
@@ -111,9 +111,9 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassSkillDescription {
-        HEROBRINE("&7Wrath", new String[]{"&7･ Unleash the wrath of Herobrine striking all nearby", "&7enemies in a 5 block radius for &a5 &7damage.", "&7･ How to activate: Left Click with your Bow Right Click", "&7with your Sword.", "&7･ Energy Per Hit (Melee & Bow): 25"}),
-        SKELETON("&7Explosive Arrow", new String[]{"&7･ You will fire an explosive arrow that deals &a6&7 damage in", "&7 in a 6 block radius and breaks blocks", "&7･ Uncharged bow shots give 50% energy, and Medium", "&7charged bow shots give 75% Energy.", "&7･ How to activate: Left Click with your Bow", "&7･ Energy Per Hit (Melee): 0", "&7･ Energy Per Hit (Bow): 20", "&7･ Energy Per Second (Deathmatch): 1"}),
-        ZOMBIE("&7Circle of Healing", new String[]{"&7･ Heal yourself for &a8 HP &7and nearby teammates in a 5", " &7block radius for &a5 HP&7.", "&7･ How to Activate: Left Click with your Bow or Right Click", "&7 with your Sword", "&7･ Energy Per Hit (Melee & Bow): 12", "&7･ Energy When Hit (Melee): 1", "&7･ Energy When Hit (Bow): 2"}),;
+        HEROBRINE("<gray>Wrath", new String[]{"<gray>･ Unleash the wrath of Herobrine striking all nearby", "<gray>enemies in a 5 block radius for <green>5 <gray>damage.", "<gray>･ How to activate: Left Click with your Bow Right Click", "<gray>with your Sword.", "<gray>･ Energy Per Hit (Melee & Bow): 25"}),
+        SKELETON("<gray>Explosive Arrow", new String[]{"<gray>･ You will fire an explosive arrow that deals <green>6<gray> damage in", "<gray> in a 6 block radius and breaks blocks", "<gray>･ Uncharged bow shots give 50% energy, and Medium", "<gray>charged bow shots give 75% Energy.", "<gray>･ How to activate: Left Click with your Bow", "<gray>･ Energy Per Hit (Melee): 0", "<gray>･ Energy Per Hit (Bow): 20", "<gray>･ Energy Per Second (Deathmatch): 1"}),
+        ZOMBIE("<gray>Circle of Healing", new String[]{"<gray>･ Heal yourself for <green>8 HP <gray>and nearby teammates in a 5", " <gray>block radius for <green>5 HP<gray>.", "<gray>･ How to Activate: Left Click with your Bow or Right Click", "<gray>with your Sword", "<gray>･ Energy Per Hit (Melee & Bow): 12", "<gray>･ Energy When Hit (Melee): 1", "<gray>･ Energy When Hit (Bow): 2"}),;
 
         private final String name;
         private final String[] description;

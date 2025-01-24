@@ -2,6 +2,7 @@ package dev.tqqn.megawalls.utils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -23,6 +24,11 @@ public final class PotionBuilder {
 
     public PotionBuilder setColor(Color color) {
         this.potionMeta.setColor(color);
+        return this;
+    }
+
+    public PotionBuilder setItemFlag(ItemFlag itemFlag) {
+        this.potionMeta.addItemFlags(itemFlag);
         return this;
     }
 

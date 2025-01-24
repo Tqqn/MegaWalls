@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.modules.game.listeners;
 
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
@@ -45,8 +46,8 @@ public final class GlobalGameListeners implements Listener {
 
         ItemMeta itemMeta = item.getItemMeta();
 
-        if (!itemMeta.hasLocalizedName()) return;
-        if (!itemMeta.getLocalizedName().equals("kit")) return;
+        if (!itemMeta.getPersistentDataContainer().has(ClassModule.KIT_ITEM_KEY)) return;
+
         if (item.getType() != Material.POTION) {
             event.setCancelled(true);
             return;
@@ -62,6 +63,7 @@ public final class GlobalGameListeners implements Listener {
 
         final ItemStack heldItem = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
 
+        if (heldItem == null) return;
         if (heldItem.isSimilar(item)) {
             heldItem.setAmount(heldItem.getAmount()+1);
         }
@@ -74,8 +76,8 @@ public final class GlobalGameListeners implements Listener {
         ItemStack item = event.getItemInHand();
         ItemMeta itemMeta = item.getItemMeta();
 
-        if (!itemMeta.hasLocalizedName()) return;
-        if (itemMeta.getLocalizedName().equals("kit")) event.setCancelled(true);
+        if (!itemMeta.getPersistentDataContainer().has(ClassModule.KIT_ITEM_KEY)) return;
+        event.setCancelled(true);
     }
 
 }

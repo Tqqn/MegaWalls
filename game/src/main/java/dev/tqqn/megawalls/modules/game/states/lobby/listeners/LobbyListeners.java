@@ -26,6 +26,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * The LobbyListeners class contains event handlers for actions that occur in the lobby.
@@ -91,21 +92,16 @@ public final class LobbyListeners implements Listener {
         if (event.getAction() != Action.LEFT_CLICK_AIR && event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (event.getItem() == null) return;
         final ItemStack itemStack = event.getItem();
-
-        if (!itemStack.getItemMeta().hasLocalizedName()) return;
-
-        String localName = itemStack.getItemMeta().getLocalizedName();
+        final ItemMeta itemMeta = itemStack.getItemMeta();
 
         final Player player = event.getPlayer();
 
-        switch (localName) {
-            case "class_selector" -> {
-                new ClassChooseMenu(PlayerModule.getPlayerModel(player.getUniqueId())).open();
-            }
+        if (itemMeta.getPersistentDataContainer().has(GameModule.CLASS_SELECTOR_KEY)) {
+            new ClassChooseMenu(PlayerModule.getPlayerModel(player.getUniqueId())).open();
+        }
 
-            case "skin_selector" -> {
-                // open Skin Selector #TODO
-            }
+        if (itemMeta.getPersistentDataContainer().has(GameModule.SKIN_SELECTOR_KEY)) {
+            // open Skin Selector #TODO
         }
     }
 

@@ -7,7 +7,6 @@ import dev.tqqn.megawalls.modules.enderchest.listeners.EnderChestListeners;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.utils.ChatUtil;
 import dev.tqqn.megawalls.utils.SoundUtil;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 public final class EnderChestModule extends AbstractModule {
 
-    @Getter private static final NamespacedKey ENDER_CHEST_KEY = new NamespacedKey(MegaWalls.getInstance(), "enderchest");
+    public static final NamespacedKey ENDER_CHEST_KEY = new NamespacedKey(MegaWalls.getInstance(), "enderchest");
 
     private static final Map<UUID, Inventory> playerEnderChests = new HashMap<>();
 

@@ -6,7 +6,7 @@ import org.bukkit.Particle;
 
 public enum ClassAbilityParticles {
 
-    DEFAULT_GREEN(Particle.REDSTONE, new Particle.DustOptions(Color.LIME, 5)),
+    DEFAULT_GREEN(Particle.REDSTONE, new Particle.DustTransition(Color.LIME, Color.fromRGB(0, 204, 0), 1)),
     SMOKE(Particle.SMOKE_NORMAL, null);
 
     private final Particle particle;
@@ -19,9 +19,9 @@ public enum ClassAbilityParticles {
 
     public void spawnParticle(Location location) {
         if (dustOptions == null) {
-            location.getWorld().spawnParticle(particle, location, 5);
+            location.getWorld().spawnParticle(particle, location, 2);
         } else {
-            location.getWorld().spawnParticle(particle, location, 5, dustOptions);
+            location.getWorld().spawnParticle(particle, location, 2, dustOptions);
         }
     }
 }

@@ -36,6 +36,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -48,6 +49,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * The GameModule class manages the game state and settings.
  */
 public final class GameModule extends AbstractModule {
+
+    public static final NamespacedKey SKIN_SELECTOR_KEY = new NamespacedKey(MegaWalls.getInstance(), "skin_selector");
+    public static final NamespacedKey CLASS_SELECTOR_KEY = new NamespacedKey(MegaWalls.getInstance(), "class_selector");
 
     @Getter private AbstractGameState currentState;
     private final Set<PlayerModel> inGamePlayers = new HashSet<>();
@@ -195,7 +199,17 @@ public final class GameModule extends AbstractModule {
             }
 
             case END -> {
-                if (isState(GameStates.END)) return;
+                if (currentState instanceof ActiveState activeState) {
+                    if (activeState.getCurrentCycle() != ActiveState.Cycle.END) {
+                        activeState.setCycle(ActiveState.Cycle.END);
+                        return;
+                    }
+                }
+                newState = new EndState(this, databaseModule);
+            }
+
+            case FORCE_END -> {
+                if (isState(GameStates.FORCE_END)) return;
                 newState = new EndState(this, databaseModule);
             }
         }
@@ -346,12 +360,12 @@ public final class GameModule extends AbstractModule {
         final Player player = playerModel.getPlayer();
         player.getInventory().clear();
 
-        player.getInventory().setItem(0, ItemBuilder.getBuilder(FinalItems.CLASS_SELECTOR.getItem()).setLocalizedName("class_selector").build());
+        player.getInventory().setItem(0, ItemBuilder.getBuilder(FinalItems.CLASS_SELECTOR.getItem()).addEmptyPDCTag(GameModule.CLASS_SELECTOR_KEY).build());
         if (playerModel.getTempPlayerData().getCurrentClass() == null) return;
 
         final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
 
-        player.getInventory().setItem(1, ItemBuilder.getBuilder(MegaWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").setLocalizedName("skin_selector").build());
+        player.getInventory().setItem(1, ItemBuilder.getBuilder(MegaWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").addEmptyPDCTag(GameModule.SKIN_SELECTOR_KEY).build());
     }
 
     public void spawnWithers() {

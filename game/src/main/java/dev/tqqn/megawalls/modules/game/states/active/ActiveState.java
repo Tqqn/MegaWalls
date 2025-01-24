@@ -169,6 +169,7 @@ public final class ActiveState extends AbstractGameState {
     }
 
     public boolean setCycle(Cycle newCycle) {
+        if (currentCycle == newCycle) return false;
         switch (newCycle) {
             case PREPARE -> {
                 enableWitherGod();
@@ -204,6 +205,7 @@ public final class ActiveState extends AbstractGameState {
 
                 callEndGameEvent(getWinReason());
                 cancel();
+                getGameModule().setGameState(GameStates.END);
             }
         }
 
@@ -228,7 +230,7 @@ public final class ActiveState extends AbstractGameState {
     }
 
     private void activateAbilityReady() {
-        abilityReadyRunnable.runTaskTimerAsynchronously(getGameModule().getPlugin(), 0L, 20L);
+        abilityReadyRunnable.runTaskTimerAsynchronously(getGameModule().getPlugin(), 0L, 5L);
     }
 
     private void disableAbilityReady() {

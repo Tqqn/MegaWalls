@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 public enum FinalItems {
 
-    CLASS_SELECTOR(Material.IRON_SWORD, "&aClass Selector &7(Right Click)", new String[]{""});
+    CLASS_SELECTOR(Material.IRON_SWORD, "<green>Class Selector <gray>(Right Click)", new String[]{""});
 
     private final Material item;
     private final String name;

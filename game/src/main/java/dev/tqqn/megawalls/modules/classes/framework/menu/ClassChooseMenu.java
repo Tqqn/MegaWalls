@@ -66,20 +66,20 @@ public final class ClassChooseMenu extends Menu {
         final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
         final List<String> lore = new ArrayList<>();
 
-        lore.add("&7Picks a random class from your");
-        lore.add("&7collection!");
+        lore.add("<gray>Picks a random class from your");
+        lore.add("<gray>collection!");
         lore.add(" ");
-        lore.add("&7You are rewarded &6+30% coins &7when");
-        lore.add("&7picking this option!");
+        lore.add("<gray>You are rewarded <gold>+30% coins <gray>when");
+        lore.add("<gray>picking this option!");
         lore.add("");
 
         if (playerClass == null) {
-            lore.add("&a&lSelected!");
+            lore.add("<gray><bold>Selected!");
         } else {
-            lore.add("&eClick to select!");
+            lore.add("<yellow>Click to select!");
         }
 
-        final MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("&aRandom!").setLore(lore).build());
+        final MenuButton randomButton = new MenuButton(ItemBuilder.getBuilder(Material.NETHER_STAR).hideAttributes().setDisplayName("<green>Random!").setLore(lore).build());
         randomButton.setClicker(player -> {
             if (playerClass == null) {
                 player.sendMessage(ChatUtil.format("<red>You have already selected the random class!"));

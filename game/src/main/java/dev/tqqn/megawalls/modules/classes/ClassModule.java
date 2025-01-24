@@ -18,7 +18,9 @@ import java.util.*;
 @Getter
 public final class ClassModule extends AbstractModule {
 
-    public static NamespacedKey POTION_HEAL_KEY = new NamespacedKey(MegaWalls.getInstance(), "heal");
+    public static final NamespacedKey POTION_HEAL_KEY = new NamespacedKey(MegaWalls.getInstance(), "heal");
+    public static final NamespacedKey KIT_ITEM_KEY = new NamespacedKey(MegaWalls.getInstance(), "kit");
+    public static final NamespacedKey CLASS_ABILITY_ITEM_KEY = new NamespacedKey(MegaWalls.getInstance(), "ability");
 
     @Getter
     private static final List<AbstractClass> classes = new ArrayList<>();

@@ -6,6 +6,7 @@ import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 public final class ChatUtil {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final GameModule GAME_MODULE = MegaWalls.getInstance().getModuleManager().getModule(GameModule.class);
 
     private ChatUtil() {
@@ -29,8 +31,7 @@ public final class ChatUtil {
      * @return The formatted message as a Component.
      */
     public static Component format(String message) {
-        MiniMessage extendedInstances = MiniMessage.builder().build();
-        return extendedInstances.deserialize(message);
+        return MINI_MESSAGE.deserialize(message).decoration(TextDecoration.ITALIC, false);
     }
 
     public static void sendPlayerMessage(PlayerModel playerModel, Component component) {
