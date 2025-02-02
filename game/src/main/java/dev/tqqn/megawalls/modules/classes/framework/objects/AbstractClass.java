@@ -1,4 +1,4 @@
-package dev.tqqn.megawalls.modules.classes.framework;
+package dev.tqqn.megawalls.modules.classes.framework.objects;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassDescriptions;
@@ -93,7 +93,7 @@ public abstract class AbstractClass implements Listener {
      * @return {@code true} if the player can use the ability, {@code false} otherwise.
      */
     public boolean canUseAbility(PlayerModel playerModel) {
-        return playerModel.getTempPlayerData().getEnergy() >= 100;
+        return playerModel.getTempPlayerData().getEnergy() >= classOptions.getClassEnergy().getNeededEnergyForAbility();
     }
 
     public List<String> getKitAbilityLore() {

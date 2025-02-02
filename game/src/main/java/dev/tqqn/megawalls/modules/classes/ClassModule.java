@@ -2,9 +2,8 @@ package dev.tqqn.megawalls.modules.classes;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.AbstractModule;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.classes.framework.listener.ClassesListener;
-import dev.tqqn.megawalls.modules.game.states.active.runnables.AbilityReadyRunnable;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;

@@ -1,7 +1,7 @@
 package dev.tqqn.megawalls.modules.classes.framework.listener;
 
 import dev.tqqn.megawalls.modules.classes.ClassModule;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;

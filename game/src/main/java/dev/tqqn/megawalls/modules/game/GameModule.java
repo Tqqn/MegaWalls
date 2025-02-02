@@ -10,7 +10,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.AbstractModule;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.enderchest.EnderChestModule;
 import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;

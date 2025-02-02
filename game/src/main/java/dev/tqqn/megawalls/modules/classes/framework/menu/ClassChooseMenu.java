@@ -2,7 +2,7 @@ package dev.tqqn.megawalls.modules.classes.framework.menu;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.menu.framework.Menu;
 import dev.tqqn.megawalls.modules.menu.framework.MenuButton;
 import dev.tqqn.megawalls.modules.classes.ClassModule;

@@ -3,7 +3,7 @@ package dev.tqqn.megawalls.modules.classes;
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.modules.classes.runnables.ZombieStrenghtRunnable;

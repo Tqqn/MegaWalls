@@ -2,7 +2,7 @@ package dev.tqqn.megawalls.modules.player.data;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
-import dev.tqqn.megawalls.modules.classes.framework.AbstractClass;
+import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
 import dev.tqqn.megawalls.modules.game.GameModule;
