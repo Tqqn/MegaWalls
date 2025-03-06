@@ -4,6 +4,7 @@ import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
+import dev.tqqn.megawalls.common.classes.levels.types.ClassUpgradeValues;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.utils.ItemBuilder;
@@ -40,6 +41,7 @@ public abstract class AbstractClass implements Listener {
     private final int inventorySlot;
     private final Map<Integer, ItemStack> kitItems;
     private final Collection<ItemStack> kitArmor;
+    private final ClassUpgradeValues classUpgradeValues;
 
     @Setter private boolean isPrestigeOne;
     @Setter private boolean isPrestigeTwo;
@@ -62,12 +64,14 @@ public abstract class AbstractClass implements Listener {
         this.inventorySlot = inventorySlot;
         this.kitItems = new HashMap<>();
         this.kitArmor = new ArrayList<>();
+        this.classUpgradeValues = new ClassUpgradeValues();
         this.isPrestigeOne = false;
         this.isPrestigeTwo = false;
         this.isPrestigeThree = false;
         this.isPrestigeFour = false;
     }
 
+    public abstract void initLevelValues();
     public abstract void initKitItems();
     public abstract void executeAbility(PlayerModel playerModel);
     public abstract String getActionBar(PlayerModel playerModel);

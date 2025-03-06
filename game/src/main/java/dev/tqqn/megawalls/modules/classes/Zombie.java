@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Zombie class extends AbstractClass and represents the Zombie class in the plugin.
@@ -40,7 +41,12 @@ public final class Zombie extends AbstractClass {
         super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, ClassSkins.ZOMBIE);
         this.toughnessHits = new HashMap<>();
         this.isStrenght = new ArrayList<>();
-        this.strenghtRunnableMap = new Hashtable<>();
+        this.strenghtRunnableMap = new ConcurrentHashMap<>(); //synchronized map
+    }
+
+    @Override
+    public void initLevelValues() {
+
     }
 
     @Override
