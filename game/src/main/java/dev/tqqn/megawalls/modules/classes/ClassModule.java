@@ -1,9 +1,11 @@
 package dev.tqqn.megawalls.modules.classes;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
 import dev.tqqn.megawalls.modules.AbstractModule;
 import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.classes.framework.listener.ClassesListener;
+import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
@@ -24,8 +26,11 @@ public final class ClassModule extends AbstractModule {
     @Getter
     private static final List<AbstractClass> classes = new ArrayList<>();
 
-    public ClassModule(MegaWalls plugin) {
+    private final DatabaseModule databaseModule;
+
+    public ClassModule(MegaWalls plugin, DatabaseModule databaseModule) {
         super(plugin, "Class");
+        this.databaseModule = databaseModule;
     }
 
     @Override
@@ -43,5 +48,14 @@ public final class ClassModule extends AbstractModule {
     @Override
     protected void onDisable() {
         classes.clear();
+    }
+
+    public ClassUpgradeValues getClassUpgradeValueFromDB(String name) {
+        ClassUpgradeValues foundValue = databaseModule.getMongoDriver().readAsync(ClassUpgradeValues.class, name).join();
+        if (foundValue == null) {
+            foundValue = new ClassUpgradeValues(name);
+            databaseModule.getMongoDriver().saveAsync(foundValue);
+        }
+        return foundValue;
     }
 }

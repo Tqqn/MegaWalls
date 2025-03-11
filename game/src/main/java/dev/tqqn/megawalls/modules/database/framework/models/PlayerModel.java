@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.modules.database.framework.models;
 
 import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoItem;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoObject;
+import dev.tqqn.megawalls.common.database.MongoItem;
+import dev.tqqn.megawalls.common.database.MongoObject;
 import dev.tqqn.megawalls.utils.MessageUtil;
 import lombok.Getter;
 import lombok.Setter;

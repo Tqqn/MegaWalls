@@ -4,7 +4,7 @@ import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
-import dev.tqqn.megawalls.common.classes.levels.types.ClassUpgradeValues;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.utils.ItemBuilder;
@@ -56,7 +56,7 @@ public abstract class AbstractClass implements Listener {
      * @param classOptions The options associated with the class.
      * @param inventorySlot The inventory slot for the class icon.
      */
-    public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot, ClassSkins skins) {
+    public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot, ClassSkins skins, ClassUpgradeValues classUpgradeValues) {
         this.name = name;
         this.tag = "[" + tag + "]";
         this.classOptions = classOptions;
@@ -64,14 +64,13 @@ public abstract class AbstractClass implements Listener {
         this.inventorySlot = inventorySlot;
         this.kitItems = new HashMap<>();
         this.kitArmor = new ArrayList<>();
-        this.classUpgradeValues = new ClassUpgradeValues();
+        this.classUpgradeValues = classUpgradeValues;
         this.isPrestigeOne = false;
         this.isPrestigeTwo = false;
         this.isPrestigeThree = false;
         this.isPrestigeFour = false;
     }
 
-    public abstract void initLevelValues();
     public abstract void initKitItems();
     public abstract void executeAbility(PlayerModel playerModel);
     public abstract String getActionBar(PlayerModel playerModel);

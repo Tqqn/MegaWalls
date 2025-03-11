@@ -14,13 +14,12 @@ import dev.tqqn.megawalls.modules.database.framework.adapters.WorldAdapter;
 import dev.tqqn.megawalls.modules.database.framework.driver.IDatabaseDriver;
 import dev.tqqn.megawalls.modules.region.framework.Cuboid;
 import dev.tqqn.megawalls.modules.database.DatabaseModule;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoItem;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoObject;
+import dev.tqqn.megawalls.common.database.MongoItem;
+import dev.tqqn.megawalls.common.database.MongoObject;
 import lombok.Getter;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 

@@ -111,9 +111,9 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassSkillDescription {
-        HEROBRINE("<gray>Wrath", new String[]{"<gray>･ Unleash the wrath of Herobrine striking all nearby", "<gray>enemies in a 5 block radius for <green>5 <gray>damage.", "<gray>･ How to activate: Left Click with your Bow Right Click", "<gray>with your Sword.", "<gray>･ Energy Per Hit (Melee & Bow): 25"}),
-        SKELETON("<gray>Explosive Arrow", new String[]{"<gray>･ You will fire an explosive arrow that deals <green>6<gray> damage in", "<gray> in a 6 block radius and breaks blocks", "<gray>･ Uncharged bow shots give 50% energy, and Medium", "<gray>charged bow shots give 75% Energy.", "<gray>･ How to activate: Left Click with your Bow", "<gray>･ Energy Per Hit (Melee): 0", "<gray>･ Energy Per Hit (Bow): 20", "<gray>･ Energy Per Second (Deathmatch): 1"}),
-        ZOMBIE("<gray>Circle of Healing", new String[]{"<gray>･ Heal yourself for <green>8 HP <gray>and nearby teammates in a 5", " <gray>block radius for <green>5 HP<gray>.", "<gray>･ How to Activate: Left Click with your Bow or Right Click", "<gray>with your Sword", "<gray>･ Energy Per Hit (Melee & Bow): 12", "<gray>･ Energy When Hit (Melee): 1", "<gray>･ Energy When Hit (Bow): 2"}),;
+        HEROBRINE("<gray>Wrath", new String[]{"<gray>･ Unleash the wrath of Herobrine striking all nearby", "<gray>enemies in a 5 block radius for <green>%s <gray>damage.", "<gray>･ How to activate: Left Click with your Bow Right Click", "<gray>with your Sword.", "<gray>･ Energy Per Hit (Melee & Bow): 25"}),
+        SKELETON("<gray>Explosive Arrow", new String[]{"<gray>･ You will fire an explosive arrow that deals <green>%s<gray> damage in", "<gray> in a 6 block radius and breaks blocks", "<gray>･ Uncharged bow shots give 50% energy, and Medium", "<gray>charged bow shots give 75% Energy.", "<gray>･ How to activate: Left Click with your Bow", "<gray>･ Energy Per Hit (Melee): 0", "<gray>･ Energy Per Hit (Bow): 20", "<gray>･ Energy Per Second (Deathmatch): 1"}),
+        ZOMBIE("<gray>Circle of Healing", new String[]{"<gray>･ Heal yourself for <green>%s HP <gray>and nearby teammates in a 5", " <gray>block radius for <green>%s HP<gray>.", "<gray>･ How to Activate: Left Click with your Bow or Right Click", "<gray>with your Sword", "<gray>･ Energy Per Hit (Melee & Bow): 12", "<gray>･ Energy When Hit (Melee): 1", "<gray>･ Energy When Hit (Bow): 2"}),;
 
         private final String name;
         private final String[] description;

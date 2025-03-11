@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.modules.teams.framework;
 
 import dev.tqqn.megawalls.modules.region.framework.Cuboid;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoItem;
-import dev.tqqn.megawalls.modules.database.drivers.mongo.MongoObject;
+import dev.tqqn.megawalls.common.database.MongoItem;
+import dev.tqqn.megawalls.common.database.MongoObject;
 import lombok.Getter;
 import org.bukkit.Location;
 

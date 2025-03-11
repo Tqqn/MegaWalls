@@ -1,4 +1,4 @@
-package dev.tqqn.megawalls.modules.database.drivers.mongo;
+package dev.tqqn.megawalls.common.database;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
