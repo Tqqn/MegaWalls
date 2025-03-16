@@ -12,6 +12,7 @@ import org.bukkit.NamespacedKey;
 
 import java.util.*;
 
+
 /**
  * The ClassModule class extends AbstractModule and represents a module responsible for managing classes in the plugin.
  * It provides functionality to enable and disable the module, as well as manage a list of abstract classes.
