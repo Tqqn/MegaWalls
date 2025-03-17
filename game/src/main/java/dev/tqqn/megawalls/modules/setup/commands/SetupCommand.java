@@ -2,7 +2,7 @@ package dev.tqqn.megawalls.modules.setup.commands;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.setup.SetupModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

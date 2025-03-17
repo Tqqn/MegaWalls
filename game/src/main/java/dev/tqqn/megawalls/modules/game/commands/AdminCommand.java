@@ -9,7 +9,7 @@ import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
-import dev.tqqn.megawalls.utils.Notify;
+import dev.tqqn.megawalls.common.utils.Notify;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;

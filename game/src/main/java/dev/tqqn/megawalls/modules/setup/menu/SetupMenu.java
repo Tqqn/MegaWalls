@@ -4,8 +4,8 @@ import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.menu.framework.Menu;
 import dev.tqqn.megawalls.modules.menu.framework.MenuButton;
 import dev.tqqn.megawalls.modules.setup.SetupModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

@@ -6,7 +6,7 @@ import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.nms.framework.ICustomWither;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

@@ -1,4 +1,4 @@
-package dev.tqqn.megawalls.utils.cooldown;
+package dev.tqqn.megawalls.common.utils.cooldown;
 
 import org.bukkit.entity.Player;
 

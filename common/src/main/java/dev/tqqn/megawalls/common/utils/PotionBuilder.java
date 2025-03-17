@@ -1,4 +1,4 @@
-package dev.tqqn.megawalls.utils;
+package dev.tqqn.megawalls.common.utils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;

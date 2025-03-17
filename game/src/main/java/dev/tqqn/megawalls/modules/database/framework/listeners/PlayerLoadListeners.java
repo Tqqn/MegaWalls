@@ -7,7 +7,7 @@ import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.database.DatabaseModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

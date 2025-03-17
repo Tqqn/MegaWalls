@@ -6,7 +6,6 @@ import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ public final class GlobalGameListeners implements Listener {
         event.setCancelled(true);
 
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
-        ChatUtil.sendPlayerMessage(playerModel, event.message());
+        gameModule.sendPlayerMessage(playerModel, event.message());
     }
 
     @EventHandler

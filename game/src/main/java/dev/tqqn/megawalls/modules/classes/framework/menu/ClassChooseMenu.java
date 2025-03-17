@@ -8,8 +8,8 @@ import dev.tqqn.megawalls.modules.menu.framework.MenuButton;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

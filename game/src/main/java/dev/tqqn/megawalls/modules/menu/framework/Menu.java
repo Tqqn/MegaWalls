@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.modules.menu.framework;
 
 import dev.tqqn.megawalls.MegaWalls;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

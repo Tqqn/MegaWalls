@@ -2,12 +2,15 @@ package dev.tqqn.megawalls.modules.classes;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
+import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
+import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitUpgrade;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.modules.classes.runnables.ZombieStrenghtRunnable;
-import dev.tqqn.megawalls.utils.cooldown.CooldownUtil;
+import dev.tqqn.megawalls.common.utils.cooldown.CooldownUtil;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -42,6 +45,7 @@ public final class Zombie extends AbstractClass {
 
     @Override
     public void initKitItems() {
+        getClassUpgradeValues().getClassKit().addUpgrade(KitUpgrade.getBuilder(UpgradeLevel.I).addValue(ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<green>Zombie Sword").setGlow()));
 //        getKitItems().put(0, ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<dark_green>Zombie Sword").setLore(getKitAbilityLore()).setGlow().setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
 //        getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("<dark_green>Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
 //        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).setItemFlag(ItemFlag.HIDE_ITEM_SPECIFICS).build()).setDisplayName("<dark_green>Zombie Potion of Health (10 Hearts)").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addPDCDoubleTag("heal", 20).build());

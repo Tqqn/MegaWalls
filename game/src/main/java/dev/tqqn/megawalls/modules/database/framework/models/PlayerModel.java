@@ -3,7 +3,7 @@ package dev.tqqn.megawalls.modules.database.framework.models;
 import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
 import dev.tqqn.megawalls.common.database.MongoItem;
 import dev.tqqn.megawalls.common.database.MongoObject;
-import dev.tqqn.megawalls.utils.MessageUtil;
+import dev.tqqn.megawalls.common.utils.MessageUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.format.NamedTextColor;

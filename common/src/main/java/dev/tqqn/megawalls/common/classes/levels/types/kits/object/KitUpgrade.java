@@ -3,12 +3,14 @@ package dev.tqqn.megawalls.common.classes.levels.types.kits.object;
 import com.google.common.collect.ImmutableList;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeComponent;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
+import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemStack> {
+public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemBuilder> {
 
     private final List<ItemStack> kitItems = new ArrayList<>();
 
@@ -22,8 +24,8 @@ public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemStac
     }
 
     @Override
-    public void addValue(ItemStack itemStack) {
-        kitItems.add(itemStack);
+    public void addValue(ItemBuilder itemBuilder) {
+        kitItems.add(itemBuilder.build());
     }
 
     public static KitUpgradeBuilder getBuilder(UpgradeLevel upgradeLevel) {
@@ -33,13 +35,15 @@ public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemStac
     public static class KitUpgradeBuilder {
 
         private final KitUpgrade kitUpgrade;
+        @Getter private final UpgradeLevel upgradeLevel;
 
         private KitUpgradeBuilder(UpgradeLevel upgradeLevel) {
             this.kitUpgrade = new KitUpgrade(upgradeLevel);
+            this.upgradeLevel = upgradeLevel;
         }
 
-        public KitUpgradeBuilder addValue(ItemStack itemStack) {
-            kitUpgrade.addValue(itemStack);
+        public KitUpgradeBuilder addValue(ItemBuilder itemBuilder) {
+            kitUpgrade.addValue(itemBuilder);
             return this;
         }
 

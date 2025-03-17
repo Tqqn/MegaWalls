@@ -4,7 +4,7 @@ import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.lobby.listeners.LobbyListeners;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

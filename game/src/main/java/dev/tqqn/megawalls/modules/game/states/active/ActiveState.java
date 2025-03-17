@@ -18,7 +18,7 @@ import dev.tqqn.megawalls.modules.game.states.active.listeners.ActiveListeners;
 import dev.tqqn.megawalls.modules.game.states.active.runnables.ActionBarRunnable;
 import dev.tqqn.megawalls.modules.game.states.active.runnables.EnergyRunnable;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
-import dev.tqqn.megawalls.utils.MessageUtil;
+import dev.tqqn.megawalls.common.utils.MessageUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

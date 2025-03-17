@@ -1,6 +1,5 @@
-package dev.tqqn.megawalls.utils;
+package dev.tqqn.megawalls.common.utils;
 
-import dev.tqqn.megawalls.MegaWalls;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,6 +8,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,13 +57,13 @@ public final class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addPDCDoubleTag(String key, double value) {
-        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.DOUBLE, value);
+    public ItemBuilder addPDCDoubleTag(Plugin plugin, String key, double value) {
+        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(plugin, key), PersistentDataType.DOUBLE, value);
         return this;
     }
 
-    public ItemBuilder addPDCTag(String key, String tag) {
-        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(MegaWalls.getInstance(), key), PersistentDataType.STRING, tag);
+    public ItemBuilder addPDCTag(Plugin plugin, String key, String tag) {
+        this.itemMeta.getPersistentDataContainer().set(new NamespacedKey(plugin, key), PersistentDataType.STRING, tag);
         return this;
     }
 

@@ -6,7 +6,7 @@ import dev.tqqn.megawalls.modules.setup.framework.data.SetupTeamSettings;
 import dev.tqqn.megawalls.modules.setup.SetupModule;
 import dev.tqqn.megawalls.modules.setup.framework.model.SetupPlayer;
 import dev.tqqn.megawalls.modules.setup.menu.SetupMenu;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import org.bukkit.GameMode;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 

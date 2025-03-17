@@ -9,8 +9,8 @@ import dev.tqqn.megawalls.modules.setup.commands.SelectCommand;
 import dev.tqqn.megawalls.modules.setup.commands.SetupCommand;
 import dev.tqqn.megawalls.modules.setup.listeners.SetupListener;
 import dev.tqqn.megawalls.modules.setup.framework.model.SetupPlayer;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -117,10 +117,10 @@ public class SetupModule extends AbstractModule {
     public void giveTeamSetupItems(Player player, Teams team) {
         player.getInventory().clear();
         giveSetupItems(player);
-        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSave Team Protection Cuboid").addEmptyPDCTag(SETUP_TEAM_PROTECTION_CUBOID_KEY).addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS).setDisplayName("&cSave Wither Cuboid").addEmptyPDCTag(SETUP_WITHER_CUBOID_KEY).addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(6, ItemBuilder.getBuilder(Material.WITHER_SKELETON_SKULL).setDisplayName("&cSet Wither Spawn Location").addEmptyPDCTag(SETUP_WITHER_SPAWN_LOC_KEY).addPDCTag("team", team.name()).build());
-        player.getInventory().setItem(7, ItemBuilder.getBuilder(team.getBedMaterial()).setDisplayName("&cSet Team Spawn Location").addEmptyPDCTag(SETUP_TEAM_SPAWN_LOC_KEY).addPDCTag("team", team.name()).build());
+        player.getInventory().setItem(4, ItemBuilder.getBuilder(Material.WHITE_STAINED_GLASS).setDisplayName("&cSave Team Protection Cuboid").addEmptyPDCTag(SETUP_TEAM_PROTECTION_CUBOID_KEY).addPDCTag(getPlugin(), "team", team.name()).build());
+        player.getInventory().setItem(5, ItemBuilder.getBuilder(Material.BLACK_STAINED_GLASS).setDisplayName("&cSave Wither Cuboid").addEmptyPDCTag(SETUP_WITHER_CUBOID_KEY).addPDCTag(getPlugin(), "team", team.name()).build());
+        player.getInventory().setItem(6, ItemBuilder.getBuilder(Material.WITHER_SKELETON_SKULL).setDisplayName("&cSet Wither Spawn Location").addEmptyPDCTag(SETUP_WITHER_SPAWN_LOC_KEY).addPDCTag(getPlugin(), "team", team.name()).build());
+        player.getInventory().setItem(7, ItemBuilder.getBuilder(team.getBedMaterial()).setDisplayName("&cSet Team Spawn Location").addEmptyPDCTag(SETUP_TEAM_SPAWN_LOC_KEY).addPDCTag(getPlugin(), "team", team.name()).build());
     }
 
     public static SetupPlayer getSetupPlayer(UUID uuid) {

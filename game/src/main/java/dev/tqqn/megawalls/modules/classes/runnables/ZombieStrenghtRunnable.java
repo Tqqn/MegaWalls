@@ -3,7 +3,7 @@ package dev.tqqn.megawalls.modules.classes.runnables;
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.classes.Zombie;
-import dev.tqqn.megawalls.utils.cooldown.CooldownUtil;
+import dev.tqqn.megawalls.common.utils.cooldown.CooldownUtil;
 import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
 

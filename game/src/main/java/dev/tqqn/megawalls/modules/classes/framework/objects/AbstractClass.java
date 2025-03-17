@@ -7,7 +7,7 @@ import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -32,7 +32,7 @@ import java.util.*;
 @Getter
 public abstract class AbstractClass implements Listener {
 
-    @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).addPDCTag("kit", "dummy").addPDCTag("enderchest", "dummy").build();
+    @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).addPDCTag(MegaWalls.getInstance(), "kit", "dummy").addPDCTag(MegaWalls.getInstance(), "enderchest", "dummy").build();
 
     private final String name;
     private final String tag;

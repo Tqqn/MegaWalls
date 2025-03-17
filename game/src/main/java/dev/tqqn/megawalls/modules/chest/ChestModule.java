@@ -7,7 +7,7 @@ import dev.tqqn.megawalls.modules.chest.framework.ChestItem;
 import dev.tqqn.megawalls.modules.chest.framework.listeners.ChestListeners;
 import dev.tqqn.megawalls.modules.chest.framework.types.GatheringChest;
 import dev.tqqn.megawalls.modules.game.GameModule;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;

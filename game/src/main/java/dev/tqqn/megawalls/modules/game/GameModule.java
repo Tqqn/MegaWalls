@@ -28,11 +28,13 @@ import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.game.states.lobby.LobbyState;
 import dev.tqqn.megawalls.modules.teams.TeamModule;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.FinalItems;
-import dev.tqqn.megawalls.utils.ItemBuilder;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.FinalItems;
+import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -370,5 +372,39 @@ public final class GameModule extends AbstractModule {
 
     public void spawnWithers() {
         TeamModule.getGameTeams().values().forEach(GameTeam::spawnWither);
+    }
+
+    public void sendPlayerMessage(PlayerModel playerModel, Component component) {
+        if (playerModel.getPlayer() == null) return;
+
+        Bukkit.getLogger().info(((TextComponent) playerModel.getTempPlayerData().getChatMessage(component)).content() + ((TextComponent) component).content());
+        if (isState(GameStates.WAITING)) {
+            for (Player players : Bukkit.getOnlinePlayers()) {
+                players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
+            }
+            return;
+        }
+
+        if (playerModel.getTempPlayerData().getGameTeam() == null) return;
+
+        if (isState(GameStates.END)) {
+
+            for (Player players : Bukkit.getOnlinePlayers()) {
+                players.sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
+            }
+            return;
+        }
+
+        if (playerModel.getTempPlayerData().isSpectatorMode()) {
+            for (PlayerModel playerModels : getSpectators()) {
+                if (playerModels.getPlayer() == null) return;
+                playerModels.getPlayer().sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
+            }
+        } else {
+            for (PlayerModel playerModels : playerModel.getTempPlayerData().getGameTeam().getCurrentPlayers()) {
+                if (playerModels.getPlayer() == null) return;
+                playerModels.getPlayer().sendMessage(playerModel.getTempPlayerData().getChatMessage(component));
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ import dev.tqqn.megawalls.modules.teams.framework.wither.GameWither;
 import dev.tqqn.megawalls.modules.region.framework.AbstractRegion;
 import dev.tqqn.megawalls.modules.region.framework.Cuboid;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
-import dev.tqqn.megawalls.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;

@@ -2,10 +2,9 @@ package dev.tqqn.megawalls.modules.game.states.lobby.board;
 
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.scoreboard.framework.PluginScoreboard;
-import dev.tqqn.megawalls.modules.game.GameModule;
 import dev.tqqn.megawalls.modules.game.states.lobby.LobbyState;
-import dev.tqqn.megawalls.utils.ChatUtil;
-import dev.tqqn.megawalls.utils.MessageUtil;
+import dev.tqqn.megawalls.common.utils.ChatUtil;
+import dev.tqqn.megawalls.common.utils.MessageUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
