@@ -8,7 +8,7 @@ import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitUpgrade;
 import java.util.EnumMap;
 import java.util.List;
 
-public final class ClassKit implements IClassLevelUpgrade<KitUpgrade> {
+public final class ClassKit implements IClassLevelUpgrade<KitUpgrade, KitUpgrade.KitUpgradeBuilder> {
 
     private final EnumMap<UpgradeLevel, KitUpgrade> kitLevels = new EnumMap<>(UpgradeLevel.class);
 

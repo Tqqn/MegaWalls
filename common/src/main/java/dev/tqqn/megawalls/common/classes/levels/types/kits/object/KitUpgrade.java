@@ -1,6 +1,7 @@
 package dev.tqqn.megawalls.common.classes.levels.types.kits.object;
 
 import com.google.common.collect.ImmutableList;
+import dev.tqqn.megawalls.common.classes.UpgradeBuilder;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeComponent;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
 import dev.tqqn.megawalls.common.utils.ItemBuilder;
@@ -32,21 +33,22 @@ public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemBuil
         return new KitUpgradeBuilder(upgradeLevel);
     }
 
-    public static class KitUpgradeBuilder {
+    public static class KitUpgradeBuilder extends UpgradeBuilder<KitUpgrade, ItemBuilder> {
 
         private final KitUpgrade kitUpgrade;
-        @Getter private final UpgradeLevel upgradeLevel;
 
         private KitUpgradeBuilder(UpgradeLevel upgradeLevel) {
+            super(upgradeLevel);
             this.kitUpgrade = new KitUpgrade(upgradeLevel);
-            this.upgradeLevel = upgradeLevel;
         }
 
+        @Override
         public KitUpgradeBuilder addValue(ItemBuilder itemBuilder) {
             kitUpgrade.addValue(itemBuilder);
             return this;
         }
 
+        @Override
         public KitUpgrade build() {
             return kitUpgrade;
         }
