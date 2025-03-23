@@ -5,6 +5,9 @@ import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
+import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
+import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitItem;
+import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitUpgrade;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.common.utils.ItemBuilder;
@@ -18,6 +21,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -75,14 +80,26 @@ public abstract class AbstractClass implements Listener {
     public abstract void executeAbility(PlayerModel playerModel);
     public abstract String getActionBar(PlayerModel playerModel);
 
-    public void applyKit(PlayerModel playerModel) {
+    public void applyKit(PlayerModel playerModel, UpgradeLevel upgradeLevel) {
         final Player player = playerModel.getPlayer();
         if (player == null) return;
+        final Inventory inventory = player.getInventory();
+        final KitUpgrade kitUpgrade = classUpgradeValues.getClassKit().getUpgrade(upgradeLevel);
 
-        for (Map.Entry<Integer, ItemStack> entry : kitItems.entrySet()) {
+        if (kitUpgrade == null) return;
+
+        for (KitItem kitItem : kitUpgrade.getValue().getInventoryItems()) {
+            inventory.setItem(kitItem.getPlace(), kitItem.getItemStack());
+        }
+
+        for (Map.Entry<EquipmentSlot, ItemStack> entry : kitUpgrade.getValue().getArmorItems().entrySet()) {
             player.getInventory().setItem(entry.getKey(), entry.getValue());
         }
-        player.getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
+
+//        for (Map.Entry<Integer, ItemStack> entry : kitItems.entrySet()) {
+//            player.getInventory().setItem(entry.getKey(), entry.getValue());
+//        }
+//        player.getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
     }
 
     public void applySkin(PlayerModel playerModel) {

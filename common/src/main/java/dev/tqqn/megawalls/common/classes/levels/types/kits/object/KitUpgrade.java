@@ -1,32 +1,36 @@
 package dev.tqqn.megawalls.common.classes.levels.types.kits.object;
 
-import com.google.common.collect.ImmutableList;
 import dev.tqqn.megawalls.common.classes.UpgradeBuilder;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeComponent;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
 import dev.tqqn.megawalls.common.utils.ItemBuilder;
-import lombok.Getter;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class KitUpgrade extends UpgradeComponent<KitValue, ItemBuilder> {
 
-public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemBuilder> {
-
-    private final List<ItemStack> kitItems = new ArrayList<>();
+    private final KitValue kitValue;
 
     private KitUpgrade(UpgradeLevel upgradeLevel) {
         super(upgradeLevel);
+        this.kitValue = new KitValue();
     }
 
     @Override
-    public List<ItemStack> getValue() {
-        return ImmutableList.copyOf(kitItems);
+    public KitValue getValue() {
+        return kitValue;
     }
 
     @Override
     public void addValue(ItemBuilder itemBuilder) {
-        kitItems.add(itemBuilder.build());
+        kitValue.addValue(itemBuilder.build());
+    }
+
+    public void addValue(ItemBuilder itemBuilder, int place) {
+        kitValue.addValue(itemBuilder.build(), place);
+    }
+
+    public void addValue(ItemBuilder itemBuilder, EquipmentSlot equipmentSlot) {
+        kitValue.addValue(itemBuilder.build(), equipmentSlot);
     }
 
     public static KitUpgradeBuilder getBuilder(UpgradeLevel upgradeLevel) {
@@ -42,9 +46,20 @@ public final class KitUpgrade extends UpgradeComponent<List<ItemStack>, ItemBuil
             this.kitUpgrade = new KitUpgrade(upgradeLevel);
         }
 
+
         @Override
         public KitUpgradeBuilder addValue(ItemBuilder itemBuilder) {
             kitUpgrade.addValue(itemBuilder);
+            return this;
+        }
+
+        public KitUpgradeBuilder addValue(ItemBuilder itemBuilder, int place) {
+            kitUpgrade.addValue(itemBuilder, place);
+            return this;
+        }
+
+        public KitUpgradeBuilder addValue(ItemBuilder itemBuilder, EquipmentSlot equipmentSlot) {
+            kitUpgrade.addValue(itemBuilder, equipmentSlot);
             return this;
         }
 
