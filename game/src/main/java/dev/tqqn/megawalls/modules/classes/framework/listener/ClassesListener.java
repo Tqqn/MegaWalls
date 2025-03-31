@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 public final class ClassesListener implements Listener {
 
     private final GameModule gameModule;
+    private final ClassModule classModule;
 
     /**
      * Handles the Energy gain of the players.
@@ -42,7 +43,7 @@ public final class ClassesListener implements Listener {
         final PlayerModel defendingModel = PlayerModule.getPlayerModel(player.getUniqueId());
         if (defendingModel == null) return;
 
-        final AbstractClass defendingClass = defendingModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass defendingClass = classModule.getClass(defendingModel.getTempPlayerData().getCurrentClass());
         if (defendingClass == null) return;
 
         if (event.getDamager() instanceof Player damager) {
@@ -51,7 +52,7 @@ public final class ClassesListener implements Listener {
             final PlayerModel attackingModel = PlayerModule.getPlayerModel(damager.getUniqueId());
             if (attackingModel == null) return;
 
-            final AbstractClass attackingClass = attackingModel.getTempPlayerData().getCurrentClass();
+            final AbstractClass attackingClass = classModule.getClass(attackingModel.getTempPlayerData().getCurrentClass());
 
             if (attackingClass == null) return;
 
@@ -70,7 +71,7 @@ public final class ClassesListener implements Listener {
             final PlayerModel shooterModel = PlayerModule.getPlayerModel(shooter.getUniqueId());
             if (shooterModel == null) return;
 
-            final AbstractClass shooterClass = shooterModel.getTempPlayerData().getCurrentClass();
+            final AbstractClass shooterClass = classModule.getClass(shooterModel.getTempPlayerData().getCurrentClass());
 
             if (shooterClass == null) return;
             shooterClass.onPlayerHitBow(shooterModel);
@@ -91,7 +92,7 @@ public final class ClassesListener implements Listener {
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
         final TempPlayerData tempPlayerData = playerModel.getTempPlayerData();
 
-        final AbstractClass playerClass = tempPlayerData.getCurrentClass();
+        final AbstractClass playerClass = classModule.getClass(tempPlayerData.getCurrentClass());
         if (playerClass == null) return;
 
         final ItemStack itemStack = event.getItem();
@@ -123,7 +124,7 @@ public final class ClassesListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!gameModule.isState(GameStates.ACTIVE)) return;
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
-        final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass playerClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
         if (playerClass == null) return;
 
         playerClass.onBuild(event);
@@ -133,7 +134,7 @@ public final class ClassesListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (!gameModule.isState(GameStates.ACTIVE)) return;
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
-        final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass playerClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
         if (playerClass == null) return;
 
         playerClass.onBreak(event);
@@ -143,7 +144,7 @@ public final class ClassesListener implements Listener {
     public void onPotionConsume(PlayerItemConsumeEvent event) {
         if (!gameModule.isState(GameStates.ACTIVE)) return;
         final PlayerModel playerModel = PlayerModule.getPlayerModel(event.getPlayer().getUniqueId());
-        final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass playerClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
         if (playerClass == null) return;
 
         playerClass.onPotionConsume(event);

@@ -1,14 +1,14 @@
 package dev.tqqn.megawalls.common.classes.levels.types.passives.object;
 
 import dev.tqqn.megawalls.common.classes.UpgradeBuilder;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeComponent;
-import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
 
 public class PassiveUpgrade extends UpgradeComponent<Integer, Integer> {
 
     private int value;
 
-    private PassiveUpgrade(UpgradeLevel upgradeLevel) {
+    private PassiveUpgrade(ClassUpgrades.UpgradeLevel upgradeLevel) {
         super(upgradeLevel);
     }
 
@@ -22,7 +22,7 @@ public class PassiveUpgrade extends UpgradeComponent<Integer, Integer> {
         this.value = value;
     }
 
-    public static PassiveUpgradeBuilder getBuilder(UpgradeLevel upgradeLevel) {
+    public static PassiveUpgradeBuilder getBuilder(ClassUpgrades.UpgradeLevel upgradeLevel) {
         return new PassiveUpgradeBuilder(upgradeLevel);
     }
 
@@ -30,7 +30,7 @@ public class PassiveUpgrade extends UpgradeComponent<Integer, Integer> {
 
         private final PassiveUpgrade passiveUpgrade;
 
-        private PassiveUpgradeBuilder(UpgradeLevel upgradeLevel) {
+        private PassiveUpgradeBuilder(ClassUpgrades.UpgradeLevel upgradeLevel) {
             super(upgradeLevel);
             this.passiveUpgrade = new PassiveUpgrade(upgradeLevel);
         }

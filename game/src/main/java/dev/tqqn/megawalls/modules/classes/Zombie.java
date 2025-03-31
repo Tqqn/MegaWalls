@@ -2,7 +2,7 @@ package dev.tqqn.megawalls.modules.classes;
 
 import dev.tqqn.megawalls.MegaWalls;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
-import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitUpgrade;
 import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
@@ -28,8 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class Zombie extends AbstractClass {
 
-    private static final ClassModule classModule = MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class);
-
     private static final Set<Material> GATHERING_ACTIVE_BLOCKS = Set.of(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.CHERRY_LOG, Material.JUNGLE_LOG, Material.DARK_OAK_LOG, Material.SPRUCE_LOG, Material.OAK_LOG, Material.STONE, Material.COAL_ORE, Material.IRON_ORE, Material.DIAMOND_ORE);
 
     private final Map<UUID, Integer> toughnessHits;
@@ -37,7 +35,7 @@ public final class Zombie extends AbstractClass {
     @Getter private final Map<UUID, ZombieStrenghtRunnable> strenghtRunnableMap;
 
     public Zombie() {
-        super("Zombie", "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, ClassSkins.ZOMBIE, classModule.getClassUpgradeValueFromDB("ZOMBIE"));
+        super(ClassDescriptions.ClassType.ZOMBIE, "ZOM", new ClassOptions(ClassDescriptions.ClassEnergy.ZOMBIE, ClassDescriptions.ClassType.ZOMBIE, ClassDescriptions.ClassDifficulty.ZOMBIE, Arrays.asList(ClassDescriptions.ClassStyle.TANK, ClassDescriptions.ClassStyle.SUPPORT), ClassDescriptions.ClassDiamond.ZOMBIE, ClassDescriptions.ClassSkillDescription.ZOMBIE), 5, ClassSkins.ZOMBIE, getClassModule().getClassUpgradeValueFromDB("ZOMBIE"));
         this.toughnessHits = new HashMap<>();
         this.isStrenght = new ArrayList<>();
         this.strenghtRunnableMap = new ConcurrentHashMap<>(); //synchronized map
@@ -45,7 +43,7 @@ public final class Zombie extends AbstractClass {
 
     @Override
     public void initKitItems() {
-        getClassUpgradeValues().getClassKit().addUpgrade(KitUpgrade.getBuilder(UpgradeLevel.I).addValue(ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<green>Zombie Sword").setGlow()));
+        getClassUpgradeValues().getClassKit().addUpgrade(KitUpgrade.getBuilder(ClassUpgrades.UpgradeLevel.I).addValue(ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<green>Zombie Sword").setGlow()));
 //        getKitItems().put(0, ItemBuilder.getBuilder(Material.IRON_SWORD).setDisplayName("<dark_green>Zombie Sword").setLore(getKitAbilityLore()).setGlow().setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
 //        getKitItems().put(1, ItemBuilder.getBuilder(Material.BOW).setDisplayName("<dark_green>Zombie Bow").setLore(getKitAbilityLore()).setUnbreakable().addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addEmptyPDCTag(ClassModule.CLASS_ABILITY_ITEM_KEY).build());
 //        getKitItems().put(2, ItemBuilder.getBuilder(PotionBuilder.getBuilder().setColor(Color.RED).setItemFlag(ItemFlag.HIDE_ITEM_SPECIFICS).build()).setDisplayName("<dark_green>Zombie Potion of Health (10 Hearts)").addEmptyPDCTag(ClassModule.KIT_ITEM_KEY).addPDCDoubleTag("heal", 20).build());

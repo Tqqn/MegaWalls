@@ -1,13 +1,14 @@
 package dev.tqqn.megawalls.common.classes.levels.types;
 
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import lombok.Getter;
 
 @Getter
 public abstract class UpgradeComponent<T, O> {
 
-    private final UpgradeLevel upgradeLevel;
+    private final ClassUpgrades.UpgradeLevel upgradeLevel;
 
-    public UpgradeComponent(UpgradeLevel upgradeLevel) {
+    public UpgradeComponent(ClassUpgrades.UpgradeLevel upgradeLevel) {
         this.upgradeLevel = upgradeLevel;
     }
 

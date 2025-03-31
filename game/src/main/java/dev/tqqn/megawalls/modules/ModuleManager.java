@@ -38,7 +38,7 @@ public final class ModuleManager {
         this.modules.put(PlayerModule.class, new PlayerModule(plugin, (GameModule) this.modules.get(GameModule.class)));
         this.modules.put(RegionModule.class, new RegionModule(plugin));
         this.modules.put(TeamModule.class, new TeamModule(plugin));
-        this.modules.put(ClassModule.class, new ClassModule(plugin));
+        this.modules.put(ClassModule.class, new ClassModule(plugin, (DatabaseModule) this.modules.get(DatabaseModule.class)));
         this.modules.put(ScoreboardModule.class, new ScoreboardModule(plugin));
         this.modules.put(MenuModule.class, new MenuModule(plugin));
         this.modules.put(ChestModule.class, new ChestModule(plugin));

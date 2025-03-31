@@ -1,6 +1,7 @@
 package dev.tqqn.megawalls.modules.game.states.active;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.game.framework.AbstractGameState;
 import dev.tqqn.megawalls.modules.game.framework.GameStates;
 import dev.tqqn.megawalls.modules.game.framework.events.GameWinEvent;
@@ -69,7 +70,7 @@ public final class ActiveState extends AbstractGameState {
 
         this.runTaskTimerAsynchronously(this.getGameModule().getPlugin(), 0L, 20L);
 
-        this.abilityReadyRunnable = new AbilityReadyRunnable(getGameModule());
+        this.abilityReadyRunnable = new AbilityReadyRunnable(getGameModule(), getGameModule().getPlugin().getModuleManager().getModule(ClassModule.class));
         this.energyRunnable = new EnergyRunnable();
         this.actionBarRunnable = new ActionBarRunnable();
 

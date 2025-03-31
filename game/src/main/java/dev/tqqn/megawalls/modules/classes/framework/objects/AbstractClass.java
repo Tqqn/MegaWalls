@@ -5,7 +5,7 @@ import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassOptions;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
 import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
-import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitItem;
 import dev.tqqn.megawalls.common.classes.levels.types.kits.object.KitUpgrade;
 import dev.tqqn.megawalls.modules.classes.ClassModule;
@@ -38,8 +38,10 @@ import java.util.*;
 public abstract class AbstractClass implements Listener {
 
     @Getter private static final ItemStack ENDER_CHEST = ItemBuilder.getBuilder(Material.ENDER_CHEST).addPDCTag(MegaWalls.getInstance(), "kit", "dummy").addPDCTag(MegaWalls.getInstance(), "enderchest", "dummy").build();
+    @Getter private static final ClassModule classModule = MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class);
 
-    private final String name;
+    private final ClassDescriptions.ClassType classType;
+
     private final String tag;
     private final ClassOptions classOptions;
     private final ClassSkins skins;
@@ -56,13 +58,13 @@ public abstract class AbstractClass implements Listener {
     /**
      * Constructs an AbstractClass object with the specified name, tag, class options, and inventory slot.
      *
-     * @param name The name of the class.
+     * @param classType The type of the class.
      * @param tag The tag representing the class.
      * @param classOptions The options associated with the class.
      * @param inventorySlot The inventory slot for the class icon.
      */
-    public AbstractClass(String name, String tag, ClassOptions classOptions, int inventorySlot, ClassSkins skins, ClassUpgradeValues classUpgradeValues) {
-        this.name = name;
+    public AbstractClass(ClassDescriptions.ClassType classType, String tag, ClassOptions classOptions, int inventorySlot, ClassSkins skins, ClassUpgradeValues classUpgradeValues) {
+        this.classType = classType;
         this.tag = "[" + tag + "]";
         this.classOptions = classOptions;
         this.skins = skins;
@@ -80,7 +82,11 @@ public abstract class AbstractClass implements Listener {
     public abstract void executeAbility(PlayerModel playerModel);
     public abstract String getActionBar(PlayerModel playerModel);
 
-    public void applyKit(PlayerModel playerModel, UpgradeLevel upgradeLevel) {
+    public void applyKit(PlayerModel playerModel) {
+        applyKit(playerModel, playerModel.getClassProfile().getUpgrade(getClassType()).getUpgrades().get(ClassUpgrades.UpgradeType.KIT));
+    }
+
+    public void applyKit(PlayerModel playerModel, ClassUpgrades.UpgradeLevel upgradeLevel) {
         final Player player = playerModel.getPlayer();
         if (player == null) return;
         final Inventory inventory = player.getInventory();
@@ -95,11 +101,6 @@ public abstract class AbstractClass implements Listener {
         for (Map.Entry<EquipmentSlot, ItemStack> entry : kitUpgrade.getValue().getArmorItems().entrySet()) {
             player.getInventory().setItem(entry.getKey(), entry.getValue());
         }
-
-//        for (Map.Entry<Integer, ItemStack> entry : kitItems.entrySet()) {
-//            player.getInventory().setItem(entry.getKey(), entry.getValue());
-//        }
-//        player.getInventory().setArmorContents(kitArmor.toArray(new ItemStack[0]));
     }
 
     public void applySkin(PlayerModel playerModel) {
@@ -133,7 +134,7 @@ public abstract class AbstractClass implements Listener {
      */
     public ItemStack getKitIcon(PlayerModel playerModel) {
         final List<String> lore = new ArrayList<>();
-        final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass currentClass = MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class).getClass(playerModel.getTempPlayerData().getCurrentClass());
 
         lore.add(classOptions.getClassType().getType());
         lore.add("<gray>Play Styles:");
@@ -157,7 +158,7 @@ public abstract class AbstractClass implements Listener {
             lore.add("<yellow>Click to select!");
         }
 
-        return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("<green>" + name).setLore(lore).hideAttributes().build();
+        return ItemBuilder.getBuilder(classOptions.getClassType().getIcon()).setDisplayName("<green>" + classType.getName()).setLore(lore).hideAttributes().build();
     }
 
     /**
@@ -169,7 +170,7 @@ public abstract class AbstractClass implements Listener {
     public String getTag(PlayerModel playerModel) {
         String tagColor = "§7";
 
-        if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeFour) tagColor = "§6";
+        if (playerModel.getClassProfile().getUpgrade(classType).isPrestige()) tagColor = "§6";
 
         return tagColor + tag;
     }

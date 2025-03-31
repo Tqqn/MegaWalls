@@ -1,5 +1,6 @@
 package dev.tqqn.megawalls.modules.database.framework.models;
 
+import dev.tqqn.megawalls.common.classes.player.PlayerClassProfile;
 import dev.tqqn.megawalls.modules.player.data.TempPlayerData;
 import dev.tqqn.megawalls.common.database.MongoItem;
 import dev.tqqn.megawalls.common.database.MongoObject;
@@ -23,6 +24,8 @@ public final class PlayerModel extends MongoObject<UUID> {
 
     private final UUID uuid;
     @Setter private String name;
+
+    private final PlayerClassProfile classProfile = new PlayerClassProfile();
 
     private final transient TempPlayerData tempPlayerData;
     @Setter private transient WeakReference<Player> playerWeakReference;

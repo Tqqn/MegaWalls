@@ -23,6 +23,8 @@ import java.util.List;
  */
 public final class ClassChooseMenu extends Menu {
 
+    private static final ClassModule classModule = MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class);
+
     /**
      * Constructs a new Menu object with the specified title, number of rows, and MenuModule.
      *
@@ -35,7 +37,7 @@ public final class ClassChooseMenu extends Menu {
             registerButton(new MenuButton(abstractClass.getKitIcon(viewer)).setClicker(clicked -> {
                 final PlayerModel playerModel = PlayerModule.getPlayerModel(clicked.getUniqueId());
 
-                final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+                final AbstractClass playerClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
 
                 if (playerClass != null) {
                     if (playerClass == abstractClass) {
@@ -45,8 +47,8 @@ public final class ClassChooseMenu extends Menu {
                     }
                 }
 
-                playerModel.getTempPlayerData().setCurrentClass(abstractClass);
-                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You have selected the <yellow>" + abstractClass.getName() + "<green> class!"));
+                playerModel.getTempPlayerData().setCurrentClass(abstractClass.getClassType());
+                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You have selected the <yellow>" + abstractClass.getClassType().getName() + "<green> class!"));
                 close();
             }), slot++);
         }
@@ -63,7 +65,7 @@ public final class ClassChooseMenu extends Menu {
     public MenuButton getRandomButton() {
 
         final PlayerModel playerModel = PlayerModule.getPlayerModel(getViewer().getUniqueId());
-        final AbstractClass playerClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass playerClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
         final List<String> lore = new ArrayList<>();
 
         lore.add("<gray>Picks a random class from your");

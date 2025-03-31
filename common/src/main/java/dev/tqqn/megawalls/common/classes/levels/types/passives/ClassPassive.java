@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.common.classes.levels.types.passives;
 
 import com.google.common.collect.ImmutableList;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import dev.tqqn.megawalls.common.classes.levels.types.IClassLevelUpgrade;
-import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
 import dev.tqqn.megawalls.common.classes.levels.types.passives.object.PassiveUpgrade;
 
 import java.util.EnumMap;
@@ -10,10 +10,10 @@ import java.util.List;
 
 public final class ClassPassive implements IClassLevelUpgrade<PassiveUpgrade, PassiveUpgrade.PassiveUpgradeBuilder> {
 
-    private final EnumMap<UpgradeLevel, PassiveUpgrade> passiveLevels = new EnumMap<>(UpgradeLevel.class);
+    private final EnumMap<ClassUpgrades.UpgradeLevel, PassiveUpgrade> passiveLevels = new EnumMap<>(ClassUpgrades.UpgradeLevel.class);
 
     @Override
-    public PassiveUpgrade getUpgrade(UpgradeLevel upgradeLevel) {
+    public PassiveUpgrade getUpgrade(ClassUpgrades.UpgradeLevel upgradeLevel) {
         return passiveLevels.get(upgradeLevel);
     }
 

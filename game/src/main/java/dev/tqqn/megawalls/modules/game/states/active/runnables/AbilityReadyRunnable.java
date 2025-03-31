@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 public final class AbilityReadyRunnable extends BukkitRunnable {
 
     private final GameModule gameModule;
+    private final ClassModule classModule;
 
     @Override
     public void run() {
@@ -24,7 +25,7 @@ public final class AbilityReadyRunnable extends BukkitRunnable {
             final ItemStack itemStack = player.getInventory().getItemInMainHand();
             if (itemStack.getType() == Material.AIR || itemStack.getItemMeta() == null) return;
             if (!itemStack.getItemMeta().getPersistentDataContainer().has(ClassModule.CLASS_ABILITY_ITEM_KEY)) continue;
-            if (!playerModel.getTempPlayerData().getCurrentClass().canUseAbility(playerModel)) continue;
+            if (!classModule.getClass(playerModel.getTempPlayerData().getCurrentClass()).canUseAbility(playerModel)) continue;
 
             final Location playerLocation = playerModel.getPlayer().getLocation();
             ClassAbilityParticles.DEFAULT_GREEN.spawnParticle(calculateHandLocation(playerLocation));

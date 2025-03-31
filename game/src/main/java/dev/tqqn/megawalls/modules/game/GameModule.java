@@ -229,8 +229,8 @@ public final class GameModule extends AbstractModule {
             if (playerModel.getPlayer() == null) return;
 
             if (playerModel.getTempPlayerData().getCurrentClass() == null) {
-                playerModel.getTempPlayerData().setCurrentClass(ClassModule.getClasses().get(ThreadLocalRandom.current().nextInt(ClassModule.getClasses().size()))); // Random Class
-                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You got <gold>" + playerModel.getTempPlayerData().getCurrentClass().getName() + " <green>as random Class!"));
+                playerModel.getTempPlayerData().setCurrentClass(ClassModule.getClasses().get(ThreadLocalRandom.current().nextInt(ClassModule.getClasses().size())).getClassType()); // Random Class
+                playerModel.getPlayer().sendMessage(ChatUtil.format("<green>You got <gold>" + playerModel.getTempPlayerData().getCurrentClass().getType() + " <green>as random Class!"));
             }
 
             if (playerModel.getTempPlayerData().getGameTeam() == null) {
@@ -278,15 +278,17 @@ public final class GameModule extends AbstractModule {
     private void spawnPlayers() {
         initHealthBelowName();
         final EnderChestModule enderChestModule = getPlugin().getModuleManager().getModule(EnderChestModule.class);
+        final ClassModule classModule = getPlugin().getModuleManager().getModule(ClassModule.class);
         for (PlayerModel playerModel : getInGamePlayers()) {
             if (!playerModel.getTempPlayerData().isSpectatorMode()) {
+                final AbstractClass currentClass = classModule.getClass(playerModel.getTempPlayerData().getCurrentClass());
                 double health = 40.0;
-                if (playerModel.getTempPlayerData().getCurrentClass().isPrestigeOne()) health = 44.0;
+                if (currentClass.isPrestigeOne()) health = 44.0;
                 teleportPlayerToSpawn(playerModel);
                 playerModel.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
                 playerModel.getPlayer().setHealth(health);
                 playerModel.getPlayer().getInventory().clear();
-                playerModel.getTempPlayerData().getCurrentClass().applyKit(playerModel);
+                currentClass.applyKit(playerModel);
                 playerModel.getTempPlayerData().getCurrentClass().applySkin(playerModel);
                 enderChestModule.addEnderChest(playerModel.getPlayer());
             }

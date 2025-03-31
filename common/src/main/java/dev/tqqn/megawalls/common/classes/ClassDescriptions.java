@@ -41,15 +41,17 @@ public final class ClassDescriptions {
      */
     @Getter
     public enum ClassType {
-        HEROBRINE(Material.DIAMOND_SWORD, "<dark_gray>Regular Class", "<yellow>"),
-        SKELETON(Material.BOW, "<dark_gray>Regular Class", "<aqua>"),
-        ZOMBIE(Material.ROTTEN_FLESH, "<dark_gray>Regular Class", "<dark_green>");
+        HEROBRINE("Herobrine", Material.DIAMOND_SWORD, "<dark_gray>Regular Class", "<yellow>"),
+        SKELETON("Skeleton", Material.BOW, "<dark_gray>Regular Class", "<aqua>"),
+        ZOMBIE("Zombie", Material.ROTTEN_FLESH, "<dark_gray>Regular Class", "<dark_green>");
 
+        private final String name;
         private final Material icon;
         private final String type;
         private final String color;
 
-        ClassType(Material icon, String type, String color) {
+        ClassType(String name, Material icon, String type, String color) {
+            this.name = name;
             this.icon = icon;
             this.type = type;
             this.color = color;

@@ -1,6 +1,9 @@
 package dev.tqqn.megawalls.modules.classes;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.levels.ClassUpgradeValues;
 import dev.tqqn.megawalls.modules.AbstractModule;
 import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
@@ -24,8 +27,7 @@ public final class ClassModule extends AbstractModule {
     public static final NamespacedKey KIT_ITEM_KEY = new NamespacedKey(MegaWalls.getInstance(), "kit");
     public static final NamespacedKey CLASS_ABILITY_ITEM_KEY = new NamespacedKey(MegaWalls.getInstance(), "ability");
 
-    @Getter
-    private static final List<AbstractClass> classes = new ArrayList<>();
+    private static final Map<ClassDescriptions.ClassType, AbstractClass> classes = new EnumMap<>(ClassDescriptions.ClassType.class);
 
     private final DatabaseModule databaseModule;
 
@@ -36,12 +38,12 @@ public final class ClassModule extends AbstractModule {
 
     @Override
     protected void onEnable() {
-        register(new ClassesListener(getPlugin().getModuleManager().getModule(GameModule.class)));
-        classes.add(new Herobrine());
-        classes.add(new Skeleton());
-        classes.add(new Zombie());
+        register(new ClassesListener(getPlugin().getModuleManager().getModule(GameModule.class), this));
+        classes.put(ClassDescriptions.ClassType.HEROBRINE, new Herobrine());
+        classes.put(ClassDescriptions.ClassType.SKELETON, new Skeleton());
+        classes.put(ClassDescriptions.ClassType.ZOMBIE, new Zombie());
 
-        for (AbstractClass abstractClass : classes) {
+        for (AbstractClass abstractClass : classes.values()) {
             abstractClass.initKitItems();
         }
     }
@@ -49,6 +51,14 @@ public final class ClassModule extends AbstractModule {
     @Override
     protected void onDisable() {
         classes.clear();
+    }
+
+    public static List<AbstractClass> getClasses() {
+        return ImmutableList.copyOf(classes.values());
+    }
+
+    public AbstractClass getClass(ClassDescriptions.ClassType classType) {
+        return classes.get(classType);
     }
 
     public ClassUpgradeValues getClassUpgradeValueFromDB(String name) {

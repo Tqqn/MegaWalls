@@ -1,8 +1,8 @@
 package dev.tqqn.megawalls.common.classes.levels.types.kits.object;
 
 import dev.tqqn.megawalls.common.classes.UpgradeBuilder;
+import dev.tqqn.megawalls.common.classes.levels.ClassUpgrades;
 import dev.tqqn.megawalls.common.classes.levels.types.UpgradeComponent;
-import dev.tqqn.megawalls.common.classes.levels.types.UpgradeLevel;
 import dev.tqqn.megawalls.common.utils.ItemBuilder;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -10,7 +10,7 @@ public final class KitUpgrade extends UpgradeComponent<KitValue, ItemBuilder> {
 
     private final KitValue kitValue;
 
-    private KitUpgrade(UpgradeLevel upgradeLevel) {
+    private KitUpgrade(ClassUpgrades.UpgradeLevel upgradeLevel) {
         super(upgradeLevel);
         this.kitValue = new KitValue();
     }
@@ -33,7 +33,7 @@ public final class KitUpgrade extends UpgradeComponent<KitValue, ItemBuilder> {
         kitValue.addValue(itemBuilder.build(), equipmentSlot);
     }
 
-    public static KitUpgradeBuilder getBuilder(UpgradeLevel upgradeLevel) {
+    public static KitUpgradeBuilder getBuilder(ClassUpgrades.UpgradeLevel upgradeLevel) {
         return new KitUpgradeBuilder(upgradeLevel);
     }
 
@@ -41,7 +41,7 @@ public final class KitUpgrade extends UpgradeComponent<KitValue, ItemBuilder> {
 
         private final KitUpgrade kitUpgrade;
 
-        private KitUpgradeBuilder(UpgradeLevel upgradeLevel) {
+        private KitUpgradeBuilder(ClassUpgrades.UpgradeLevel upgradeLevel) {
             super(upgradeLevel);
             this.kitUpgrade = new KitUpgrade(upgradeLevel);
         }

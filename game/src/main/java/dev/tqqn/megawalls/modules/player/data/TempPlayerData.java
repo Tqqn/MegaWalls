@@ -1,7 +1,9 @@
 package dev.tqqn.megawalls.modules.player.data;
 
 import dev.tqqn.megawalls.MegaWalls;
+import dev.tqqn.megawalls.common.classes.ClassDescriptions;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.classes.framework.objects.AbstractClass;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerStats;
@@ -31,7 +33,7 @@ public final class TempPlayerData {
     private final PlayerStats playerStats;
     private final Map<GameWither, Integer> witherDamageMap;
 
-    private AbstractClass currentClass;
+    private ClassDescriptions.ClassType currentClass;
     @Setter private PluginScoreboard currentScoreboard;
     @Setter private GameTeam gameTeam;
 
@@ -170,11 +172,11 @@ public final class TempPlayerData {
         }
     }
 
-    public void setCurrentClass(AbstractClass abstractClass) {
-        if (abstractClass == getCurrentClass()) return;
-        this.currentClass = abstractClass;
-        if (abstractClass != null) abstractClass.applySkin(playerModel);
-        if (abstractClass == null) MegaWalls.getReflectionLayer().changeSkin(ClassSkins.RANDOM, playerModel);
+    public void setCurrentClass(ClassDescriptions.ClassType classType) {
+        if (classType == getCurrentClass()) return;
+        this.currentClass = classType;
+        if (classType != null) MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class).applySkin(playerModel);
+        if (classType == null) MegaWalls.getReflectionLayer().changeSkin(ClassSkins.RANDOM, playerModel);
     }
 
     public Component getChatMessage(Component text) {

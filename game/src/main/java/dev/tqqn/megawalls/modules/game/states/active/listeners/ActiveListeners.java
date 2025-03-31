@@ -45,6 +45,8 @@ import org.bukkit.inventory.ItemStack;
 @RequiredArgsConstructor
 public final class ActiveListeners implements Listener {
 
+    private static final ClassModule classModule = MegaWalls.getInstance().getModuleManager().getModule(ClassModule.class);
+
     private final GameModule gameModule;
 
     /**
@@ -220,7 +222,7 @@ public final class ActiveListeners implements Listener {
         } else {
             event.setRespawnLocation(tempPlayerData.getGameTeam().getGameTeamSettings().getSpawnLocation());
             tempPlayerData.setProtected(true);
-            tempPlayerData.getCurrentClass().applyKit(playerModel);
+            classModule.getClass(tempPlayerData.getCurrentClass()).applyKit(playerModel);
         }
     }
 
