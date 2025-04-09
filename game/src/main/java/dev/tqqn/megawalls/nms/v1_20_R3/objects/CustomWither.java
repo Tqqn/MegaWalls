@@ -6,6 +6,7 @@ import dev.tqqn.megawalls.modules.game.states.active.ActiveState;
 import dev.tqqn.megawalls.modules.player.PlayerModule;
 import dev.tqqn.megawalls.nms.framework.ICustomWither;
 import lombok.Getter;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +15,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 
 /**
@@ -55,7 +56,7 @@ public final class CustomWither extends WitherBoss implements ICustomWither {
      * No random AI attacks.
      */
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(ServerLevel serverLevel) {
     }
 
     /**
@@ -65,7 +66,7 @@ public final class CustomWither extends WitherBoss implements ICustomWither {
      *
      */
     @Override
-    public boolean hurt(DamageSource damagesource, float damage) {
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damagesource, float damage) {
         if (isGod()) return false;
         if (damagesource.getEntity() == null) return false;
 

@@ -6,8 +6,8 @@ import org.bukkit.Particle;
 
 public enum ClassAbilityParticles {
 
-    DEFAULT_GREEN(Particle.REDSTONE, new Particle.DustTransition(Color.LIME, Color.fromRGB(0, 204, 0), 1)),
-    SMOKE(Particle.SMOKE_NORMAL, null);
+    DEFAULT_GREEN(Particle.DUST, new Particle.DustTransition(Color.LIME, Color.fromRGB(0, 204, 0), 1)),
+    SMOKE(Particle.SMOKE, null);
 
     private final Particle particle;
     private final Particle.DustOptions dustOptions;
