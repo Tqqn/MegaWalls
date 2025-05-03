@@ -57,7 +57,7 @@ public final class ClassModule extends AbstractModule {
         return ImmutableList.copyOf(classes.values());
     }
 
-    public AbstractClass getClass(ClassDescriptions.ClassType classType) {
+    public static AbstractClass getClass(ClassDescriptions.ClassType classType) {
         return classes.get(classType);
     }
 

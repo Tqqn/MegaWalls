@@ -104,7 +104,7 @@ public final class ItemBuilder {
      * @return The ItemBuilder instance.
      */
     public ItemBuilder setGlow() {
-        itemMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+        itemMeta.addEnchant(Enchantment.UNBREAKING, 0, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         return this;
     }

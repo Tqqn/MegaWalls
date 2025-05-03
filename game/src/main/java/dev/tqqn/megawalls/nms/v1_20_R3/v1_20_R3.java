@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import dev.tqqn.megawalls.common.classes.ClassSkins;
+import dev.tqqn.megawalls.modules.classes.ClassModule;
 import dev.tqqn.megawalls.modules.database.framework.models.PlayerModel;
 import dev.tqqn.megawalls.modules.teams.framework.GameTeam;
 import dev.tqqn.megawalls.nms.ReflectionLayer;
@@ -12,12 +13,14 @@ import dev.tqqn.megawalls.nms.v1_20_R3.objects.CustomWither;
 import io.netty.channel.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.numbers.BlankFormat;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.world.level.GameType;
@@ -26,8 +29,8 @@ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -102,7 +105,7 @@ public final class v1_20_R3 implements ReflectionLayer {
             int index = board.size()-1;
 
             for (String line : board) {
-                sendPacket(player, new ClientboundSetScorePacket("line" + index, objective.getName(), index, CraftChatMessage.fromStringOrNull(line), new BlankFormat()));
+                sendPacket(player, new ClientboundSetScorePacket("line" + index, objective.getName(), index, CraftChatMessage.fromStringOrOptional(line), Optional.of(new BlankFormat())));
                 index--;
             }
         }
@@ -110,7 +113,7 @@ public final class v1_20_R3 implements ReflectionLayer {
 
     @Override
     public void updateSidebarScoreboardLine(String name, Player player, String line, int index) {
-        sendPacket(player, new ClientboundSetScorePacket("line" + index, name, index, CraftChatMessage.fromStringOrNull(line), new BlankFormat()));
+        sendPacket(player, new ClientboundSetScorePacket("line" + index, name, index, CraftChatMessage.fromStringOrOptional(line), Optional.of(new BlankFormat())));
     }
 
     @Override
@@ -132,7 +135,7 @@ public final class v1_20_R3 implements ReflectionLayer {
     public void sendActionBar(PlayerModel playerModel) {
         Component message = CraftChatMessage.fromStringOrNull(" ");
         if (!playerModel.getTempPlayerData().isSpectatorMode()) {
-            message = CraftChatMessage.fromStringOrNull(playerModel.getTempPlayerData().getCurrentClass().getActionBar(playerModel));
+            message = CraftChatMessage.fromStringOrNull(ClassModule.getClass(playerModel.getTempPlayerData().getCurrentClass()).getActionBar(playerModel));
         }
         sendPacket(playerModel.getPlayer(), new ClientboundSetActionBarTextPacket(message));
     }
@@ -141,7 +144,7 @@ public final class v1_20_R3 implements ReflectionLayer {
     public void sendZombieParticle(PlayerModel playerModel) {
         final Player player = playerModel.getPlayer();
         if (player == null) return;
-        ClientboundLevelParticlesPacket clientboundLevelParticlesPacket = new ClientboundLevelParticlesPacket(ParticleTypes.ANGRY_VILLAGER, false, player.getX(), player.getY()+1, player.getZ(), 0, 0, 0, 10, 1);
+        ClientboundLevelParticlesPacket clientboundLevelParticlesPacket = new ClientboundLevelParticlesPacket(ParticleTypes.ANGRY_VILLAGER, false, true, player.getX(), player.getY()+1, player.getZ(), 0, 0, 0, 10, 1);
         sendPacketToAll(new Object[]{clientboundLevelParticlesPacket});
     }
 
@@ -162,13 +165,13 @@ public final class v1_20_R3 implements ReflectionLayer {
             case SPECTATOR -> gameType = GameType.SPECTATOR;
         }
 
-        CommonPlayerSpawnInfo playerInfo = new CommonPlayerSpawnInfo(serverPlayer.level().dimensionTypeId(), serverPlayer.level().dimension(), serverPlayer.server.overworld().getSeed(), gameType, gameType, false, false, Optional.of(GlobalPos.of(serverPlayer.level().dimension(), serverPlayer.getOnPos())), 0);
+        CommonPlayerSpawnInfo playerInfo = new CommonPlayerSpawnInfo(Holder.direct(serverPlayer.level().dimensionType()), serverPlayer.level().dimension(), serverPlayer.server.overworld().getSeed(), gameType, gameType, false, false, Optional.of(GlobalPos.of(serverPlayer.level().dimension(), serverPlayer.getOnPos())), 0, 0);
 
         ClientboundPlayerInfoRemovePacket clientboundPlayerInfoRemovePacket = new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId()));
 
         ClientboundRemoveEntitiesPacket clientboundRemoveEntitiesPacket = new ClientboundRemoveEntitiesPacket(player.getEntityId());
 
-        ClientboundAddEntityPacket clientboundAddEntityPacket = new ClientboundAddEntityPacket(serverPlayer);
+        ClientboundAddEntityPacket clientboundAddEntityPacket = new ClientboundAddEntityPacket(serverPlayer, new ServerEntity(serverPlayer.server, serverPlayer, 0, false));
 
         ClientboundPlayerInfoUpdatePacket clientboundPlayerInfoUpdatePacket = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(Collections.singletonList(serverPlayer));
 
