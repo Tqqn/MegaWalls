@@ -236,7 +236,7 @@ public abstract class AbstractClass implements Listener {
         if (heal == 0) return;
 
         double newHealth = player.getHealth() + heal;
-        final double currentHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        final double currentHealth = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
         if (newHealth >= currentHealth) {
             newHealth = currentHealth;
         }
