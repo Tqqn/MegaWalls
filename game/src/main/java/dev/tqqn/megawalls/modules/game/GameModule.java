@@ -289,7 +289,7 @@ public final class GameModule extends AbstractModule {
                 playerModel.getPlayer().setHealth(health);
                 playerModel.getPlayer().getInventory().clear();
                 currentClass.applyKit(playerModel);
-                playerModel.getTempPlayerData().getCurrentClass().applySkin(playerModel);
+                classModule.getClass(playerModel.getTempPlayerData().getCurrentClass()).applySkin(playerModel);
                 enderChestModule.addEnderChest(playerModel.getPlayer());
             }
         }
@@ -367,9 +367,9 @@ public final class GameModule extends AbstractModule {
         player.getInventory().setItem(0, ItemBuilder.getBuilder(FinalItems.CLASS_SELECTOR.getItem()).addEmptyPDCTag(GameModule.CLASS_SELECTOR_KEY).build());
         if (playerModel.getTempPlayerData().getCurrentClass() == null) return;
 
-        final AbstractClass currentClass = playerModel.getTempPlayerData().getCurrentClass();
+        final AbstractClass currentClass = getPlugin().getModuleManager().getModule(ClassModule.class).getClass(playerModel.getTempPlayerData().getCurrentClass());
 
-        player.getInventory().setItem(1, ItemBuilder.getBuilder(MegaWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getName() + " Selector").addEmptyPDCTag(GameModule.SKIN_SELECTOR_KEY).build());
+        player.getInventory().setItem(1, ItemBuilder.getBuilder(MegaWalls.getReflectionLayer().getCustomSkull(currentClass.getSkins().getUrl())).setDisplayName(currentClass.getClassOptions().getClassType().getColor() + currentClass.getClassType().getName() + " Selector").addEmptyPDCTag(GameModule.SKIN_SELECTOR_KEY).build());
     }
 
     public void spawnWithers() {
